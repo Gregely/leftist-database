@@ -14,6 +14,7 @@ export function Notes({ notes, className = "" }: { notes: Note[]; className?: st
         {notes.map((n) => (
           <li key={n.n} id={`note-${n.n}`} className="grid grid-cols-[2rem_1fr] gap-2 text-[0.88rem] leading-snug target:bg-beige/40">
             <span className="label-mono pt-[2px] text-red">{n.n}.</span>
+            {n.source ? (
             <span>
               <span className="text-ink-warm">{n.source.author}</span>,{" "}
               <Link href={`/sources/${n.source.id}`} className="link-inline italic">
@@ -26,6 +27,9 @@ export function Notes({ notes, className = "" }: { notes: Note[]; className?: st
               {!n.inline && <span className="label ml-2 text-faint">· general</span>}
               {n.note && <span className="mt-0.5 block text-muted">{n.note}</span>}
             </span>
+            ) : (
+              <span className="text-ink-warm">{n.text}</span>
+            )}
           </li>
         ))}
       </ol>

@@ -2,17 +2,20 @@ import "server-only";
 import { and, asc, eq, inArray, sql } from "drizzle-orm";
 import { ready } from "@/lib/db/client";
 import { entities, relationships, textDetails } from "@/lib/db/schema";
-import { buildProse, getEntityRow, getExcerpts, getRelations, isPublic, pick, toSummary } from "./core";
+import { buildProse, getEntityRow, getExcerpts, getMediaFor, getRelations, isPublic, pick, toSummary, withPreview } from "./core";
+import type { PreviewSpec } from "./types";
 
-export async function getText(slug: string) {
-  const row = await getEntityRow("text", slug);
+export async function getText(slug: string, preview?: PreviewSpec) {
+  const row = await getEntityRow("text", slug, preview);
   if (!row) return null;
   const db = await ready();
-  const details = (await db.select().from(textDetails).where(eq(textDetails.entityId, row.id)).get()) ?? null;
-  const [relations, excerpts, prose] = await Promise.all([
+  const stored = (await db.select().from(textDetails).where(eq(textDetails.entityId, row.id)).get()) ?? null;
+  const details = stored ? withPreview(stored, preview) : null;
+  const [relations, excerpts, prose, media] = await Promise.all([
     getRelations(row.id),
     getExcerpts({ textId: row.id }),
-    buildProse(row.id, [row.body]),
+    buildProse(row.id, [row.body, details?.context]),
+    getMediaFor(row.id),
   ]);
   return {
     entity: toSummary(row),
@@ -27,6 +30,7 @@ export async function getText(slug: string) {
     paths: relations.filter((r) => r.kind === "path"),
     excerpts,
     prose,
+    media,
   };
 }
 

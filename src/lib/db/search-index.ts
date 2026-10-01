@@ -54,7 +54,8 @@ function toDocument(r: Row) {
 
 export async function indexEntity(db: Db, id: string): Promise<void> {
   await db.run(sql`DELETE FROM search_index WHERE entity_id = ${id}`);
-  const rows = (await db.all(sql`${SELECT_DOCUMENTS} WHERE e.id = ${id}`)) as Row[];
+  // Only public entries are indexed; drafts and withdrawn entries never enter the public search index.
+  const rows = (await db.all(sql`${SELECT_DOCUMENTS} WHERE e.id = ${id} AND e.live = 1`)) as Row[];
   for (const r of rows) {
     const d = toDocument(r);
     await db.run(
@@ -69,7 +70,7 @@ export async function removeFromIndex(db: Db, id: string): Promise<void> {
 
 export async function rebuildSearchIndex(db: Db): Promise<number> {
   await db.run(sql`DELETE FROM search_index`);
-  const rows = (await db.all(SELECT_DOCUMENTS)) as Row[];
+  const rows = (await db.all(sql`${SELECT_DOCUMENTS} WHERE e.live = 1`)) as Row[];
   for (const r of rows) {
     const d = toDocument(r);
     await db.run(

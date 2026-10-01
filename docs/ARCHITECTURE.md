@@ -4,17 +4,26 @@ The Atlas is one Next.js application with three layers:
 
 ```
 src/
-  app/                    Routes (server components by default), route handlers, server actions
-  components/             UI, grouped by role: layout, editorial, entity, graph, timeline, debate, concept, path, search, admin
+  app/
+    (site)/               Public routes, wrapped in the site chrome (SiteShell); includes /preview/[id]
+    admin/                The editorial desk: (desk)/ pages, login, and actions.ts (every server action)
+    api/                  Public JSON (search, map previews) and /api/desk/* (session-only pickers, uploads)
+    media/[id]/           Serves uploaded images (public only while attached to a live entry)
+  components/             UI, grouped by role: layout, editorial, entity, views (whole public pages, shared with the
+                          preview), graph, timeline, debate, concept, path, search, desk (editor, rich text, panels)
   lib/
     content/              Framework-free domain model: kinds, relationship registry, markup parser (safe on client & server)
     db/                   Drizzle schema, libSQL client, FTS5 index maintenance
     data/                 The public content API (server-only): getThinker(), getConcept(), getDebate(), search()…
-    admin/                Session, field definitions, editorial repository (reads drafts, writes, reindexes)
+    auth/                 Passwords (scrypt), database sessions, users
+    editorial/            The editorial domain: permissions, workflow, content (revisions, saves, transitions),
+                          structure (relationships, citations, excerpts, media, debates, paths), sources, media,
+                          notes, audit, validation/completeness/dependencies (insight), desk queries
     graph/                Server-side d3-force layout
     seed/                 Sample records and the seeder
 drizzle/                  SQL migrations (generated + the hand-written FTS5 migration)
 scripts/db.ts             migrate / seed / reset / ensure / reindex
+scripts/users.ts          create / list desk accounts; demo accounts for development
 tests/e2e/                Playwright
 ```
 
@@ -30,7 +39,11 @@ tests/e2e/                Playwright
    that are normalised on write.
 3. **Sources are first-class.** Entries cite sources (with locators), prose carries inline `[cite:…]` markers that are
    numbered into footnotes at render time, excerpts point to a text and an edition, and relationships can rest on a source.
-4. **Draft is invisible.** Public queries filter to `sample` and `published`. The editorial repository sees everything.
+4. **Draft is invisible.** Public queries filter to `entities.live` (`isPublic()` in `lib/data/core.ts`); only live
+   entries are written to the search index, and relationships, graphs, timelines, sources and media are filtered
+   through the same flag. The editorial library sees everything.
+5. **One content model.** The desk edits the same tables the public site reads. The preview renders the public view
+   components (`components/views/*`) with a `PreviewSpec` overlay that substitutes the working copy for one entry.
 
 ## Rendering & performance
 
@@ -42,10 +55,10 @@ tests/e2e/                Playwright
 - **Timeline** data is a single query over `entities.year_start` joined to detail tables (`getTimeline({from, to, lanes})`),
   so the same API can later serve windowed ranges; context for a selected item loads on demand from `/api/preview/[id]`.
 - **Search:** FTS5 with Porter stemming and diacritic folding, weighted bm25 (title > aliases > body), prefix matching on
-  every term, snippets, and "connected" results drawn from the relationship graph. `/api/search?mode=lookup` powers the
-  admin entity picker.
+  every term, snippets, and "connected" results drawn from the relationship graph. The desk's entity picker uses its own
+  lookup (`/api/desk/lookup`) across all statuses.
 - Client JavaScript is limited to interaction: map, timeline, compare, depth reader, search overlay, bookmarks, path
-  progress, admin forms. The search overlay is code-split and loaded on first use.
+  progress, and the desk. The search overlay is code-split and loaded on first use.
 
 ## Scaling from 20 to 2,000 thinkers
 
@@ -74,7 +87,7 @@ Tokens are defined once in `src/app/globals.css` (`@theme`), replacing Tailwind'
 | `muted`, `faint` | `#5C574F`, `#6F695F` | Secondary text (both ≥ 4.5:1 on paper) |
 
 Editorial primitives (`components/editorial`): `SectionHead` (issue-style numbered sections), `Label`, `ArrowLink`,
-`StatusMark` (marks sample/draft entries), `MetaList`, `Prose` (Atlas markup), `Notes` (footnotes), `IndexHeader`, `Pager`.
+`SampleMark` (marks sample entries), `MetaList`, `Prose` (Atlas markup), `Notes` (footnotes), `IndexHeader`, `Pager`.
 Entry primitives (`components/entity`): `EntryHeader`, `SectionNav` (sticky scroll-spy index), `EntrySection`,
 `RelationList`, `EntryGrid`, `Excerpts`.
 
@@ -87,9 +100,28 @@ buttons with descriptive labels; the map has a "read as a list" alternative; the
 combobox/listbox pattern and focus trapping; comparison data is a real `<table>`; motion is disabled under
 `prefers-reduced-motion`; colour is never the only carrier of meaning (stances have glyphs and labels).
 
-## Admin & security
+## Editorial system & security
 
-`src/proxy.ts` (Next 16's middleware) guards `/admin/*`; every server action also calls `requireAdmin()`. Sessions are
-HMAC-signed cookies (`lib/admin/session.ts`). In production the desk is disabled unless `ADMIN_PASSWORD` is set; set
-`ADMIN_SESSION_SECRET` too. Redirect targets from forms are restricted to `/admin` paths. This is a single-editor model;
-multi-user accounts and revision history are natural next steps.
+- **Authentication.** Accounts live in `users` (scrypt password hashes). Signing in creates a random session token,
+  stored hashed in `sessions` and sent as an HTTP-only, same-site cookie (`secure` in production) that expires after
+  seven days. `getCurrentUser()` / `requireUser()` (`lib/auth/session.ts`) resolve it per request. `src/proxy.ts` (Next
+  16's middleware) turns away requests without a session cookie early; it is a convenience, not the security boundary.
+- **Authorization** is centralised in `lib/editorial/permissions.ts`. Every server action in `app/admin/actions.ts`
+  and every `/api/desk/*` handler resolves the user on the server and the editorial library calls `assertCan()` before
+  writing. Client components only decide which buttons to show.
+- **Revisions.** Every save writes a snapshot to `revisions` (`{fields, structure}`); autosaves by the same person within
+  half an hour are folded into one open version. For an entry that is not live, saves also write the tables; for a live
+  entry the tables keep the published version and the working copy lives only in revisions until **publish** copies it
+  across. Restoring writes the old snapshot as a new version.
+- **Concurrency.** `entities.lock_version` is compared-and-set on every save; a stale save fails with a conflict that
+  the editor shows to the user.
+- **Publication propagates** by setting `live`, reindexing search and calling `revalidatePath("/", "layout")`, which
+  refreshes prerendered pages, maps and timelines.
+- **Slugs.** Renaming a published entry records the old slug in `slug_history`; public routes redirect permanently
+  (`lib/routing.ts`).
+- **Uploads** go through `/api/desk/media` (server actions are limited to 1 MB). Files are identified by content
+  (magic bytes, no SVG), de-duplicated by SHA-256 and stored under `MEDIA_DIR`; `/media/[id]` serves them with
+  `nosniff` and a restrictive CSP, publicly only while attached to a live entry.
+- **No default credentials** in production; demo accounts are created only outside production with
+  `ATLAS_DEMO_USERS=1`. The audit log scrubs any metadata key resembling a password, token, secret, hash, cookie or
+  session.

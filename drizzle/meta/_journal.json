@@ -15,6 +15,20 @@
       "when": 1790884474099,
       "tag": "0001_search_index",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1790888600546,
+      "tag": "0002_editorial",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1790888610867,
+      "tag": "0003_excerpt_verification",
+      "breakpoints": true
     }
   ]
 }

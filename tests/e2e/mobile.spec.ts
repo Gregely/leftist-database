@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { login } from "./helpers";
 
 const PAGES = ["/", "/explore", "/thinkers", "/thinkers/marx", "/concepts/alienation", "/debates/what-is-the-state", "/timeline", "/texts", "/paths/foundations?step=3", "/search?q=state"];
 
@@ -25,4 +26,21 @@ test("portrait map and timeline list are used on phones", async ({ page }) => {
   await page.goto("/timeline");
   await page.getByRole("button", { name: /The Paris Commune/ }).first().click();
   await expect(page.getByRole("complementary", { name: /Context: The Paris Commune/ })).toBeVisible();
+});
+
+test("the editorial desk fits a phone, with an Editor / Preview switch", async ({ page }) => {
+  await login(page, "editor");
+  const pages = ["/admin", "/admin/content", "/admin/review", "/admin/new", "/admin/sources", "/admin/media", "/admin/relationships", "/admin/entries/th_marx", "/admin/entries/th_marx?tab=connections", "/admin/entries/th_marx?tab=sources", "/admin/entries/th_marx?tab=history", "/admin/entries/db_class-consciousness?tab=structure", "/preview/th_marx"];
+  for (const path of pages) {
+    await page.goto(path);
+    const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
+    expect(overflow, path).toBeLessThanOrEqual(1);
+  }
+  await page.goto("/admin/entries/th_marx");
+  const views = page.getByRole("navigation", { name: "Editor or preview" });
+  await views.getByRole("link", { name: "Preview" }).click();
+  await expect(page).toHaveURL(/\/preview\/th_marx$/);
+  await expect(page.getByRole("heading", { level: 1 })).toContainText("Karl Marx");
+  await page.getByRole("navigation", { name: "Editor or preview" }).getByRole("link", { name: "Editor" }).click();
+  await expect(page).toHaveURL(/\/admin\/entries\/th_marx$/);
 });

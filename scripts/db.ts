@@ -12,6 +12,7 @@ import { migrate } from "drizzle-orm/libsql/migrator";
 import { DEFAULT_DATABASE_URL, getClient, ready } from "../src/lib/db/client";
 import { rebuildSearchIndex } from "../src/lib/db/search-index";
 import { seedDatabase } from "../src/lib/seed";
+import { ensureDemoUsers } from "./users";
 
 const url = process.env.DATABASE_URL || DEFAULT_DATABASE_URL;
 const localPath = url.startsWith("file:") ? url.slice("file:".length) : null;
@@ -47,6 +48,7 @@ async function run(task: string) {
   } else if (task === "reindex") {
     console.log(`Indexed ${await rebuildSearchIndex(db)} entities.`);
   }
+  if (process.env.ATLAS_DEMO_USERS === "1" && ["ensure", "reset", "seed"].includes(task)) await ensureDemoUsers();
   getClient().close();
 }
 

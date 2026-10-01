@@ -2,18 +2,29 @@ import "server-only";
 import { eq, inArray } from "drizzle-orm";
 import { ready } from "@/lib/db/client";
 import { tendencyDetails } from "@/lib/db/schema";
-import { buildProse, getEntityRow, getRelations, pick, toSummary } from "./core";
+import { buildProse, getEntityRow, getMediaFor, getRelations, pick, toSummary, withPreview } from "./core";
+import type { PreviewSpec } from "./types";
 import { getNeighborhood } from "./graph";
 
-export async function getTendency(slug: string) {
-  const row = await getEntityRow("tendency", slug);
+export async function getTendency(slug: string, preview?: PreviewSpec) {
+  const row = await getEntityRow("tendency", slug, preview);
   if (!row) return null;
   const db = await ready();
-  const details = (await db.select().from(tendencyDetails).where(eq(tendencyDetails.entityId, row.id)).get()) ?? {
-    color: "ink",
-    periodLabel: null,
-  };
-  const [relations, prose] = await Promise.all([getRelations(row.id), buildProse(row.id, [row.body])]);
+  const details = withPreview(
+    (await db.select().from(tendencyDetails).where(eq(tendencyDetails.entityId, row.id)).get()) ?? {
+      color: "ink",
+      periodLabel: null,
+      context: "",
+      criticisms: "",
+      legacy: "",
+    },
+    preview,
+  );
+  const [relations, prose, media] = await Promise.all([
+    getRelations(row.id),
+    buildProse(row.id, [row.body, details.context, details.criticisms, details.legacy]),
+    getMediaFor(row.id),
+  ]);
   const members = pick(relations, "MEMBER_OF", "in", "thinker").sort((a, b) => (a.yearStart ?? 0) - (b.yearStart ?? 0));
   const memberIds = members.map((m) => m.id);
   // Texts by members.
@@ -24,7 +35,7 @@ export async function getTendency(slug: string) {
     .filter((t, i, all) => all.findIndex((x) => x.id === t.id) === i)
     .sort((a, b) => (a.yearStart ?? 0) - (b.yearStart ?? 0));
   const network = memberIds.length
-    ? await getNeighborhood(row.id, { depth: 1, kinds: ["thinker", "tendency"], limit: 30, families: ["influence", "critique", "response", "affinity", "structure"] })
+    ? await getNeighborhood(row.id, { depth: 1, kinds: ["thinker", "tendency"], limit: 30, families: ["influence", "critique", "response", "affinity", "structure"], includeIds: preview ? [row.id] : [] })
     : { nodes: [], edges: [] };
   return {
     entity: toSummary(row),
@@ -36,6 +47,7 @@ export async function getTendency(slug: string) {
     events: relations.filter((r) => r.kind === "event"),
     network,
     prose,
+    media,
   };
 }
 

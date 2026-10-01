@@ -1,37 +1,123 @@
-# Editorial guide
+# The Atlas Editorial Desk
 
-## Adding an entry
+The desk at `/admin` is the only way content enters the Atlas. It writes to the same tables the public site reads —
+there is no separate admin data model — and nothing reaches the public site until an editor publishes it.
 
-1. Sign in at `/admin`.
-2. Choose a kind and **+ New**. New entries start as **draft** (invisible to the public).
-3. After creating, connect it: **Relationships** (any entry to any other, with a note, weight and optional source),
-   **Citations** (entry-level sources with locators) and **Excerpts** (passages). Debates have propositions, positions,
-   a stance matrix and arguments; paths have an ordered route.
-4. Set status to **published** when it is ready.
+## Roles
 
-## Atlas markup
-
-Long-form fields (overview, legacy, the three concept depths) accept a small extension of Markdown:
-
-| Write | Result |
+| Role | Can |
 | --- | --- |
-| Blank line | New paragraph |
-| `**strong**`, `*emphasis*` | Bold, italic |
-| `> quoted text` | Block quotation |
-| `- item` | List |
-| `[label](https://…)` | External link |
-| `[[concept:alienation]]` | Link to an entry, labelled with its title |
-| `[[thinker:marx\|Marx's]]` | …with a custom label |
-| `[cite:src_capital_fowkes]` | Footnote to a source |
-| `[cite:src_capital_fowkes, p. 125]` | …with a locator |
+| **Contributor** | Create entries; edit their own entries while in draft, revision requested, rejected (and propose edits to their own published entries); add sources, excerpts and media; submit for review. Cannot review, publish or archive. |
+| **Reviewer** | Everything a contributor can, plus start reviews, leave field- and passage-level notes, request revisions, reject, approve, and mark excerpts *verified*. Never signs off their own work. |
+| **Editor** | Edit any entry; change structure on live entries (relationships, citations, media, debate and path structure); publish, unpublish, archive and restore; global relationship editing; edit any source or media record. |
+| **Administrator** | Everything editors can, plus **People** (create accounts, change roles, deactivate/reactivate, reset passwords) and the **Audit log**. |
 
-References to unpublished entries render as plain text, so drafts never produce broken links.
+Permissions are decided in one place, `src/lib/editorial/permissions.ts` (`can()` / `assertCan()`), and enforced on the
+server by every server action and desk API route. Buttons the user may not use are hidden, but hiding is a courtesy —
+the server refuses the action regardless.
+
+## Workflow
+
+```
+DRAFT → SUBMITTED → UNDER REVIEW → REVISION REQUESTED → RESUBMITTED → UNDER REVIEW → APPROVED → PUBLISHED
+                                 ↘ REJECTED                                                  ↘ UNPUBLISHED
+any (editor) → ARCHIVED → restore → DRAFT / UNPUBLISHED
+```
+
+- **Submit** sends the entry to the review queue (`/admin/review`); the author can no longer edit it until a reviewer
+  responds.
+- **Request revision** and **Reject** require a note, which the author sees in the Review tab.
+- **Publish** is available to editors on approved entries and is refused while structural checks report errors.
+- Editing a published entry starts a new cycle: the public page keeps showing the published version until the new one
+  is reviewed and published (the entry header shows "Unpublished changes: vN (live: vM)").
+- **Unpublish** and **Archive** show what depends on the entry (relationships, learning paths, debates, prose links)
+  before asking for confirmation. Published material is never hard-deleted; only never-published drafts can be deleted.
+
+Whether an entry is public is the `live` flag; `status` is where its current edit cycle stands. Public queries,
+search, maps, timelines and `/api/*` only ever read live entries.
+
+## Editing an entry
+
+The entry editor (`/admin/entries/[id]`) has tabs:
+
+- **Content** — the fields for the entry's kind (defined in `src/lib/editorial/fields.ts`), grouped into sections.
+  Long-form fields use the rich-text editor. The editor **autosaves** a few seconds after you stop typing (the save
+  bar reads *Unsaved changes → Saving… → Saved · time*), saves when you switch tabs or windows, warns before you leave
+  with unsaved work, and keeps a backup in the browser that it offers to restore. **Save version** saves with a note.
+  If someone else saved the entry in the meantime, your save is refused and you choose whether to load their version
+  or save yours over it — nothing is silently overwritten.
+- **Connections** — the relationship builder (FROM · TYPE · TO, with note, dates, context, weight and source), a map of
+  the entry's neighbourhood and its place on the timeline. Inverse phrasings ("influenced by") are stored canonically.
+- **Sources & excerpts** — entry-level citations and excerpts. Each excerpt has a verification status:
+  *Unverified*, *Needs review* or *Verified* (reviewers and above). Leave the quotation empty to record a passage
+  reference instead.
+- **Media** — attach images from the library or upload new ones (portrait, photograph, cover, scan, diagram, figure).
+- **Positions & arguments** (debates) / **Route** (learning paths).
+- **Review** — editorial notes, general or attached to a field and passage. Notes are internal and never public.
+- **History** — every version, who saved it and what changed; compare any two versions word by word; **restore** an
+  old version (this creates a new version — history is never rewritten).
+
+The right-hand rail shows a **completeness** checklist for the kind (a guide to what entries usually cover, not a
+score), structural **checks** (errors, warnings, information: broken links, missing required fields, unsourced
+relationships, unverified quotations…) and open feedback. The checks are about structure and sourcing; whether an
+interpretation is right is for editors to judge.
+
+**Preview** renders the working copy with the public page components. On wide screens **Side-by-side** puts the
+preview beside the editor; on phones an **Editor / Preview** switch toggles between them. Previews require a desk
+session and are never indexed.
+
+## The rich-text editor
+
+A word-labelled toolbar: **H2 / H3**, **Bold / Italic**, **Quote**, **• List / 1. List**, **Note box** (callout),
+**Link entry**, **Web link**, **Cite**, **Footnote**, **Figure** and **Excerpt**.
+
+- **Link entry** (⌘⇧L): select words, search the Atlas, choose an entry. Links are stored by kind and slug, so they
+  follow renames (old slugs redirect) and read as plain text while the target is unpublished.
+- **Cite** inserts a numbered citation to a source with an optional page; it also lists the source on the entry.
+- **Figure** places an image from the media library with a caption; **Excerpt** embeds one of the entry's excerpts.
+
+Content is stored as Atlas markup (`src/lib/content/markup.ts`), a small superset of Markdown:
+
+| Markup | Meaning |
+| --- | --- |
+| `## Heading`, `### Subheading` | Section headings |
+| `**strong**`, `*emphasis*`, `> quote`, `- item`, `1. item` | As in Markdown |
+| `:::note` … `:::` | Callout box |
+| `[label](https://…)` | External link |
+| `[[concept:alienation]]`, `[[thinker:marx\|Marx's]]` | Link to an entry (optionally relabelled) |
+| `[cite:src_capital_fowkes, p. 125]` | Citation footnote |
+| `[^Footnote text]` | Editorial footnote |
+| `[[figure:med_…\|Caption]]` | Figure from the media library |
+| `[[excerpt:ex_…]]` | Embedded excerpt |
+
+## Sources and media
+
+- **Sources** (`/admin/sources`) are the shared bibliography: author, title, edition, translator, editors, publisher,
+  place, date, container title, ISBN, URL and type. Sources can also be catalogued inline from any source picker.
+  Sources in use cannot be deleted. A source is public only while something live cites it.
+- **Media** (`/admin/media`) holds images with title, alt text (required), caption, creator, credit, source, licence,
+  rights notes, year and tags. Uploads are checked by content (JPEG, PNG, WebP, GIF; no SVG; 12 MB max) and identical
+  files are stored once. An image is publicly served only while attached to a live entry. Files live in `MEDIA_DIR`.
+
+## Audit
+
+Logins, failed logins, creation, each new version, every workflow transition, restores, structural changes, source and
+media changes and account changes are written to the audit log (`/admin/audit`, administrators only). Passwords,
+tokens and session secrets are never logged.
+
+## Accounts and sessions
+
+Accounts are created by administrators (People) or from the command line (`npm run user:create`). Passwords are
+hashed with scrypt; sessions are random tokens in an HTTP-only, same-site cookie (secure in production), stored hashed
+and expiring after seven days. Deactivating an account signs it out everywhere. There are no default credentials in
+production; the demo accounts exist only when `ATLAS_DEMO_USERS=1` outside production.
 
 ## Sample content and accuracy
 
 - Seeded records are **sample** entries, marked on every page. Replace or promote them deliberately.
-- Do not add quotations from memory. Quote only from an edition recorded as a source, give a locator, and tick
-  "wording checked" when verified. Until then, record the passage reference with an empty body.
+- **Never invent quotations.** Quote only from an edition recorded as a source, give a locator, and leave the excerpt
+  *Unverified* until a reviewer has checked the wording against that edition. Otherwise record the passage reference
+  with an empty quotation.
 - Describe positions; do not adjudicate them. Stances are readings: use **qualified** and a note wherever a view is
   contested or complex.
-- Prefer a source for every relationship that makes a substantive claim (who influenced whom, who critiqued what).
+- Prefer a source for every relationship that makes a substantive claim (who influenced whom, who criticised what).

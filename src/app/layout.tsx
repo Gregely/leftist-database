@@ -1,8 +1,5 @@
 import type { Metadata, Viewport } from "next";
 import { Fraunces, IBM_Plex_Mono, IBM_Plex_Sans } from "next/font/google";
-import { SiteFooter } from "@/components/layout/SiteFooter";
-import { SiteHeader } from "@/components/layout/SiteHeader";
-import { SearchProvider } from "@/components/search/SearchProvider";
 import { SITE, siteTitle } from "@/lib/site";
 import "./globals.css";
 
@@ -39,15 +36,7 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${fraunces.variable} ${plex.variable} ${plexMono.variable}`}>
-      <body className="min-h-screen">
-        <SearchProvider>
-          <SiteHeader />
-          <main id="main" tabIndex={-1} className="focus:outline-none">
-            {children}
-          </main>
-          <SiteFooter />
-        </SearchProvider>
-      </body>
+      <body className="min-h-screen">{children}</body>
     </html>
   );
 }

@@ -10,8 +10,8 @@ import {
   positionStances,
 } from "@/lib/db/schema";
 import type { Stance } from "@/lib/content/model";
-import { buildProse, getEntitiesByIds, getEntityRow, getRelations, parseJsonArray, toSummary, uniqueById } from "./core";
-import type { EntitySummary, StanceCell } from "./types";
+import { buildProse, getEntitiesByIds, getEntityRow, getMediaFor, getRelations, parseJsonArray, toSummary, uniqueById, withPreview } from "./core";
+import type { EntitySummary, PreviewSpec, StanceCell } from "./types";
 
 export interface DebatePosition {
   id: string;
@@ -37,18 +37,20 @@ export interface DebateArgument {
   replies: DebateArgument[];
 }
 
-export async function getDebate(slug: string) {
-  const row = await getEntityRow("debate", slug);
+export async function getDebate(slug: string, preview?: PreviewSpec) {
+  const row = await getEntityRow("debate", slug, preview);
   if (!row) return null;
   const db = await ready();
-  const [details, propositions, positions, args, relations, prose] = await Promise.all([
+  const [storedDetails, propositions, positions, args, relations, media] = await Promise.all([
     db.select().from(debateDetails).where(eq(debateDetails.entityId, row.id)).get(),
     db.select().from(debatePropositions).where(eq(debatePropositions.debateId, row.id)).orderBy(asc(debatePropositions.position)),
     db.select().from(debatePositions).where(eq(debatePositions.debateId, row.id)).orderBy(asc(debatePositions.position)),
     db.select().from(debateArguments).where(eq(debateArguments.debateId, row.id)).orderBy(asc(debateArguments.position)),
     getRelations(row.id),
-    buildProse(row.id, [row.body]),
+    getMediaFor(row.id),
   ]);
+  const details = withPreview(storedDetails ?? { entityId: row.id, intro: "", context: "" }, preview);
+  const prose = await buildProse(row.id, [row.body, details.context]);
   const positionIds = positions.map((p) => p.id);
   const [stances, links] = positionIds.length
     ? await Promise.all([
@@ -96,7 +98,8 @@ export async function getDebate(slug: string) {
 
   return {
     entity: toSummary(row),
-    intro: details?.intro ?? "",
+    intro: details.intro ?? "",
+    context: details.context ?? "",
     body: row.body,
     propositions: propositions.map((p) => ({ id: p.id, statement: p.statement })),
     positions: outPositions,
@@ -106,6 +109,7 @@ export async function getDebate(slug: string) {
     events: relations.filter((r) => r.kind === "event"),
     related: relations.filter((r) => r.kind === "debate"),
     prose,
+    media,
   };
 }
 

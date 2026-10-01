@@ -12,14 +12,15 @@ export {
   getRelations,
   lettersFor,
   listEntities,
-  PUBLIC_STATUSES,
+  resolveMovedSlug,
+  getMediaFor,
 } from "./core";
 export { getThinker, withTendencies } from "./thinkers";
 export { getConcept, getRelatedConcepts, getConceptBriefs } from "./concepts";
-export { getText, listTexts } from "./texts";
-export { getTendency, getTendencyColors, getTendencyMemberIds } from "./tendencies";
+export { getText, listTexts, type TextAggregate } from "./texts";
+export { getTendency, getTendencyColors, getTendencyMemberIds, type TendencyAggregate } from "./tendencies";
 export { getDebate, getDebatePositionLabels } from "./debates";
-export { getEvent, getTimeline, getPreview } from "./events";
+export { getEvent, getTimeline, getPreview, type EventAggregate } from "./events";
 export { getPath, getStepDetours, listPaths } from "./paths";
 export { search, lookupEntities } from "./search";
 export { listSources, getSource } from "./sources";

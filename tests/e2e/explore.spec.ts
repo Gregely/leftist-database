@@ -37,6 +37,7 @@ test.describe("home & theory map", () => {
 test.describe("search", () => {
   test("overlay opens with / and groups results by type", async ({ page }) => {
     await page.goto("/explore");
+    await page.waitForLoadState("networkidle"); // the shortcut exists once the page has hydrated
     await page.keyboard.press("/");
     const dialog = page.getByRole("dialog", { name: "Search the archive" });
     await expect(dialog).toBeVisible();

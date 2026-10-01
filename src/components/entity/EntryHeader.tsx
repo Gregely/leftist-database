@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { BookmarkButton } from "@/components/bookmarks/BookmarkButton";
-import { Container, StatusMark } from "@/components/editorial/primitives";
+import { Container, SampleMark } from "@/components/editorial/primitives";
 import { KINDS } from "@/lib/content/model";
 import type { EntitySummary } from "@/lib/data/types";
 
@@ -52,7 +52,7 @@ export function EntryHeader({
           )}
         </ol>
         <div className="flex items-center gap-4">
-          <StatusMark status={entity.status} />
+          <SampleMark sample={entity.sample} />
           <BookmarkButton
             entity={{ id: entity.id, kind: entity.kind, title: entity.title, href: entity.href, subtitle: entity.subtitle }}
           />

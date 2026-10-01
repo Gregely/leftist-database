@@ -1,11 +1,18 @@
-import { saveSourceAction } from "@/app/admin/actions";
-import { SourceForm } from "@/components/admin/SourceForm";
+import type { Metadata } from "next";
+import { SourceEditor } from "@/components/desk/SourceEditor";
+import { DeskHeading, DeskPage } from "@/components/desk/ui";
+import { requireUser } from "@/lib/auth/session";
 
-export default function NewSource() {
+export const metadata: Metadata = { title: "New source" };
+
+export default async function NewSource() {
+  await requireUser();
   return (
-    <div className="max-w-3xl">
-      <h1 className="display mb-8 text-5xl">New source</h1>
-      <SourceForm values={{}} action={saveSourceAction.bind(null, null)} />
-    </div>
+    <DeskPage className="max-w-4xl">
+      <DeskHeading kicker="Bibliography" title="Catalogue a source" lede="Record the edition you actually used — translator, edition and date matter for page references." />
+      <div className="mt-8">
+        <SourceEditor initial={{}} canEdit />
+      </div>
+    </DeskPage>
   );
 }

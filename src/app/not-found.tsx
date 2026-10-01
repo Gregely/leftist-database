@@ -1,9 +1,11 @@
 import Link from "next/link";
 import { Container } from "@/components/editorial/primitives";
 import { HomeSearch } from "@/components/search/HomeSearch";
+import { SiteShell } from "@/components/layout/SiteShell";
 
 export default function NotFound() {
   return (
+    <SiteShell>
     <Container className="py-20">
       <p className="label slash text-red">404 · Not in the archive</p>
       <h1 className="display mt-6 max-w-3xl text-[3.4rem] sm:text-[5rem]">
@@ -15,5 +17,6 @@ export default function NotFound() {
         Back to the library
       </Link>
     </Container>
+    </SiteShell>
   );
 }

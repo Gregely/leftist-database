@@ -103,15 +103,72 @@ export function isEntityKind(value: string): value is EntityKind {
 /* Editorial status                                                          */
 /* ------------------------------------------------------------------------ */
 
-export const ENTRY_STATUSES = ["sample", "draft", "review", "published"] as const;
-export type EntryStatus = (typeof ENTRY_STATUSES)[number];
+/**
+ * Workflow status of an entry's current edit cycle. Public visibility is a
+ * separate flag (`entities.live`): a published entry that is being revised is
+ * live *and* in, say, "draft" — the public keeps seeing the published version
+ * until the new one is published.
+ */
+export const WORKFLOW_STATUSES = [
+  "draft",
+  "submitted",
+  "under_review",
+  "revision_requested",
+  "resubmitted",
+  "approved",
+  "published",
+  "unpublished",
+  "archived",
+  "rejected",
+] as const;
+export type WorkflowStatus = (typeof WORKFLOW_STATUSES)[number];
+/** @deprecated alias kept for older imports. */
+export type EntryStatus = WorkflowStatus;
 
-export const STATUS_LABELS: Record<EntryStatus, string> = {
-  sample: "Sample entry",
+export const STATUS_LABELS: Record<WorkflowStatus, string> = {
   draft: "Draft",
-  review: "In review",
+  submitted: "Submitted",
+  under_review: "Under review",
+  revision_requested: "Revision requested",
+  resubmitted: "Resubmitted",
+  approved: "Approved",
   published: "Published",
+  unpublished: "Unpublished",
+  archived: "Archived",
+  rejected: "Rejected",
 };
+
+/** Statuses that are waiting on a reviewer. */
+export const REVIEW_QUEUE_STATUSES: WorkflowStatus[] = ["submitted", "resubmitted", "under_review"];
+
+/* ------------------------------------------------------------------------ */
+/* People                                                                    */
+/* ------------------------------------------------------------------------ */
+
+export const ROLES = ["contributor", "reviewer", "editor", "admin"] as const;
+export type Role = (typeof ROLES)[number];
+
+export const ROLE_LABELS: Record<Role, string> = {
+  contributor: "Contributor",
+  reviewer: "Reviewer",
+  editor: "Editor",
+  admin: "Administrator",
+};
+
+/* ------------------------------------------------------------------------ */
+/* Excerpts & media                                                          */
+/* ------------------------------------------------------------------------ */
+
+export const EXCERPT_VERIFICATION = ["verified", "unverified", "needs_review"] as const;
+export type ExcerptVerification = (typeof EXCERPT_VERIFICATION)[number];
+export const VERIFICATION_LABELS: Record<ExcerptVerification, string> = {
+  verified: "Verified",
+  unverified: "Unverified",
+  needs_review: "Needs review",
+};
+
+export const MEDIA_ROLES = ["portrait", "photograph", "cover", "scan", "diagram", "figure"] as const;
+export type MediaRole = (typeof MEDIA_ROLES)[number];
 
 /* ------------------------------------------------------------------------ */
 /* Relationships                                                             */
@@ -134,6 +191,12 @@ export const CANONICAL_RELATIONSHIP_TYPES = [
   "WROTE",
   "DISCUSSES",
   "PRECEDES",
+  "EXTENDED",
+  "EDITED",
+  "CITES",
+  "PARTICIPATED_IN",
+  "CONTRASTS_WITH",
+  "PRESUPPOSES",
 ] as const;
 export type RelationshipType = (typeof CANONICAL_RELATIONSHIP_TYPES)[number];
 
@@ -141,6 +204,9 @@ export const INVERSE_ALIASES = {
   INFLUENCED_BY: "INFLUENCED",
   CRITIQUED_BY: "CRITIQUED",
   FOLLOWED_BY: "PRECEDES",
+  EXTENDED_BY: "EXTENDED",
+  EDITED_BY: "EDITED",
+  CITED_BY: "CITES",
 } as const satisfies Record<string, RelationshipType>;
 export type RelationshipAlias = keyof typeof INVERSE_ALIASES;
 export type AnyRelationshipType = RelationshipType | RelationshipAlias;
@@ -149,6 +215,12 @@ export const ALL_RELATIONSHIP_TYPES = [
   ...CANONICAL_RELATIONSHIP_TYPES,
   ...(Object.keys(INVERSE_ALIASES) as RelationshipAlias[]),
 ] as AnyRelationshipType[];
+
+/** The phrase for a relationship type as offered to editors, including inverse aliases ("influenced by"). */
+export function relationshipTypeLabel(t: AnyRelationshipType): string {
+  if (t in INVERSE_ALIASES) return RELATIONSHIP_TYPES[INVERSE_ALIASES[t as RelationshipAlias]].inverseLabel;
+  return RELATIONSHIP_TYPES[t as RelationshipType].label;
+}
 
 /** Visual families used by graphs and lists. */
 export type RelationshipFamily = "influence" | "critique" | "response" | "affinity" | "structure";
@@ -178,8 +250,8 @@ export const RELATIONSHIP_TYPES: Record<RelationshipType, RelationshipTypeMeta> 
   },
   CRITIQUED: {
     type: "CRITIQUED",
-    label: "critiqued",
-    inverseLabel: "critiqued by",
+    label: "criticised",
+    inverseLabel: "criticised by",
     symmetric: false,
     family: "critique",
     typicalFrom: ["thinker", "text", "tendency"],
@@ -265,6 +337,60 @@ export const RELATIONSHIP_TYPES: Record<RelationshipType, RelationshipTypeMeta> 
     family: "structure",
     typicalFrom: ["event", "text"],
     typicalTo: ["event", "text"],
+  },
+  EXTENDED: {
+    type: "EXTENDED",
+    label: "extended",
+    inverseLabel: "extended by",
+    symmetric: false,
+    family: "influence",
+    typicalFrom: ["thinker", "text", "tendency"],
+    typicalTo: ["concept", "thinker", "text", "tendency"],
+  },
+  EDITED: {
+    type: "EDITED",
+    label: "edited",
+    inverseLabel: "edited by",
+    symmetric: false,
+    family: "structure",
+    typicalFrom: ["thinker"],
+    typicalTo: ["text"],
+  },
+  CITES: {
+    type: "CITES",
+    label: "cites",
+    inverseLabel: "cited by",
+    symmetric: false,
+    family: "structure",
+    typicalFrom: ["text", "thinker"],
+    typicalTo: ["text", "thinker"],
+  },
+  PARTICIPATED_IN: {
+    type: "PARTICIPATED_IN",
+    label: "participated in",
+    inverseLabel: "participants include",
+    symmetric: false,
+    family: "affinity",
+    typicalFrom: ["thinker", "tendency"],
+    typicalTo: ["event"],
+  },
+  CONTRASTS_WITH: {
+    type: "CONTRASTS_WITH",
+    label: "contrasts with",
+    inverseLabel: "contrasts with",
+    symmetric: true,
+    family: "critique",
+    typicalFrom: ["concept", "tendency", "thinker"],
+    typicalTo: ["concept", "tendency", "thinker"],
+  },
+  PRESUPPOSES: {
+    type: "PRESUPPOSES",
+    label: "builds on",
+    inverseLabel: "is a prerequisite for",
+    symmetric: false,
+    family: "structure",
+    typicalFrom: ["concept", "debate"],
+    typicalTo: ["concept"],
   },
 };
 

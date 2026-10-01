@@ -2,13 +2,16 @@ import { defineConfig, devices } from "@playwright/test";
 
 /**
  * End-to-end tests run against a dev server on port 3100 backed by a
- * throwaway database (data/test.db), reset and re-seeded on every run.
+ * throwaway database (data/test.db) and upload folder, reset and re-seeded
+ * on every run, with the demo desk accounts (see scripts/users.ts).
  */
 const PORT = 3100;
 
 export default defineConfig({
   testDir: "tests/e2e",
   timeout: 60_000,
+  // The dev server compiles routes on first request, which can take several seconds on a cold cache.
+  expect: { timeout: 15_000 },
   fullyParallel: false,
   workers: 1,
   reporter: [["list"]],
@@ -22,10 +25,10 @@ export default defineConfig({
     { name: "mobile", use: { ...devices["Pixel 7"] }, testMatch: /mobile\.spec/ },
   ],
   webServer: {
-    command: `npx tsx scripts/db.ts reset && npx next dev -p ${PORT}`,
+    command: `rm -rf data/test-uploads && npx tsx scripts/db.ts reset && npx next dev -p ${PORT}`,
     url: `http://localhost:${PORT}`,
     reuseExistingServer: false,
     timeout: 180_000,
-    env: { DATABASE_URL: "file:data/test.db", ADMIN_PASSWORD: "test-password", NEXT_DIST_DIR: ".next-test" },
+    env: { DATABASE_URL: "file:data/test.db", MEDIA_DIR: "data/test-uploads", ATLAS_DEMO_USERS: "1", NEXT_DIST_DIR: ".next-test" },
   },
 });

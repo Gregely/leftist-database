@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { ExcerptRecord } from "@/lib/data/types";
+import { VERIFICATION_LABELS } from "@/lib/content/model";
 import { EmptyNote } from "@/components/editorial/primitives";
 
 /**
@@ -42,7 +43,7 @@ export function Excerpts({ items, empty }: { items: ExcerptRecord[]; empty?: str
                 </span>
               )}
               {x.body && !x.verified && (
-                <span className="label ml-2 inline-block border border-dashed border-red/60 px-1 text-red">Unverified wording</span>
+                <span className="label ml-2 inline-block border border-dashed border-red/60 px-1 text-red">{VERIFICATION_LABELS[x.verification]} wording</span>
               )}
               {x.note && <span className="mt-1 block text-muted">{x.note}</span>}
             </figcaption>

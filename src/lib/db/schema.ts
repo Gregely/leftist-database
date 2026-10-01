@@ -16,6 +16,14 @@
  *   relationships (entity → entity, typed, optionally cited)
  *   sources ── citations (source → entity, with locator)
  *   excerpts (passages from sources, attached to entities)
+ *   media ── entity_media (images attached to entities)
+ *
+ * Editorial layer (same canonical entities — no second content store):
+ *   users ── sessions
+ *   revisions        (versioned snapshots of an entity's content fields)
+ *   editorial_notes  (internal feedback, never rendered publicly)
+ *   audit_log        (who did what, when)
+ *   slug_history     (old published slugs → redirects)
  *
  * The full-text index (`search_index`, SQLite FTS5) lives in a hand-written
  * migration because Drizzle cannot express virtual tables.
@@ -60,13 +68,32 @@ export const entities = sqliteTable(
     featured: integer("featured", { mode: "boolean" }).notNull().default(false),
     /** Editorial ordering within a kind (lower first). */
     sortOrder: integer("sort_order").notNull().default(1000),
-    status: text("status").notNull().default("draft"), // EntryStatus
+    /** Workflow status of the current edit cycle (WorkflowStatus). */
+    status: text("status").notNull().default("draft"),
+    /** Is a published version visible to the public? The only public-visibility switch. */
+    live: integer("live", { mode: "boolean" }).notNull().default(false),
+    /** Seeded demonstration record (labelled on the public site). */
+    isSample: integer("is_sample", { mode: "boolean" }).notNull().default(false),
+    authorId: text("author_id"),
+    reviewerId: text("reviewer_id"),
+    lastEditedBy: text("last_edited_by"),
+    /** Incremented on every write; used for optimistic concurrency. */
+    lockVersion: integer("lock_version").notNull().default(1),
+    /** Latest revision number (revisions.version). */
+    revision: integer("revision").notNull().default(0),
+    /** Revision number currently live, if any. */
+    publishedRevision: integer("published_revision"),
+    publishedAt: text("published_at"),
+    submittedAt: text("submitted_at"),
     ...timestamps,
   },
   (t) => [
     uniqueIndex("entities_kind_slug").on(t.kind, t.slug),
     index("entities_kind").on(t.kind, t.sortOrder),
     index("entities_year").on(t.yearStart),
+    index("entities_live").on(t.live, t.kind),
+    index("entities_status").on(t.status),
+    index("entities_author").on(t.authorId),
   ],
 );
 
@@ -85,6 +112,8 @@ export const thinkerDetails = sqliteTable("thinker_details", {
   roles: text("roles").notNull().default(""),
   birthPlace: text("birth_place"),
   deathPlace: text("death_place"),
+  /** Historical context of the life and work (markup). */
+  context: text("context").notNull().default(""),
   legacy: text("legacy").notNull().default(""),
 });
 
@@ -96,6 +125,12 @@ export const conceptDetails = sqliteTable("concept_details", {
   standard: text("standard").notNull().default(""),
   /** "Deep dive" — theoretical treatment. */
   deep: text("deep").notNull().default(""),
+  /** Historical development of the concept (markup). */
+  history: text("history").notNull().default(""),
+  /** Rival interpretations (markup). */
+  interpretations: text("interpretations").notNull().default(""),
+  /** Criticisms of the concept (markup). */
+  criticisms: text("criticisms").notNull().default(""),
 });
 
 export const textDetails = sqliteTable("text_details", {
@@ -109,18 +144,27 @@ export const textDetails = sqliteTable("text_details", {
   difficulty: integer("difficulty").notNull().default(2),
   /** Public-domain or open-access reading copy. */
   readingUrl: text("reading_url"),
+  /** Recommended edition / translation, free text. */
+  edition: text("edition"),
+  /** Context of composition and reception (markup). */
+  context: text("context").notNull().default(""),
 });
 
 export const tendencyDetails = sqliteTable("tendency_details", {
   entityId: entityRef(),
   color: text("color").notNull().default("ink"), // TendencyColor
   periodLabel: text("period_label"),
+  context: text("context").notNull().default(""),
+  criticisms: text("criticisms").notNull().default(""),
+  legacy: text("legacy").notNull().default(""),
 });
 
 export const debateDetails = sqliteTable("debate_details", {
   entityId: entityRef(),
   /** Short framing shown beneath the question. */
   intro: text("intro").notNull().default(""),
+  /** Historical context of the debate (markup). */
+  context: text("context").notNull().default(""),
 });
 
 export const eventDetails = sqliteTable("event_details", {
@@ -129,6 +173,8 @@ export const eventDetails = sqliteTable("event_details", {
   dateLabel: text("date_label"),
   place: text("place"),
   eventType: text("event_type").notNull().default("movement"),
+  /** Historical significance (markup). */
+  significance: text("significance").notNull().default(""),
 });
 
 export const pathDetails = sqliteTable("path_details", {
@@ -137,6 +183,8 @@ export const pathDetails = sqliteTable("path_details", {
   entryLine: text("entry_line").notNull().default(""),
   level: text("level").notNull().default("introductory"),
   estimatedTime: text("estimated_time"),
+  /** What a reader should know first (markup). */
+  prerequisites: text("prerequisites").notNull().default(""),
 });
 
 export const pathSteps = sqliteTable(
@@ -152,6 +200,10 @@ export const pathSteps = sqliteTable(
     position: integer("position").notNull(),
     /** Why this step is here, in the context of this path. */
     framing: text("framing").notNull().default(""),
+    /** "main" route, a "branch" off a main stop, or an "alternative" to one. */
+    track: text("track").notNull().default("main"),
+    /** For branches and alternatives: the main-route stop they leave from. */
+    parentStepId: text("parent_step_id"),
   },
   (t) => [index("path_steps_path").on(t.pathId, t.position)],
 );
@@ -263,6 +315,12 @@ export const relationships = sqliteTable(
     weight: integer("weight").notNull().default(2),
     sourceId: text("source_id").references(() => sources.id, { onDelete: "set null" }),
     locator: text("locator"),
+    /** When the relation held, if it matters (e.g. a polemic of 1847). */
+    yearStart: integer("year_start"),
+    yearEnd: integer("year_end"),
+    /** Longer editorial context for the claim. */
+    context: text("context").notNull().default(""),
+    createdBy: text("created_by"),
     ...timestamps,
   },
   (t) => [
@@ -290,6 +348,14 @@ export const sources = sqliteTable(
     /** Default page / chapter for the source as a whole (citations can override). */
     locator: text("locator"),
     notes: text("notes").notNull().default(""),
+    edition: text("edition"),
+    translator: text("translator"),
+    editors: text("editors"),
+    place: text("place"),
+    /** Journal, collection or book containing the item. */
+    containerTitle: text("container_title"),
+    isbn: text("isbn"),
+    createdBy: text("created_by"),
     ...timestamps,
   },
   (t) => [index("sources_type").on(t.sourceType)],
@@ -333,11 +399,178 @@ export const excerpts = sqliteTable(
     body: text("body").notNull().default(""),
     locator: text("locator"),
     note: text("note").notNull().default(""),
-    /** Has the wording been checked against the cited edition? */
-    verified: integer("verified", { mode: "boolean" }).notNull().default(false),
+    /** Has the wording been checked against the cited edition? (ExcerptVerification) */
+    verification: text("verification").notNull().default("unverified"),
+    /** Who said or wrote the passage, if catalogued (usually a thinker). */
+    speakerId: text("speaker_id").references(() => entities.id, { onDelete: "set null" }),
     position: integer("position").notNull().default(0),
+    createdBy: text("created_by"),
   },
   (t) => [index("excerpts_entity").on(t.entityId)],
+);
+
+/* -------------------------------------------------------------------------- */
+/* Media                                                                       */
+/* -------------------------------------------------------------------------- */
+
+export const media = sqliteTable(
+  "media",
+  {
+    id: text("id").primaryKey(),
+    /** SHA-256 of the file contents — identical uploads are stored once. */
+    sha256: text("sha256").notNull(),
+    fileName: text("file_name").notNull(),
+    originalName: text("original_name").notNull().default(""),
+    mimeType: text("mime_type").notNull(),
+    size: integer("size").notNull(),
+    width: integer("width"),
+    height: integer("height"),
+    title: text("title").notNull().default(""),
+    description: text("description").notNull().default(""),
+    caption: text("caption").notNull().default(""),
+    altText: text("alt_text").notNull().default(""),
+    creator: text("creator").notNull().default(""),
+    credit: text("credit").notNull().default(""),
+    /** Where it came from: archive, collection, URL. */
+    sourceText: text("source_text").notNull().default(""),
+    sourceId: text("source_id").references(() => sources.id, { onDelete: "set null" }),
+    license: text("license").notNull().default(""),
+    rights: text("rights").notNull().default(""),
+    year: integer("year"),
+    tags: text("tags").notNull().default("[]"),
+    uploadedBy: text("uploaded_by"),
+    ...timestamps,
+  },
+  (t) => [uniqueIndex("media_sha").on(t.sha256)],
+);
+
+export const entityMedia = sqliteTable(
+  "entity_media",
+  {
+    id: text("id").primaryKey(),
+    entityId: text("entity_id")
+      .notNull()
+      .references(() => entities.id, { onDelete: "cascade" }),
+    mediaId: text("media_id")
+      .notNull()
+      .references(() => media.id, { onDelete: "cascade" }),
+    role: text("role").notNull().default("figure"), // MediaRole
+    /** Overrides the media caption in this context. */
+    caption: text("caption").notNull().default(""),
+    position: integer("position").notNull().default(0),
+  },
+  (t) => [uniqueIndex("entity_media_unique").on(t.entityId, t.mediaId, t.role), index("entity_media_media").on(t.mediaId)],
+);
+
+/* -------------------------------------------------------------------------- */
+/* Editorial layer                                                             */
+/* -------------------------------------------------------------------------- */
+
+export const users = sqliteTable(
+  "users",
+  {
+    id: text("id").primaryKey(),
+    email: text("email").notNull(),
+    name: text("name").notNull(),
+    role: text("role").notNull().default("contributor"), // Role
+    /** scrypt$N$r$p$salt$hash */
+    passwordHash: text("password_hash").notNull(),
+    active: integer("active", { mode: "boolean" }).notNull().default(true),
+    lastLoginAt: text("last_login_at"),
+    ...timestamps,
+  },
+  (t) => [uniqueIndex("users_email").on(t.email)],
+);
+
+export const sessions = sqliteTable(
+  "sessions",
+  {
+    /** SHA-256 of the session token; the token itself only lives in the cookie. */
+    id: text("id").primaryKey(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    expiresAt: text("expires_at").notNull(),
+    createdAt: text("created_at").notNull().default(sql`(CURRENT_TIMESTAMP)`),
+  },
+  (t) => [index("sessions_user").on(t.userId)],
+);
+
+export const revisions = sqliteTable(
+  "revisions",
+  {
+    id: text("id").primaryKey(),
+    entityId: text("entity_id")
+      .notNull()
+      .references(() => entities.id, { onDelete: "cascade" }),
+    version: integer("version").notNull(),
+    /** JSON: { entity: {...content fields}, details: {...} } */
+    snapshot: text("snapshot").notNull(),
+    /** JSON array of field names changed relative to the previous revision. */
+    changedFields: text("changed_fields").notNull().default("[]"),
+    message: text("message").notNull().default(""),
+    /** Workflow status when the revision was recorded. */
+    status: text("status").notNull(),
+    authorId: text("author_id"),
+    /** A sealed revision is never amended by autosave (submitted, published, restored, or messaged). */
+    sealed: integer("sealed", { mode: "boolean" }).notNull().default(false),
+    ...timestamps,
+  },
+  (t) => [uniqueIndex("revisions_entity_version").on(t.entityId, t.version)],
+);
+
+export const editorialNotes = sqliteTable(
+  "editorial_notes",
+  {
+    id: text("id").primaryKey(),
+    entityId: text("entity_id")
+      .notNull()
+      .references(() => entities.id, { onDelete: "cascade" }),
+    authorId: text("author_id"),
+    /** note | revision_request | approval | rejection | reply */
+    kind: text("kind").notNull().default("note"),
+    /** The field the note concerns, if any. */
+    field: text("field"),
+    /** The passage the note concerns, if any. */
+    quote: text("quote"),
+    body: text("body").notNull(),
+    resolved: integer("resolved", { mode: "boolean" }).notNull().default(false),
+    resolvedBy: text("resolved_by"),
+    resolvedAt: text("resolved_at"),
+    revision: integer("revision"),
+    createdAt: text("created_at").notNull().default(sql`(CURRENT_TIMESTAMP)`),
+  },
+  (t) => [index("editorial_notes_entity").on(t.entityId)],
+);
+
+export const auditLog = sqliteTable(
+  "audit_log",
+  {
+    id: text("id").primaryKey(),
+    actorId: text("actor_id"),
+    action: text("action").notNull(),
+    /** entity | relationship | source | media | user | session */
+    targetType: text("target_type").notNull(),
+    targetId: text("target_id"),
+    /** Human label captured at the time (survives deletion). */
+    targetLabel: text("target_label").notNull().default(""),
+    metadata: text("metadata").notNull().default("{}"),
+    createdAt: text("created_at").notNull().default(sql`(CURRENT_TIMESTAMP)`),
+  },
+  (t) => [index("audit_created").on(t.createdAt), index("audit_target").on(t.targetId), index("audit_actor").on(t.actorId)],
+);
+
+export const slugHistory = sqliteTable(
+  "slug_history",
+  {
+    kind: text("kind").notNull(),
+    slug: text("slug").notNull(),
+    entityId: text("entity_id")
+      .notNull()
+      .references(() => entities.id, { onDelete: "cascade" }),
+    createdAt: text("created_at").notNull().default(sql`(CURRENT_TIMESTAMP)`),
+  },
+  (t) => [primaryKey({ columns: [t.kind, t.slug] })],
 );
 
 export type EntityRow = typeof entities.$inferSelect;
@@ -345,3 +578,6 @@ export type RelationshipRow = typeof relationships.$inferSelect;
 export type SourceRow = typeof sources.$inferSelect;
 export type CitationRow = typeof citations.$inferSelect;
 export type ExcerptRow = typeof excerpts.$inferSelect;
+export type MediaRow = typeof media.$inferSelect;
+export type UserRow = typeof users.$inferSelect;
+export type RevisionRow = typeof revisions.$inferSelect;

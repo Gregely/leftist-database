@@ -32,11 +32,11 @@ async function tendencyFor(ids: string[]): Promise<Map<string, { color: string; 
   return out;
 }
 
-async function buildGraph(nodeIds: string[], families: RelationshipFamily[]): Promise<Graph> {
+async function buildGraph(nodeIds: string[], families: RelationshipFamily[], includeIds: string[] = []): Promise<Graph> {
   if (!nodeIds.length) return { nodes: [], edges: [] };
   const db = await ready();
   const [rows, rels] = await Promise.all([
-    db.select().from(entities).where(and(inArray(entities.id, nodeIds), isPublic())),
+    db.select().from(entities).where(and(inArray(entities.id, nodeIds), includeIds.length ? or(isPublic(), inArray(entities.id, includeIds)) : isPublic())),
     db
       .select()
       .from(relationships)
@@ -109,7 +109,7 @@ export async function getGraph(opts: {
  */
 export async function getNeighborhood(
   id: string,
-  opts: { depth?: number; kinds?: EntityKind[]; families?: RelationshipFamily[]; limit?: number } = {},
+  opts: { depth?: number; kinds?: EntityKind[]; families?: RelationshipFamily[]; limit?: number; includeIds?: string[] } = {},
 ): Promise<Graph> {
   const db = await ready();
   const depth = opts.depth ?? 1;
@@ -150,5 +150,5 @@ export async function getNeighborhood(
       frontier.push(x);
     }
   }
-  return buildGraph([...seen], families);
+  return buildGraph([...seen], families, opts.includeIds);
 }

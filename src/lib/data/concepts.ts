@@ -2,23 +2,31 @@ import "server-only";
 import { and, eq, inArray } from "drizzle-orm";
 import { ready } from "@/lib/db/client";
 import { conceptDetails, entities } from "@/lib/db/schema";
-import { buildProse, getEntityRow, getExcerpts, getRelations, isPublic, pick, toSummary, uniqueById } from "./core";
+import { buildProse, getEntityRow, getExcerpts, getMediaFor, getRelations, isPublic, pick, toSummary, uniqueById, withPreview } from "./core";
+import type { PreviewSpec } from "./types";
 import { getNeighborhood } from "./graph";
 
-export async function getConcept(slug: string) {
-  const row = await getEntityRow("concept", slug);
+export async function getConcept(slug: string, preview?: PreviewSpec) {
+  const row = await getEntityRow("concept", slug, preview);
   if (!row) return null;
   const db = await ready();
-  const details = (await db.select().from(conceptDetails).where(eq(conceptDetails.entityId, row.id)).get()) ?? {
-    brief: "",
-    standard: "",
-    deep: "",
-  };
-  const [relations, excerpts, constellation, prose] = await Promise.all([
+  const details = withPreview(
+    (await db.select().from(conceptDetails).where(eq(conceptDetails.entityId, row.id)).get()) ?? {
+      brief: "",
+      standard: "",
+      deep: "",
+      history: "",
+      interpretations: "",
+      criticisms: "",
+    },
+    preview,
+  );
+  const [relations, excerpts, constellation, prose, media] = await Promise.all([
     getRelations(row.id),
     getExcerpts({ entityId: row.id }),
-    getNeighborhood(row.id, { depth: 2, kinds: ["concept"], limit: 16 }),
-    buildProse(row.id, [details.brief, details.standard, details.deep, row.body]),
+    getNeighborhood(row.id, { depth: 2, kinds: ["concept"], limit: 16, includeIds: preview ? [row.id] : [] }),
+    buildProse(row.id, [details.brief, details.standard, details.deep, details.history, details.interpretations, details.criticisms, row.body]),
+    getMediaFor(row.id),
   ]);
 
   const thinkers = relations.filter((r) => r.kind === "thinker");
@@ -36,6 +44,7 @@ export async function getConcept(slug: string) {
     excerpts,
     constellation,
     prose,
+    media,
   };
 }
 

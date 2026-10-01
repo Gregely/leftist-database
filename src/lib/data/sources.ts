@@ -3,26 +3,25 @@ import { and, asc, eq, sql } from "drizzle-orm";
 import { ready } from "@/lib/db/client";
 import { citations, entities, excerpts, relationships, sources } from "@/lib/db/schema";
 import type { SourceType } from "@/lib/content/model";
-import { isPublic, toSource, toSummary } from "./core";
+import { isPublic, PUBLIC_SOURCE, toSource, toSummary } from "./core";
 
 export async function listSources(opts: { type?: SourceType } = {}) {
   const db = await ready();
   const rows = await db
     .select({
       s: sources,
-      cited: sql<number>`(SELECT count(*) FROM ${citations} WHERE ${citations.sourceId} = ${sources.id})
-        + (SELECT count(*) FROM ${excerpts} WHERE ${excerpts.sourceId} = ${sources.id})
-        + (SELECT count(*) FROM ${relationships} WHERE ${relationships.sourceId} = ${sources.id})`,
+      cited: sql<number>`(SELECT count(*) FROM citations c JOIN entities e ON e.id = c.entity_id WHERE c.source_id = sources.id AND e.live = 1)
+        + (SELECT count(*) FROM excerpts x JOIN entities e ON e.id = x.entity_id WHERE x.source_id = sources.id AND e.live = 1)`,
     })
     .from(sources)
-    .where(opts.type ? eq(sources.sourceType, opts.type) : undefined)
+    .where(and(sql`${PUBLIC_SOURCE}`, opts.type ? eq(sources.sourceType, opts.type) : undefined))
     .orderBy(asc(sources.author), asc(sources.title));
   return rows.map((r) => ({ ...toSource(r.s), cited: Number(r.cited) }));
 }
 
 export async function getSource(id: string) {
   const db = await ready();
-  const row = await db.select().from(sources).where(eq(sources.id, id)).get();
+  const row = await db.select().from(sources).where(and(eq(sources.id, id), sql`${PUBLIC_SOURCE}`)).get();
   if (!row) return null;
   const [cites, quoted] = await Promise.all([
     db

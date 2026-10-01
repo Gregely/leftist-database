@@ -2,10 +2,10 @@
 
 **A living map of socialist thought** — ideas, thinkers, texts, tendencies, debates, and the relationships between them.
 
-This repository is the initial build: a complete editorial front end, a relational content model in which
-relationships and sources are first-class data, an editorial desk for creating and connecting entries, and a small set of
-clearly marked **sample records** that demonstrate the system. It is built as a machine for holding the theory, not yet as
-the theory itself.
+This repository holds the public site, a relational content model in which relationships and sources are first-class
+data, the **Atlas Editorial Desk** — a multi-user publishing system with roles, review workflow, revisions, rich text,
+sources and media — and a small set of clearly marked **sample records** that demonstrate the system. It is built as a
+machine for holding the theory, not yet as the theory itself.
 
 ## Quick start
 
@@ -15,18 +15,29 @@ npm run dev          # migrates + seeds data/atlas.db on first run, then starts 
 ```
 
 - Public site: <http://localhost:3000>
-- Editorial desk: <http://localhost:3000/admin> — in development the password is `atlas` unless `ADMIN_PASSWORD` is set.
+- Editorial desk: <http://localhost:3000/admin>. In development `npm run dev` creates four demo accounts, one per role —
+  `contributor@atlas.test`, `reviewer@atlas.test`, `editor@atlas.test`, `admin@atlas.test` — all with the password
+  `atlas-demo-2026`. They are never created in production; create real accounts with `npm run user:create`.
 
 | Command | What it does |
 | --- | --- |
 | `npm run dev` / `build` / `start` | Next.js (each ensures the database exists first) |
 | `npm run typecheck` | TypeScript, no emit |
-| `npm run test:e2e` | Playwright suite (desktop, mobile, admin) against a throwaway `data/test.db` |
+| `npm run test:e2e` | Playwright suite (public site, editorial workflow, desk, mobile) against a throwaway `data/test.db` |
 | `npm run db:reset` | Delete the local database, migrate and re-seed the samples |
 | `npm run db:migrate` / `db:seed` / `db:reindex` | Individual database tasks |
 | `npm run db:generate` | Generate a migration after editing `src/lib/db/schema.ts` |
+| `npm run user:create -- --email … --name … --role admin` | Create a desk account (prints a generated password once unless `--password` is given) |
+| `npm run user:list` | List desk accounts |
 
-Copy `.env.example` to `.env.local` to configure the database URL and admin credentials.
+Copy `.env.example` to `.env.local` to configure the database URL and the media folder.
+
+### Deploying
+
+1. Set `DATABASE_URL` (and `DATABASE_AUTH_TOKEN` for libSQL/Turso) and `MEDIA_DIR` (a persistent folder for uploads).
+2. `npm run build && npm start` — migrations run automatically before both.
+3. Create the first administrator: `npm run user:create -- --email you@example.org --name "Your Name" --role admin`.
+   Administrators then manage everyone else from **People** in the desk.
 
 ## What's here
 
@@ -43,7 +54,7 @@ Copy `.env.example` to `.env.local` to configure the database URL and admin cred
 | Search | overlay (`/` or ⌘K) and `/search` | SQLite FTS5 full-text search grouped by entity type, with related entries |
 | Sources | `/sources`, `/sources/[id]` | Bibliography; every citation and excerpt points here |
 | Bookmarks | `/bookmarks` | Per-browser reading list |
-| Editorial desk | `/admin` | Create and edit every entity, relationships, citations, excerpts, debate structure and path routes |
+| Editorial desk | `/admin` | Roles, review workflow, revisions, rich-text editor, relationship builder, sources, excerpts, media library, previews, audit log — see [`docs/EDITORIAL.md`](docs/EDITORIAL.md) |
 
 ## Stack
 
@@ -58,11 +69,11 @@ Copy `.env.example` to `.env.local` to configure the database URL and admin cred
 
 - [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) — layers, data access, rendering, design system, scaling
 - [`docs/DATA_MODEL.md`](docs/DATA_MODEL.md) — entities, relationship types, sources and citations, debates, paths
-- [`docs/EDITORIAL.md`](docs/EDITORIAL.md) — markup, the sample-content policy, how to add entries
+- [`docs/EDITORIAL.md`](docs/EDITORIAL.md) — the editorial desk: roles, workflow, revisions, rich text, sources, media; the sample-content policy
 
 ## Content policy for this build
 
-All seeded entries carry status **sample** and are labelled as such on the site. Summaries are brief and conventional.
+All seeded entries are flagged **sample** (`is_sample`) and labelled as such on the site. Summaries are brief and conventional.
 Only a handful of very widely reproduced quotations are included, each tied to a cited edition and flagged
 **unverified** until checked; elsewhere excerpts are references to passages, not invented text. Debate stances are
 editorial readings, presented descriptively.

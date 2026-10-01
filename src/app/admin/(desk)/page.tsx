@@ -1,86 +1,127 @@
 import Link from "next/link";
-import { RelationshipComposer } from "@/components/admin/RelationshipComposer";
-import { adminCounts, listSourcesAdmin, recentEntities } from "@/lib/admin/repository";
-import { ENTITY_KINDS, entityHref, isEntityKind, KINDS } from "@/lib/content/model";
+import { ContentTable } from "@/components/desk/ContentTable";
+import { DeskHeading, DeskLink, DeskPage, Panel, When } from "@/components/desk/ui";
+import { requireUser } from "@/lib/auth/session";
+import { ENTITY_KINDS, KINDS, STATUS_LABELS, type WorkflowStatus } from "@/lib/content/model";
+import { atLeast } from "@/lib/editorial/permissions";
+import { dashboard } from "@/lib/editorial/queries";
 
-export default async function AdminHome() {
-  const [counts, recent, sources] = await Promise.all([adminCounts(), recentEntities(12), listSourcesAdmin()]);
-  const byKind = (k: string) => counts.rows.filter((r) => r.kind === k);
+const STAGES: WorkflowStatus[] = ["draft", "submitted", "under_review", "revision_requested", "resubmitted", "approved", "published"];
+
+const ACTION_LABELS: Record<string, string> = {
+  create: "created",
+  edit: "edited",
+  submit: "submitted",
+  review: "began reviewing",
+  revision_request: "requested a revision of",
+  approve: "approved",
+  reject: "rejected",
+  publish: "published",
+  unpublish: "unpublished",
+  archive: "archived",
+  restore: "restored",
+  restore_revision: "restored a version of",
+  relationship_create: "drew a relationship:",
+  relationship_delete: "removed a relationship:",
+  source_attach: "attached a source to",
+  excerpt_add: "added an excerpt to",
+  media_upload: "uploaded",
+  media_attach: "attached an image to",
+  note_add: "left a note on",
+};
+
+export default async function DeskHome() {
+  const user = await requireUser();
+  const d = await dashboard(user);
+  const reviewer = atLeast(user, "reviewer");
+  const editor = atLeast(user, "editor");
   return (
-    <div className="space-y-14">
-      <header>
-        <h1 className="display text-5xl">The desk<span className="text-red">.</span></h1>
-        <p className="mt-2 text-muted">
-          {counts.rows.reduce((a, r) => a + r.n, 0)} entries · {counts.relationships} relationships · {counts.sources} sources
-        </p>
-      </header>
+    <DeskPage>
+      <DeskHeading
+        kicker={new Date().toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}
+        title={
+          <>
+            Good to see you, {user.name.split(" ")[0]}
+            <span className="text-red">.</span>
+          </>
+        }
+        lede="Everything in the publishing room, from first drafts to the public library."
+        aside={<DeskLink href="/admin/content">Browse all content →</DeskLink>}
+      />
 
-      <section aria-labelledby="kinds-h">
-        <h2 id="kinds-h" className="label mb-3 font-sans">Entries</h2>
-        <ul className="grid gap-px border border-ink bg-ink sm:grid-cols-2 lg:grid-cols-4">
-          {ENTITY_KINDS.map((k) => {
-            const rows = byKind(k);
-            const total = rows.reduce((a, r) => a + r.n, 0);
-            return (
-              <li key={k} className="bg-paper p-4">
-                <div className="flex items-baseline justify-between">
-                  <Link href={`/admin/${k}`} className="font-serif text-2xl hover:text-red">
-                    {KINDS[k].plural}
-                  </Link>
-                  <span className="numeral text-2xl text-red">{total}</span>
-                </div>
-                <p className="label mt-1 text-faint">{rows.map((r) => `${r.n} ${r.status}`).join(" · ") || "none"}</p>
-                <Link href={`/admin/${k}/new`} className="label mt-3 inline-block text-red hover:underline">
-                  + New {KINDS[k].label.toLowerCase()}
-                </Link>
-              </li>
-            );
-          })}
-          <li className="bg-paper p-4">
-            <div className="flex items-baseline justify-between">
-              <Link href="/admin/sources" className="font-serif text-2xl hover:text-red">
-                Sources
+      {/* The workflow, as a strip of stages */}
+      <section aria-label="Workflow" className="mt-8 overflow-x-auto">
+        <ol className="grid min-w-[720px] grid-cols-7 border-y border-ink">
+          {STAGES.map((s, i) => (
+            <li key={s} className={i ? "border-l border-rule" : ""}>
+              <Link href={`/admin/content?status=${s}`} className="group block px-3 py-4 hover:bg-paper-warm">
+                <span className="numeral block text-3xl text-red">{d.byStatus[s] ?? 0}</span>
+                <span className="label mt-1 block group-hover:text-red">{STATUS_LABELS[s]}</span>
               </Link>
-              <span className="numeral text-2xl text-red">{counts.sources}</span>
-            </div>
-            <Link href="/admin/sources/new" className="label mt-3 inline-block text-red hover:underline">
-              + New source
-            </Link>
-          </li>
-        </ul>
-      </section>
-
-      <section aria-labelledby="rel-h" className="border-t border-ink pt-6">
-        <div className="flex items-baseline justify-between">
-          <h2 id="rel-h" className="label font-sans">Draw a relationship</h2>
-          <Link href="/admin/relationships" className="label text-red">All relationships →</Link>
-        </div>
-        <p className="mb-4 mt-1 text-sm text-muted">Any entry can be related to any other. Inverse types (e.g. “influenced by”) are stored in canonical form.</p>
-        <RelationshipComposer sources={sources.map((s) => ({ id: s.id, label: `${s.author} — ${s.title}` }))} returnTo="/admin" />
-      </section>
-
-      <section aria-labelledby="recent-h" className="border-t border-ink pt-6">
-        <h2 id="recent-h" className="label mb-3 font-sans">Recently edited</h2>
-        <ul className="divide-y divide-rule border-y border-rule">
-          {recent.map((e) => (
-            <li key={e.id} className="flex flex-wrap items-baseline justify-between gap-2 py-2.5">
-              <span>
-                <span className="label mr-3 text-faint">{isEntityKind(e.kind) ? KINDS[e.kind].label : e.kind}</span>
-                <Link href={`/admin/${e.kind}/${e.id}`} className="font-serif text-lg hover:text-red">
-                  {e.title}
-                </Link>
-                <span className="label ml-3 text-faint">{e.status}</span>
-              </span>
-              <span className="flex gap-4">
-                <span className="label-mono text-faint">{e.updatedAt}</span>
-                {isEntityKind(e.kind) && (
-                  <Link href={entityHref(e.kind, e.slug)} className="label text-muted hover:text-red">View ↗</Link>
-                )}
-              </span>
             </li>
           ))}
-        </ul>
+        </ol>
       </section>
-    </div>
+
+      <div className="mt-10 grid gap-10 lg:grid-cols-12">
+        <div className="space-y-10 lg:col-span-8">
+          {reviewer && (
+            <Panel id="queue" title={`Review queue · ${d.queue.length}`} aside={<DeskLink href="/admin/review">Open queue →</DeskLink>}>
+              <ContentTable rows={d.queue} compact empty="No submissions are waiting for review." />
+            </Panel>
+          )}
+          {editor && d.approved.length > 0 && (
+            <Panel id="approved" title={`Approved — ready to publish · ${d.approved.length}`}>
+              <ContentTable rows={d.approved} compact />
+            </Panel>
+          )}
+          <Panel id="revisions" title={`Revision requests · ${d.revisionRequests.length}`}>
+            <ContentTable rows={d.revisionRequests} compact empty="No revision requests waiting on you." />
+          </Panel>
+          <Panel id="mine" title="Your work in progress" aside={<DeskLink href={`/admin/content?author=${user.id}`}>All your entries →</DeskLink>}>
+            <ContentTable rows={d.mine} compact empty="Nothing in progress. Start a new entry from the button above." />
+          </Panel>
+          <Panel id="recent" title="Recently edited">
+            <ContentTable rows={d.recent} />
+          </Panel>
+        </div>
+
+        <aside className="space-y-10 lg:col-span-4">
+          <Panel id="holdings" title="The archive">
+            <ul className="divide-y divide-rule border-b border-rule">
+              {ENTITY_KINDS.map((k) => (
+                <li key={k}>
+                  <Link href={`/admin/content?kind=${k}`} className="group flex items-baseline justify-between py-2">
+                    <span className="font-serif text-lg group-hover:text-red">{KINDS[k].plural}</span>
+                    <span className="label-mono text-faint">
+                      <span className="text-ink">{d.byKind[k]?.live ?? 0}</span> live / {d.byKind[k]?.total ?? 0}
+                    </span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </Panel>
+          <Panel id="activity" title="Recent editorial activity" aside={atLeast(user, "admin") ? <DeskLink href="/admin/audit">Audit log →</DeskLink> : undefined}>
+            <ol className="space-y-3">
+              {d.activity.map((a) => (
+                <li key={a.id} className="border-l border-rule pl-3 text-sm leading-snug">
+                  <span className="font-medium">{a.actorName}</span> <span className="text-muted">{ACTION_LABELS[a.action] ?? a.action.replace(/_/g, " ")}</span>{" "}
+                  {a.targetType === "entity" && a.targetId ? (
+                    <Link href={`/admin/entries/${a.targetId}`} className="link-inline">
+                      {a.targetLabel}
+                    </Link>
+                  ) : (
+                    <span>{a.targetLabel}</span>
+                  )}
+                  <span className="label-mono block text-faint">
+                    <When at={a.createdAt} />
+                  </span>
+                </li>
+              ))}
+            </ol>
+          </Panel>
+        </aside>
+      </div>
+    </DeskPage>
   );
 }

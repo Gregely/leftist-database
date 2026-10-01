@@ -3,17 +3,17 @@ import { and, asc, eq, gt, inArray, lt, sql } from "drizzle-orm";
 import { ready } from "@/lib/db/client";
 import { entities, eventDetails, tendencyDetails, textDetails } from "@/lib/db/schema";
 import { entityHref, type EntityKind } from "@/lib/content/model";
-import { buildProse, getEntityRow, getRelations, isPublic, toSummary } from "./core";
-import type { RelatedEntity } from "./types";
+import { buildProse, getEntityRow, getMediaFor, getRelations, isPublic, toSummary, withPreview } from "./core";
+import type { PreviewSpec, RelatedEntity } from "./types";
 
-export async function getEvent(slug: string) {
-  const row = await getEntityRow("event", slug);
+export async function getEvent(slug: string, preview?: PreviewSpec) {
+  const row = await getEntityRow("event", slug, preview);
   if (!row) return null;
   const db = await ready();
-  const [details, relations, prose, prev, next] = await Promise.all([
+  const [storedDetails, relations, media, prev, next] = await Promise.all([
     db.select().from(eventDetails).where(eq(eventDetails.entityId, row.id)).get(),
     getRelations(row.id),
-    buildProse(row.id, [row.body]),
+    getMediaFor(row.id),
     db
       .select()
       .from(entities)
@@ -29,10 +29,13 @@ export async function getEvent(slug: string) {
       .limit(1)
       .get(),
   ]);
+  const details = storedDetails ? withPreview(storedDetails, preview) : null;
+  const prose = await buildProse(row.id, [row.body, details?.significance]);
   return {
     entity: toSummary(row),
     body: row.body,
-    details: details ?? null,
+    media,
+    details,
     relations,
     prev: prev ? toSummary(prev) : null,
     next: next ? toSummary(next) : null,

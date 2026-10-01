@@ -3,21 +3,26 @@ import { and, eq, inArray } from "drizzle-orm";
 import { ready } from "@/lib/db/client";
 import { debatePositions, entities, thinkerDetails } from "@/lib/db/schema";
 import { entityHref } from "@/lib/content/model";
-import { buildProse, getEntityRow, getExcerpts, getRelations, isPublic, pick, toSummary, uniqueById } from "./core";
+import { buildProse, getEntityRow, getExcerpts, getMediaFor, getRelations, isPublic, pick, toSummary, uniqueById, withPreview } from "./core";
+import type { PreviewSpec } from "./types";
 import { getNeighborhood } from "./graph";
 
-export async function getThinker(slug: string) {
-  const row = await getEntityRow("thinker", slug);
+export async function getThinker(slug: string, preview?: PreviewSpec) {
+  const row = await getEntityRow("thinker", slug, preview);
   if (!row) return null;
   const db = await ready();
-  const details = (await db.select().from(thinkerDetails).where(eq(thinkerDetails.entityId, row.id)).get()) ?? {
-    roles: "",
-    birthPlace: null,
-    deathPlace: null,
-    legacy: "",
-  };
+  const details = withPreview(
+    (await db.select().from(thinkerDetails).where(eq(thinkerDetails.entityId, row.id)).get()) ?? {
+      roles: "",
+      birthPlace: null,
+      deathPlace: null,
+      context: "",
+      legacy: "",
+    },
+    preview,
+  );
 
-  const [relations, positions, excerpts, network, prose] = await Promise.all([
+  const [relations, positions, excerpts, network, prose, media] = await Promise.all([
     getRelations(row.id),
     db
       .select({ position: debatePositions, debate: entities })
@@ -25,8 +30,9 @@ export async function getThinker(slug: string) {
       .innerJoin(entities, eq(entities.id, debatePositions.debateId))
       .where(and(eq(debatePositions.holderId, row.id), isPublic())),
     getExcerpts({ entityId: row.id }),
-    getNeighborhood(row.id, { depth: 1, kinds: ["thinker"], limit: 24 }),
-    buildProse(row.id, [row.body, details.legacy]),
+    getNeighborhood(row.id, { depth: 1, kinds: ["thinker"], limit: 24, includeIds: preview ? [row.id] : [] }),
+    buildProse(row.id, [row.body, details.context, details.legacy]),
+    getMediaFor(row.id),
   ]);
 
   const tendencies = pick(relations, "MEMBER_OF", "out", "tendency");
@@ -76,6 +82,7 @@ export async function getThinker(slug: string) {
     excerpts,
     network,
     prose,
+    media,
   };
 }
 

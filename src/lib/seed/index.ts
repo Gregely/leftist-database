@@ -62,7 +62,11 @@ export async function seedDatabase(db: Db, log: (m: string) => void = console.lo
       yearEnd: r.yearEnd ?? null,
       featured: r.featured ?? false,
       sortOrder: r.sortOrder ?? (i + 1) * 10,
-      status: "sample",
+      status: "published",
+      live: true,
+      isSample: true,
+      publishedRevision: 0,
+      publishedAt: new Date().toISOString(),
     });
     for (const [n, c] of (r.citations ?? []).entries()) {
       await db.insert(s.citations).values({
@@ -242,7 +246,7 @@ export async function seedDatabase(db: Db, log: (m: string) => void = console.lo
       body: x.body,
       locator: x.locator ?? null,
       note: x.note ?? "Sample excerpt — verify wording against the cited edition.",
-      verified: x.verified ?? false,
+      verification: x.verified ? "verified" : "unverified",
       position: n,
     });
   }

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { KINDS, STATUS_LABELS, type EntityKind, type EntryStatus } from "@/lib/content/model";
+import { KINDS, type EntityKind } from "@/lib/content/model";
 
 /** Page-width container with the Atlas gutters. */
 export function Container({ children, className = "" }: { children: ReactNode; className?: string }) {
@@ -73,16 +73,16 @@ export function KindTag({ kind, className = "" }: { kind: EntityKind; className?
   return <span className={`label text-faint ${className}`}>{KINDS[kind].label}</span>;
 }
 
-/** Marks sample / draft entries, so placeholder content is never mistaken for finished work. */
-export function StatusMark({ status, className = "" }: { status: EntryStatus; className?: string }) {
-  if (status === "published") return null;
+/** Marks seeded sample entries, so placeholder content is never mistaken for finished work. */
+export function SampleMark({ sample, className = "" }: { sample: boolean; className?: string }) {
+  if (!sample) return null;
   return (
     <span
       className={`label inline-flex items-center gap-1.5 border border-dashed border-red/60 px-1.5 py-0.5 text-red ${className}`}
       title="This is a sample record demonstrating the Atlas. It is not finished scholarship."
     >
       <span aria-hidden="true">◐</span>
-      {STATUS_LABELS[status]}
+      Sample entry
     </span>
   );
 }
