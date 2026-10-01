@@ -1,0 +1,28 @@
+import { expect, test } from "@playwright/test";
+
+const PAGES = ["/", "/explore", "/thinkers", "/thinkers/marx", "/concepts/alienation", "/debates/what-is-the-state", "/timeline", "/texts", "/paths/foundations?step=3", "/search?q=state"];
+
+for (const path of PAGES) {
+  test(`no horizontal overflow: ${path}`, async ({ page }) => {
+    await page.goto(path);
+    const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
+    expect(overflow).toBeLessThanOrEqual(1);
+  });
+}
+
+test("index menu opens and navigates", async ({ page }) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: "Index" }).click();
+  const nav = page.getByRole("navigation", { name: "Site index" });
+  await expect(nav).toBeVisible();
+  await nav.getByRole("link", { name: "Debates" }).click();
+  await expect(page).toHaveURL(/\/debates$/);
+});
+
+test("portrait map and timeline list are used on phones", async ({ page }) => {
+  await page.goto("/");
+  await expect(page.locator("section[aria-labelledby=map-heading] svg:visible g[role=button]").first()).toBeVisible();
+  await page.goto("/timeline");
+  await page.getByRole("button", { name: /The Paris Commune/ }).first().click();
+  await expect(page.getByRole("complementary", { name: /Context: The Paris Commune/ })).toBeVisible();
+});

@@ -1,0 +1,336 @@
+@import "tailwindcss";
+
+/*
+ * THEORY / ATLAS — visual tokens.
+ * A warm paper ground, ink type, and a deliberate socialist red used for
+ * emphasis, selection and relationship — never as wallpaper.
+ */
+@theme inline {
+  --color-*: initial;
+  --color-transparent: transparent;
+  --color-current: currentColor;
+  --color-white: #ffffff;
+
+  --color-red: #b51f2a;
+  --color-red-deep: #7e1720;
+  --color-ink: #171717;
+  --color-ink-warm: #202020;
+  --color-paper: #f3f0e8;
+  --color-paper-warm: #faf9f5;
+  --color-beige: #ddd7ca;
+  --color-olive: #53624b;
+  --color-ochre: #b18a47;
+  /* Derived neutrals (AA on paper). */
+  --color-muted: #5c574f;
+  --color-faint: #6f695f;
+  --color-rule: #c8c0b0;
+  --color-rule-soft: #e2dccf;
+  --color-ink-muted: #b9b2a5; /* secondary text on ink grounds */
+
+  --font-serif: var(--font-fraunces), "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+  --font-sans: var(--font-plex), "Helvetica Neue", Arial, sans-serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, "SFMono-Regular", Menlo, monospace;
+
+  --ease-atlas: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --animate-enter: enter 0.5s var(--ease-atlas) backwards;
+  --animate-fade: fade 0.35s var(--ease-atlas) backwards;
+}
+
+@keyframes enter {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes dash-flow {
+  to { stroke-dashoffset: -24; }
+}
+@keyframes draw {
+  from { stroke-dashoffset: var(--len, 1000); }
+  to { stroke-dashoffset: 0; }
+}
+
+/* -------------------------------------------------------------------------- */
+/* Base                                                                        */
+/* -------------------------------------------------------------------------- */
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
+    scroll-padding-top: 5.5rem;
+  }
+  body {
+    background-color: var(--color-paper);
+    /* A barely-there paper grain. */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.09 0 0 0 0 0.08 0 0 0 0 0.06 0 0 0 0.05 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    font-feature-settings: "kern", "liga";
+  }
+  ::selection {
+    background: var(--color-red);
+    color: var(--color-paper-warm);
+  }
+  h1, h2, h3, h4 {
+    font-family: var(--font-serif);
+    font-weight: 400;
+    letter-spacing: -0.01em;
+    line-height: 1.08;
+    font-variation-settings: "SOFT" 30;
+  }
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-red);
+    outline-offset: 3px;
+    border-radius: 1px;
+  }
+  /* Grid children may shrink below their content width (prevents horizontal overflow on phones). */
+  .grid > * {
+    min-width: 0;
+  }
+  hr {
+    border: 0;
+    border-top: 1px solid var(--color-rule);
+  }
+  button {
+    cursor: pointer;
+  }
+  input, textarea, select {
+    font: inherit;
+  }
+}
+
+/* -------------------------------------------------------------------------- */
+/* Editorial primitives                                                        */
+/* -------------------------------------------------------------------------- */
+
+@layer components {
+  /* Tiny uppercase metadata label. */
+  .label {
+    font-family: var(--font-sans);
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    line-height: 1.4;
+  }
+  .label-mono {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.04em;
+  }
+  .display {
+    font-family: var(--font-serif);
+    font-weight: 380;
+    letter-spacing: -0.025em;
+    line-height: 0.98;
+    font-variation-settings: "SOFT" 40;
+    font-optical-sizing: auto;
+  }
+  .lede {
+    font-family: var(--font-serif);
+    font-size: 1.3125rem;
+    line-height: 1.45;
+    font-weight: 350;
+  }
+  .serif-italic {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-variation-settings: "SOFT" 60;
+  }
+  .numeral {
+    font-family: var(--font-serif);
+    font-variant-numeric: lining-nums tabular-nums;
+    font-optical-sizing: auto;
+  }
+
+  /* Links with an animated underline that grows from the left. */
+  .link-sweep {
+    background-image: linear-gradient(currentColor, currentColor);
+    background-size: 0% 1px;
+    background-position: 0 100%;
+    background-repeat: no-repeat;
+    transition: background-size 0.35s var(--ease-atlas), color 0.2s;
+    padding-bottom: 1px;
+  }
+  .link-sweep:hover,
+  .link-sweep:focus-visible,
+  .group:hover .link-sweep {
+    background-size: 100% 1px;
+  }
+  /* Always-underlined inline link (prose). */
+  .link-inline {
+    text-decoration: underline;
+    text-decoration-color: color-mix(in srgb, var(--color-red) 55%, transparent);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.18em;
+    transition: text-decoration-color 0.2s, color 0.2s;
+  }
+  .link-inline:hover {
+    color: var(--color-red);
+    text-decoration-color: var(--color-red);
+    text-decoration-thickness: 2px;
+  }
+
+  /* The slash motif. */
+  .slash::before {
+    content: "/";
+    color: var(--color-red);
+    margin-right: 0.45em;
+    font-weight: 400;
+  }
+
+  /* Long-form text. */
+  .prose-atlas {
+    font-size: 1.0625rem;
+    line-height: 1.7;
+    color: var(--color-ink-warm);
+  }
+  .prose-atlas > * + * {
+    margin-top: 1.05em;
+  }
+  .prose-atlas strong {
+    font-weight: 600;
+    color: var(--color-ink);
+  }
+  .prose-atlas em {
+    font-style: italic;
+  }
+  .prose-atlas blockquote {
+    border-left: 2px solid var(--color-red);
+    padding-left: 1.1em;
+    font-family: var(--font-serif);
+    font-size: 1.15em;
+    line-height: 1.5;
+  }
+  .prose-atlas ul {
+    list-style: none;
+    padding: 0;
+  }
+  .prose-atlas ul li {
+    position: relative;
+    padding-left: 1.2em;
+  }
+  .prose-atlas ul li::before {
+    content: "—";
+    position: absolute;
+    left: 0;
+    color: var(--color-red);
+  }
+  .prose-atlas sup a {
+    font-family: var(--font-mono);
+    font-size: 0.7em;
+    color: var(--color-red);
+    padding: 0 0.15em;
+  }
+  .dropcap > p:first-child::first-letter {
+    float: left;
+    font-family: var(--font-serif);
+    font-size: 4.1em;
+    line-height: 0.8;
+    padding: 0.08em 0.1em 0 0;
+    color: var(--color-red);
+    font-variation-settings: "SOFT" 50;
+  }
+
+  /* A rule with a short red lead-in. */
+  .rule-lead {
+    position: relative;
+    border-top: 1px solid var(--color-rule);
+  }
+  .rule-lead::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: -1px;
+    width: 2.5rem;
+    height: 1px;
+    background: var(--color-red);
+  }
+
+  /* Faint layout grid shown behind maps. */
+  .grid-paper {
+    background-image:
+      linear-gradient(to right, color-mix(in srgb, var(--color-rule) 35%, transparent) 1px, transparent 1px),
+      linear-gradient(to bottom, color-mix(in srgb, var(--color-rule) 35%, transparent) 1px, transparent 1px);
+    background-size: 48px 48px;
+  }
+
+  /* Form controls used in search and admin. */
+  .field {
+    width: 100%;
+    background: var(--color-paper-warm);
+    border: 1px solid var(--color-rule);
+    padding: 0.55rem 0.7rem;
+    border-radius: 1px;
+    transition: border-color 0.15s;
+  }
+  .field:focus {
+    border-color: var(--color-ink);
+    outline: none;
+  }
+  .field:focus-visible {
+    outline: 2px solid var(--color-red);
+    outline-offset: 1px;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    border: 1px solid var(--color-ink);
+    padding: 0.5rem 0.9rem;
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-weight: 500;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+  }
+  .btn:hover {
+    background: var(--color-ink);
+    color: var(--color-paper-warm);
+  }
+  .btn-red {
+    border-color: var(--color-red);
+    background: var(--color-red);
+    color: var(--color-paper-warm);
+  }
+  .btn-red:hover {
+    background: var(--color-red-deep);
+    border-color: var(--color-red-deep);
+  }
+  .btn-quiet {
+    border-color: var(--color-rule);
+  }
+
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-rule) transparent;
+  }
+}
+
+@layer utilities {
+  .text-balance { text-wrap: balance; }
+  .text-pretty { text-wrap: pretty; }
+  .tabular { font-variant-numeric: tabular-nums; }
+}
+
+/* Respect reduced motion everywhere. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}

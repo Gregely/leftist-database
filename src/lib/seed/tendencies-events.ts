@@ -1,0 +1,411 @@
+import type { SeedEvent, SeedTendency } from "./types";
+
+export const tendencies: SeedTendency[] = [
+  {
+    slug: "marxism",
+    title: "Marxism",
+    color: "red",
+    periodLabel: "1840s –",
+    yearStart: 1845,
+    featured: true,
+    sortOrder: 10,
+    summary:
+      "The body of theory and practice descending from Marx and Engels: historical materialism, the critique of political economy and the politics of working-class self-emancipation.",
+    body: `"Marxism" was consolidated as a doctrine in the parties of the Second International, and has since divided into many, often hostile, currents. The Atlas treats it as a family of traditions rather than a single doctrine.`,
+  },
+  {
+    slug: "anarchism",
+    title: "Anarchism",
+    color: "ink",
+    periodLabel: "1840s –",
+    yearStart: 1840,
+    featured: true,
+    sortOrder: 20,
+    summary:
+      "The tradition that rejects the state and other forms of coercive hierarchy, seeking a society organised through free association and federation.",
+    body: `From Proudhon's mutualism through Bakunin's collectivism and Kropotkin's communism to anarcho-syndicalism and contemporary horizontal movements, anarchism shares an insistence that the means of struggle must prefigure the free society it aims at.`,
+    citations: [{ source: "src_marshall_anarchism" }],
+  },
+  {
+    slug: "mutualism",
+    title: "Mutualism",
+    color: "olive",
+    periodLabel: "1840s – 1870s",
+    yearStart: 1840,
+    sortOrder: 25,
+    summary:
+      "Proudhon's programme of reciprocal exchange, free credit and workers' associations, federated without a centralised state.",
+  },
+  {
+    slug: "anarcho-communism",
+    title: "Anarchist Communism",
+    color: "ink",
+    periodLabel: "1870s –",
+    yearStart: 1876,
+    sortOrder: 30,
+    aliases: ["Anarcho-communism", "Libertarian communism"],
+    summary:
+      "Anarchism in which goods are distributed according to need, without wages or money — associated above all with Kropotkin.",
+  },
+  {
+    slug: "social-democracy",
+    title: "Social Democracy & Revisionism",
+    color: "beige",
+    periodLabel: "1890s –",
+    yearStart: 1890,
+    sortOrder: 40,
+    aliases: ["Revisionism", "Reformism", "Democratic socialism"],
+    summary:
+      "The current that sought socialism through parliamentary democracy and gradual reform — theorised by Bernstein, later the mainstream of Western labour parties.",
+  },
+  {
+    slug: "leninism",
+    title: "Leninism",
+    color: "deep",
+    periodLabel: "1900s –",
+    yearStart: 1902,
+    sortOrder: 50,
+    aliases: ["Bolshevism", "Marxism-Leninism"],
+    summary:
+      "The theory and practice of the Bolshevik party: the vanguard party, the theory of imperialism, and the dictatorship of the proletariat in the form of soviet power.",
+  },
+  {
+    slug: "western-marxism",
+    title: "Western Marxism",
+    color: "red",
+    periodLabel: "1920s – 1970s",
+    yearStart: 1923,
+    yearEnd: 1980,
+    sortOrder: 60,
+    summary:
+      "Marxist theory in Western Europe after the defeat of revolution in the West: Lukács, Korsch, Gramsci, the Frankfurt School — turning towards philosophy, culture and consciousness.",
+    citations: [{ source: "src_anderson_western" }],
+  },
+  {
+    slug: "structural-marxism",
+    title: "Structural Marxism",
+    color: "deep",
+    periodLabel: "1960s – 1980s",
+    yearStart: 1965,
+    yearEnd: 1985,
+    sortOrder: 70,
+    summary:
+      "Althusser and his circle's anti-humanist reading of Marx, emphasising structures, overdetermination and ideology.",
+  },
+  {
+    slug: "anti-colonial-thought",
+    title: "Anti-colonial Thought",
+    color: "olive",
+    periodLabel: "1920s –",
+    yearStart: 1920,
+    sortOrder: 80,
+    aliases: ["Anticolonialism", "Third Worldism", "National liberation"],
+    summary:
+      "Theory produced in and for struggles against colonialism — Fanon, Cabral, C. L. R. James, Nkrumah and others — often in critical dialogue with Marxism.",
+  },
+  {
+    slug: "marxist-feminism",
+    title: "Marxist & Autonomist Feminism",
+    color: "ochre",
+    periodLabel: "1970s –",
+    yearStart: 1970,
+    sortOrder: 90,
+    aliases: ["Marxist feminism", "Socialist feminism", "Wages for Housework"],
+    summary:
+      "Feminism that analyses women's oppression through labour, reproduction and capital — from Wages for Housework to social reproduction theory.",
+  },
+  {
+    slug: "social-ecology",
+    title: "Social Ecology",
+    color: "olive",
+    periodLabel: "1960s –",
+    yearStart: 1964,
+    sortOrder: 100,
+    summary:
+      "Bookchin's synthesis of anarchism and ecology, rooting environmental crisis in social hierarchy.",
+  },
+  {
+    slug: "german-idealism",
+    title: "German Idealism",
+    color: "beige",
+    periodLabel: "1780s – 1840s",
+    yearStart: 1781,
+    yearEnd: 1845,
+    sortOrder: 1,
+    summary:
+      "Precursor tradition — Kant, Fichte, Schelling, Hegel — whose philosophy of history and dialectic was the starting point for the Young Hegelians.",
+  },
+];
+
+export const events: SeedEvent[] = [
+  {
+    slug: "french-revolution",
+    title: "The French Revolution",
+    dateLabel: "1789 – 1799",
+    place: "France",
+    eventType: "revolution",
+    yearStart: 1789,
+    yearEnd: 1799,
+    featured: true,
+    summary:
+      "The overthrow of the absolute monarchy in France, which gave modern politics its vocabulary of left and right, citizenship and revolution.",
+    citations: [{ source: "src_hobsbawm_revolution" }],
+  },
+  {
+    slug: "luddites",
+    title: "Luddite machine-breaking",
+    dateLabel: "1811 – 1816",
+    place: "English Midlands and North",
+    eventType: "movement",
+    yearStart: 1811,
+    yearEnd: 1816,
+    summary:
+      "Textile workers in England destroyed machinery that threatened their trades and wages, and were met with military repression.",
+  },
+  {
+    slug: "peoples-charter",
+    title: "The People's Charter published",
+    dateLabel: "May 1838",
+    place: "London",
+    eventType: "movement",
+    yearStart: 1838,
+    summary:
+      "The Chartist movement's six demands for political democracy made it the first mass working-class political movement.",
+  },
+  {
+    slug: "revolutions-of-1848",
+    title: "Revolutions of 1848",
+    dateLabel: "February 1848 – 1849",
+    place: "Paris, Vienna, Berlin, Milan, Budapest and beyond",
+    eventType: "revolution",
+    yearStart: 1848,
+    yearEnd: 1849,
+    featured: true,
+    summary:
+      "A wave of revolutions across Europe, published alongside — though not caused by — the Communist Manifesto, ending in defeat for democrats and workers.",
+    citations: [{ source: "src_hobsbawm_revolution" }],
+  },
+  {
+    slug: "first-international",
+    title: "First International founded",
+    subtitle: "International Workingmen's Association",
+    dateLabel: "28 September 1864",
+    place: "St Martin's Hall, London",
+    eventType: "founding",
+    yearStart: 1864,
+    featured: true,
+    summary:
+      "Trade unionists and radicals from several countries founded the International Workingmen's Association; Marx drafted its Inaugural Address.",
+  },
+  {
+    slug: "paris-commune",
+    title: "The Paris Commune",
+    dateLabel: "18 March – 28 May 1871",
+    place: "Paris",
+    eventType: "revolution",
+    yearStart: 1871,
+    featured: true,
+    summary:
+      "For seventy-two days, Paris was governed by an elected Commune, before its bloody suppression. Marxists and anarchists both claimed its lessons.",
+  },
+  {
+    slug: "hague-congress",
+    title: "The Hague Congress",
+    dateLabel: "September 1872",
+    place: "The Hague",
+    eventType: "congress",
+    yearStart: 1872,
+    summary:
+      "The congress of the International at which Bakunin was expelled, effectively splitting the movement between Marxists and anti-authoritarians.",
+  },
+  {
+    slug: "haymarket",
+    title: "The Haymarket affair",
+    dateLabel: "4 May 1886",
+    place: "Chicago",
+    eventType: "repression",
+    yearStart: 1886,
+    summary:
+      "A bomb at a labour rally for the eight-hour day led to the trial and execution of anarchists — commemorated internationally on May Day.",
+  },
+  {
+    slug: "second-international",
+    title: "Second International founded",
+    dateLabel: "July 1889",
+    place: "Paris",
+    eventType: "founding",
+    yearStart: 1889,
+    summary:
+      "A federation of socialist and labour parties, dominated by German Social Democracy, in which Marxism became a party doctrine.",
+  },
+  {
+    slug: "bolshevik-menshevik-split",
+    title: "Bolshevik–Menshevik split",
+    dateLabel: "July – August 1903",
+    place: "Brussels and London",
+    eventType: "congress",
+    yearStart: 1903,
+    summary:
+      "At its Second Congress the Russian Social Democratic Labour Party divided over party membership and organisation.",
+  },
+  {
+    slug: "revolution-1905",
+    title: "The 1905 Russian Revolution",
+    dateLabel: "January 1905 – 1907",
+    place: "Russian Empire",
+    eventType: "revolution",
+    yearStart: 1905,
+    yearEnd: 1907,
+    featured: true,
+    summary:
+      "Mass strikes, mutinies and the first soviets followed the shooting of petitioners on 'Bloody Sunday'.",
+  },
+  {
+    slug: "war-credits-1914",
+    title: "The SPD votes for war credits",
+    dateLabel: "4 August 1914",
+    place: "Berlin",
+    eventType: "war",
+    yearStart: 1914,
+    summary:
+      "German Social Democracy's support for the war collapsed the Second International's commitment to internationalism.",
+  },
+  {
+    slug: "october-revolution",
+    title: "The October Revolution",
+    dateLabel: "25 October (7 November N.S.) 1917",
+    place: "Petrograd",
+    eventType: "revolution",
+    yearStart: 1917,
+    featured: true,
+    summary:
+      "The Bolsheviks took power in the name of the soviets, eight months after the February Revolution overthrew the Tsar.",
+  },
+  {
+    slug: "spartacist-uprising",
+    title: "Spartacist uprising; Luxemburg and Liebknecht murdered",
+    dateLabel: "January 1919",
+    place: "Berlin",
+    eventType: "uprising",
+    yearStart: 1919,
+    summary:
+      "An insurrection in Berlin was crushed by government-backed Freikorps; Luxemburg and Karl Liebknecht were murdered on 15 January.",
+  },
+  {
+    slug: "comintern",
+    title: "Communist International founded",
+    dateLabel: "March 1919",
+    place: "Moscow",
+    eventType: "founding",
+    yearStart: 1919,
+    summary:
+      "The Third International organised communist parties worldwide under Bolshevik leadership.",
+  },
+  {
+    slug: "biennio-rosso",
+    title: "Biennio Rosso and the Turin factory occupations",
+    dateLabel: "1919 – 1920",
+    place: "Turin and northern Italy",
+    eventType: "movement",
+    yearStart: 1919,
+    yearEnd: 1920,
+    summary:
+      "Two 'red years' of strikes and factory occupations in Italy, in which Gramsci's L'Ordine Nuovo championed factory councils.",
+  },
+  {
+    slug: "gramsci-arrested",
+    title: "Gramsci arrested",
+    dateLabel: "8 November 1926",
+    place: "Rome",
+    eventType: "repression",
+    yearStart: 1926,
+    summary:
+      "The fascist regime arrested Gramsci despite his parliamentary immunity; he spent the rest of his life in prison or under guard.",
+  },
+  {
+    slug: "spanish-revolution",
+    title: "The Spanish Revolution",
+    dateLabel: "July 1936 – 1939",
+    place: "Catalonia, Aragon and beyond",
+    eventType: "revolution",
+    yearStart: 1936,
+    yearEnd: 1939,
+    featured: true,
+    summary:
+      "In response to Franco's coup, anarchist and socialist workers collectivised land and industry — the largest anarchist experiment in history.",
+  },
+  {
+    slug: "algerian-war",
+    title: "Algerian War of Independence",
+    dateLabel: "1954 – 1962",
+    place: "Algeria",
+    eventType: "war",
+    yearStart: 1954,
+    yearEnd: 1962,
+    summary:
+      "The war of national liberation against French rule, in which Fanon served with the FLN.",
+  },
+  {
+    slug: "may-1968",
+    title: "May 1968",
+    dateLabel: "May – June 1968",
+    place: "France",
+    eventType: "uprising",
+    yearStart: 1968,
+    featured: true,
+    summary:
+      "Student occupations and the largest general strike in French history, a turning point for the New Left.",
+  },
+  {
+    slug: "wages-for-housework",
+    title: "Wages for Housework campaign launched",
+    dateLabel: "1972",
+    place: "Padua and internationally",
+    eventType: "movement",
+    yearStart: 1972,
+    summary:
+      "The International Feminist Collective launched a campaign demanding wages for domestic labour, to expose its role in capitalist accumulation.",
+  },
+  {
+    slug: "fall-of-berlin-wall",
+    title: "Fall of the Berlin Wall",
+    dateLabel: "9 November 1989",
+    place: "Berlin",
+    eventType: "crisis",
+    yearStart: 1989,
+    featured: true,
+    summary:
+      "The opening of the Wall symbolised the collapse of the Soviet bloc and a crisis for every tendency of the left.",
+  },
+  {
+    slug: "zapatista-uprising",
+    title: "Zapatista uprising",
+    dateLabel: "1 January 1994",
+    place: "Chiapas, Mexico",
+    eventType: "uprising",
+    yearStart: 1994,
+    summary:
+      "The EZLN rose on the day NAFTA came into force, inspiring a new generation of anti-capitalist and indigenous movements.",
+  },
+  {
+    slug: "financial-crisis-2008",
+    title: "Global financial crisis",
+    dateLabel: "2007 – 2009",
+    place: "Global",
+    eventType: "crisis",
+    yearStart: 2008,
+    featured: true,
+    summary:
+      "The collapse of the US housing and credit markets became a global recession, reviving interest in Marxist crisis theory.",
+  },
+  {
+    slug: "occupy",
+    title: "Occupy Wall Street",
+    dateLabel: "17 September 2011",
+    place: "New York",
+    eventType: "movement",
+    yearStart: 2011,
+    summary:
+      "An occupation of Zuccotti Park against inequality spread to hundreds of cities: 'We are the 99%'.",
+  },
+];
