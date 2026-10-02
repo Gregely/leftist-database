@@ -350,6 +350,20 @@ async function importBatch(
   for (const m of batch.media ?? []) {
     const bytes = await readFile(path.join(process.cwd(), corpus.dir, "media", m.file));
     const { id } = await uploadMedia(actor, { name: m.file, bytes: new Uint8Array(bytes) }, {});
+    const db = await ready();
+    const existing = await db.select({ uploadedBy: s.media.uploadedBy, title: s.media.title }).from(s.media).where(eq(s.media.id, id)).get();
+    if (existing && existing.uploadedBy !== actor.id) {
+      // The same file is already in the library under someone else's record (possibly public):
+      // never rewrite its metadata — attach it and ask a human to reconcile the details.
+      for (const a of m.attach) {
+        const row = await requireKey(a.entity);
+        await attachMedia(actor, row.id, id, a.role, a.caption ?? "");
+        summary.notes += await flagNote(actor, row.id, { type: "sample-overlap", note: `The image “${m.title}” is identical to the existing library item “${existing.title}”, whose metadata was left unchanged. Check its credit and licence against: ${m.sourceText}` });
+        touched.add(row.id);
+      }
+      summary.media++;
+      continue;
+    }
     await updateMedia(actor, id, {
       title: m.title,
       altText: m.altText,

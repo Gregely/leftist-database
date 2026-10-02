@@ -170,7 +170,8 @@ export async function checkData(corpus: Corpus, upTo?: string): Promise<CheckIss
   const presupposes = new Map<string, string[]>();
   for (const b of batches) for (const r of b.relationships ?? []) if (r.type === "PRESUPPOSES") presupposes.set(r.from, [...(presupposes.get(r.from) ?? []), r.to]);
   for (const b of batches) for (const p of b.paths ?? []) {
-    const order = p.steps.map((s) => s.entity);
+    // Reading order: each main step, then its side routes.
+    const order = p.steps.flatMap((s) => [s.entity, ...(s.branches ?? []).map((b) => b.entity)]);
     order.forEach((k, i) => {
       for (const pre of presupposes.get(k) ?? []) {
         const j = order.indexOf(pre as EntityKey);

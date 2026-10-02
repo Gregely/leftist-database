@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-10-02T01:29:07.945Z",
+  "checkedAt": "2026-10-02T06:45:41.341Z",
   "quotes": {
     "hegel-pr-owl": {
       "url": "https://www.marxists.org/reference/archive/hegel/works/pr/preface.htm",
@@ -332,6 +332,76 @@
       "url": "https://www.marxists.org/archive/luxemburg/1906/mass-strike/ch04.htm",
       "status": 200,
       "matched": true,
+      "detail": "verbatim"
+    },
+    "junius-barbarism": {
+      "url": "https://www.marxists.org/archive/luxemburg/1915/junius/ch01.htm",
+      "status": 200,
+      "matched": true,
+      "detail": "verbatim"
+    },
+    "kautsky-1892-barbarism": {
+      "url": "https://www.marxists.org/archive/kautsky/1892/erfurt/ch04.htm",
+      "status": 200,
+      "matched": true,
+      "detail": "verbatim"
+    },
+    "luxemburg-freedom": {
+      "url": "https://www.marxists.org/archive/luxemburg/1918/russian-revolution/ch06.htm",
+      "status": 200,
+      "matched": true,
+      "detail": "verbatim"
+    },
+    "lenin-imperialism-monopoly": {
+      "url": "https://www.marxists.org/archive/lenin/works/1916/imp-hsc/ch07.htm",
+      "status": 200,
+      "matched": true,
+      "detail": "verbatim"
+    },
+    "state-rev-irreconcilable": {
+      "url": "https://www.marxists.org/archive/lenin/works/1917/staterev/ch01.htm",
+      "status": 200,
+      "matched": true,
+      "detail": "verbatim"
+    },
+    "april-theses-soviets": {
+      "url": "https://www.marxists.org/archive/lenin/works/1917/apr/04.htm",
+      "status": 200,
+      "matched": true,
+      "provenance": "Lenin’s Collected Works , Progress Publishers, 1964, Moscow, Volume 24 , pp. 19-26.; translated: Isaacs Bernard",
+      "detail": "verbatim"
+    },
+    "basel-crime": {
+      "url": "https://www.marxists.org/history/international/social-democracy/1912/basel-manifesto.htm",
+      "status": 200,
+      "matched": true,
+      "provenance": "The Bolsheviks and War , Sam Marcy;",
+      "detail": "verbatim"
+    },
+    "manifesto-1882-russia": {
+      "url": "https://www.marxists.org/archive/marx/works/1848/communist-manifesto/preface.htm",
+      "status": 200,
+      "matched": true,
+      "detail": "verbatim"
+    },
+    "trotsky-european-support": {
+      "url": "https://www.marxists.org/archive/trotsky/1931/tpr/rp08.htm",
+      "status": 200,
+      "matched": true,
+      "detail": "verbatim"
+    },
+    "lenin-1914-civil-war": {
+      "url": "https://www.marxists.org/archive/lenin/works/1914/sep/28.htm",
+      "status": 200,
+      "matched": true,
+      "provenance": "Lenin Collected Works , Progress Publishers, 1974, Moscow, Volume 21 , pages 25-34.",
+      "detail": "verbatim"
+    },
+    "zimmerwald-slaughterhouse": {
+      "url": "https://www.marxists.org/history/international/social-democracy/zimmerwald/manifesto-1915.htm",
+      "status": 200,
+      "matched": true,
+      "provenance": "The Bolsheviks and War , by Sam Marcy ;",
       "detail": "verbatim"
     }
   },
@@ -1010,6 +1080,46 @@
       "status": 200,
       "ok": true,
       "detail": "page mentions “Kant against Cant”"
+    },
+    "src_mia_manifesto_1882": {
+      "status": 200,
+      "ok": true,
+      "detail": "page mentions “signal for a proletarian revolution”"
+    },
+    "src_mia_lenin_war_1914": {
+      "status": 200,
+      "ok": true,
+      "detail": "page mentions “conversion of the present imperialist war”"
+    },
+    "src_mia_kautsky_ultra": {
+      "status": 200,
+      "ok": true,
+      "detail": "page mentions “Ultra-imperialism”"
+    },
+    "src_mia_trotsky_results": {
+      "status": 200,
+      "ok": true,
+      "detail": "page mentions “direct State support of the European proletariat”"
+    },
+    "src_mia_kautsky_barbarism": {
+      "status": 200,
+      "ok": true,
+      "detail": "page mentions “fall back into barbarism”"
+    },
+    "src_hobson_imperialism": {
+      "status": 200,
+      "ok": true,
+      "detail": "Open Library: “Imperialism”, John Atkinson Hobson, first published 1902"
+    },
+    "src_wade_revolution": {
+      "status": 200,
+      "ok": true,
+      "detail": "Open Library: “The Russian Revolution, 1917”, Rex A. Wade, first published 2000"
+    },
+    "src_gietinger_murder": {
+      "status": 200,
+      "ok": true,
+      "detail": "Open Library: “Murder of Rosa Luxemburg”, Klaus Gietinger, first published 2019"
     }
   }
 }
