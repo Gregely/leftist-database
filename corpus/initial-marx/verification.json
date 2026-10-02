@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-10-02T01:10:53.989Z",
+  "checkedAt": "2026-10-02T01:18:58.936Z",
   "quotes": {
     "hegel-pr-owl": {
       "url": "https://www.marxists.org/reference/archive/hegel/works/pr/preface.htm",
@@ -226,6 +226,52 @@
       "url": "https://www.marxists.org/archive/marx/works/1890/letters/90_08_05.htm",
       "status": 200,
       "matched": true,
+      "detail": "verbatim"
+    },
+    "engels-bloch-ultimately": {
+      "url": "https://www.marxists.org/archive/marx/works/1890/letters/90_09_21.htm",
+      "status": 200,
+      "matched": true,
+      "provenance": "Historical Materialism (Marx, Engels, Lenin), p. 294 - 296; Publisher: Progress Publishers, 1972;; translated: from German",
+      "detail": "verbatim"
+    },
+    "kautsky-revolution-making": {
+      "url": "https://www.marxists.org/archive/kautsky/1909/power/ch05.htm",
+      "status": 200,
+      "matched": true,
+      "detail": "verbatim"
+    },
+    "kautsky-certainty-of-doom": {
+      "url": "https://www.marxists.org/archive/kautsky/1892/erfurt/ch04.htm",
+      "status": 200,
+      "matched": true,
+      "detail": "verbatim"
+    },
+    "plekhanov-general-trend": {
+      "url": "https://www.marxists.org/archive/plekhanov/1898/xx/individual.html",
+      "status": 200,
+      "matched": true,
+      "provenance": "Selected Works of G.V. Plekhanov , Volume II. Publisher: Lawrence & Wishart, 1961.; translated: into Russian by P. Nikolayev. Lamprecht’s opponents accused him of being a “collectivist” and a materialist",
+      "detail": "verbatim"
+    },
+    "plekhanov-1889-working-class": {
+      "url": "https://www.marxists.org/archive/plekhanov/1889/07/speech.html",
+      "status": 200,
+      "matched": true,
+      "provenance": "Georgii Plekhanov, Selected Philosophical Works , Moscow: Foreign Languages Publishing House, 1981, Vol.1, pp.451-454.",
+      "detail": "verbatim"
+    },
+    "bernstein-ethical-factors": {
+      "url": "https://www.marxists.org/reference/archive/bernstein/works/1899/evsoc/ch01.htm",
+      "status": 200,
+      "matched": true,
+      "detail": "verbatim"
+    },
+    "erfurt-political-power": {
+      "url": "https://www.marxists.org/history/international/social-democracy/1891/erfurt-program.htm",
+      "status": 200,
+      "matched": true,
+      "provenance": "German History in Documents and Images ;",
       "detail": "verbatim"
     }
   },
@@ -879,6 +925,21 @@
       "status": 200,
       "ok": true,
       "detail": "Open Library: “The outlawed party”, Vernon L. Lidtke, first published 1966"
+    },
+    "src_mia_plekhanov_1889": {
+      "status": 200,
+      "ok": true,
+      "detail": "page mentions “as a working-class movement”"
+    },
+    "src_sassoon_hundred_years": {
+      "status": 200,
+      "ok": true,
+      "detail": "Open Library: “One hundred years of socialism”, Donald Sassoon, first published 1996"
+    },
+    "src_joll_second_international": {
+      "status": 200,
+      "ok": true,
+      "detail": "Open Library: “The Second International, 1889-1914”, James Joll, first published 1955"
     }
   }
 }
