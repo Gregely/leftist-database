@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-10-02T00:59:06.744Z",
+  "checkedAt": "2026-10-02T01:10:53.989Z",
   "quotes": {
     "hegel-pr-owl": {
       "url": "https://www.marxists.org/reference/archive/hegel/works/pr/preface.htm",
@@ -151,6 +151,79 @@
     },
     "engels-graveside-surplus": {
       "url": "https://www.marxists.org/archive/marx/works/1883/death/burial.htm",
+      "status": 200,
+      "matched": true,
+      "detail": "verbatim"
+    },
+    "cwf-ready-made": {
+      "url": "https://www.marxists.org/archive/marx/works/1871/civil-war-france/ch05.htm",
+      "status": 200,
+      "matched": true,
+      "detail": "verbatim"
+    },
+    "cwf-political-form": {
+      "url": "https://www.marxists.org/archive/marx/works/1871/civil-war-france/ch05.htm",
+      "status": 200,
+      "matched": true,
+      "detail": "verbatim"
+    },
+    "nieuwenhuis-commune": {
+      "url": "https://www.marxists.org/archive/marx/works/1881/letters/81_02_22.htm",
+      "status": 200,
+      "matched": true,
+      "provenance": "Marx and Engels Correspondence ; Publisher: International Publishers (1968);; translated: Donna Torr",
+      "detail": "verbatim"
+    },
+    "engels-1891-dictatorship": {
+      "url": "https://www.marxists.org/archive/marx/works/1871/civil-war-france/postscript.htm",
+      "status": 200,
+      "matched": true,
+      "detail": "verbatim"
+    },
+    "gotha-transition": {
+      "url": "https://www.marxists.org/archive/marx/works/1875/gotha/ch04.htm",
+      "status": 200,
+      "matched": true,
+      "detail": "verbatim"
+    },
+    "gotha-needs": {
+      "url": "https://www.marxists.org/archive/marx/works/1875/gotha/ch01.htm",
+      "status": 200,
+      "matched": true,
+      "detail": "verbatim"
+    },
+    "german-ideology-real-movement": {
+      "url": "https://www.marxists.org/archive/marx/works/1845/german-ideology/ch01a.htm",
+      "status": 200,
+      "matched": true,
+      "detail": "verbatim"
+    },
+    "engels-dies-out": {
+      "url": "https://www.marxists.org/archive/marx/works/1880/soc-utop/ch03.htm",
+      "status": 200,
+      "matched": true,
+      "detail": "verbatim"
+    },
+    "iwma-rules-emancipation": {
+      "url": "https://www.marxists.org/history/international/iwma/documents/1864/rules.htm",
+      "status": 200,
+      "matched": true,
+      "detail": "verbatim"
+    },
+    "soc-utopian-two-discoveries": {
+      "url": "https://www.marxists.org/archive/marx/works/1880/soc-utop/ch02.htm",
+      "status": 200,
+      "matched": true,
+      "detail": "verbatim"
+    },
+    "hague-political-power": {
+      "url": "https://www.marxists.org/history/international/iwma/documents/1872/hague-conference/resolutions.htm",
+      "status": 200,
+      "matched": true,
+      "detail": "verbatim"
+    },
+    "engels-not-a-marxist": {
+      "url": "https://www.marxists.org/archive/marx/works/1890/letters/90_08_05.htm",
       "status": 200,
       "matched": true,
       "detail": "verbatim"
@@ -726,6 +799,86 @@
       "status": 200,
       "ok": true,
       "detail": "Open Library: “Pre-capitalist economic formations”, Karl Marx, first published 1964"
+    },
+    "src_mia_inaugural": {
+      "status": 200,
+      "ok": true,
+      "detail": "page mentions “political economy of labor”"
+    },
+    "src_mia_iwma_rules": {
+      "status": 200,
+      "ok": true,
+      "detail": "page mentions “conquered by the working classes themselves”"
+    },
+    "src_mia_hague_resolutions": {
+      "status": 200,
+      "ok": true,
+      "detail": "page mentions “conquest of political power”"
+    },
+    "src_mia_manifesto_1872": {
+      "status": 200,
+      "ok": true,
+      "detail": "page mentions “proved by the Commune”"
+    },
+    "src_mia_kugelmann_1871": {
+      "status": 200,
+      "ok": true,
+      "detail": "page mentions “bureaucratic-military machine”"
+    },
+    "src_mia_engels_1891_cwf": {
+      "status": 200,
+      "ok": true,
+      "detail": "page mentions “Dictatorship of the Proletariat”"
+    },
+    "src_mia_nieuwenhuis_1881": {
+      "status": 200,
+      "ok": true,
+      "detail": "page mentions “in no sense socialist”"
+    },
+    "src_mia_engels_bebel_1875": {
+      "status": 200,
+      "ok": true,
+      "detail": "page mentions “Gemeinwesen”"
+    },
+    "src_mia_engels_schmidt_1890": {
+      "status": 200,
+      "ok": true,
+      "detail": "page mentions “not a Marxist”"
+    },
+    "src_mia_bakunin_conspectus": {
+      "status": 200,
+      "ok": true,
+      "detail": "page mentions “Statism and Anarchy”"
+    },
+    "src_mia_soc_utopian_1892": {
+      "status": 200,
+      "ok": true,
+      "detail": "page mentions “circulates in 10 languages”"
+    },
+    "src_draper_dictatorship": {
+      "status": 200,
+      "ok": true,
+      "detail": "Open Library: “The \"dictatorship of the proletariat\" from Marx to Lenin”, Hal Draper, first published 1987"
+    },
+    "src_collins_abramsky": {
+      "status": 200,
+      "ok": true,
+      "detail": "Open Library: “Karl Marx and the British labour movement”, Collins, Henry, first published 1965"
+    },
+    "src_morgan_first_international": {
+      "status": 200,
+      "ok": true,
+      "detail": "Open Library: “German Social Democrats and the First International, 1864-1872”, Roger Morgan, first published 1965"
+    },
+    "src_merriman_massacre": {
+      "status": 200,
+      "ok": true,
+      "detail": "Open Library: “Massacre”, John M. Merriman, first published 2014"
+    },
+    "src_lidtke_outlawed": {
+      "status": 200,
+      "ok": true,
+      "detail": "Open Library: “The outlawed party”, Vernon L. Lidtke, first published 1966"
     }
   }
 }

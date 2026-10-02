@@ -3,6 +3,7 @@ import { batch1 } from "./b1-foundations";
 import { batch2 } from "./b2-development";
 import { batch3 } from "./b3-history";
 import { batch3e } from "./b3e-political-economy";
+import { batch4 } from "./b4-commune";
 
 /**
  * INITIAL MARX CORPUS — "Introduction to Marx".
@@ -43,5 +44,5 @@ export const initialMarx: Corpus = {
     // Path
     "path:first-steps-into-marxism",
   ],
-  batches: [batch1, batch2, batch3, batch3e],
+  batches: [batch1, batch2, batch3, batch3e, batch4],
 };
