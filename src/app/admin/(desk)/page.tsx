@@ -66,7 +66,7 @@ export default async function DeskHome() {
       <div className="mt-10 grid gap-10 lg:grid-cols-12">
         <div className="space-y-10 lg:col-span-8">
           {reviewer && (
-            <Panel id="queue" title={`Review queue · ${d.queue.length}`} aside={<DeskLink href="/admin/review">Open queue →</DeskLink>}>
+            <Panel id="queue" title={`Review queue · ${d.queueCount}`} aside={<DeskLink href="/admin/review">Open queue →</DeskLink>}>
               <ContentTable rows={d.queue} compact empty="No submissions are waiting for review." />
             </Panel>
           )}

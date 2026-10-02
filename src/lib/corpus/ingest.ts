@@ -12,6 +12,7 @@ import "server-only";
  * data only touches what changed.
  */
 import { createHash } from "node:crypto";
+import { existsSync, statSync } from "node:fs";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { and, desc, eq, sql } from "drizzle-orm";
@@ -139,6 +140,8 @@ export interface ImportSummary {
   citations: number;
   excerpts: number;
   media: number;
+  /** Images whose files have not been downloaded yet. */
+  mediaMissing: number;
   notes: number;
   submitted: number;
 }
@@ -147,7 +150,7 @@ export async function importCorpus(corpus: Corpus, opts: ImportOptions = {}): Pr
   const log = opts.log ?? (() => {});
   const actor = await importActor();
   const verification = await loadVerification(corpus);
-  const summary: ImportSummary = { created: [], amended: [], unchanged: [], sources: { created: 0, updated: 0, reused: 0 }, relationships: 0, citations: 0, excerpts: 0, media: 0, notes: 0, submitted: 0 };
+  const summary: ImportSummary = { created: [], amended: [], unchanged: [], sources: { created: 0, updated: 0, reused: 0 }, relationships: 0, citations: 0, excerpts: 0, media: 0, mediaMissing: 0, notes: 0, submitted: 0 };
   const touched = new Set<string>();
   const batches = opts.batches?.length ? corpus.batches.filter((b) => opts.batches!.includes(b.id)) : corpus.batches;
   for (const batch of batches) {
@@ -348,7 +351,13 @@ async function importBatch(
 
   /* Media ------------------------------------------------------------------ */
   for (const m of batch.media ?? []) {
-    const bytes = await readFile(path.join(process.cwd(), corpus.dir, "media", m.file));
+    const file = path.join(process.cwd(), corpus.dir, "media", m.file);
+    if (!existsSync(file) || statSync(file).size === 0) {
+      log(`  ! image ${m.file} is not downloaded yet (npm run corpus -- media); skipped`);
+      summary.mediaMissing++;
+      continue;
+    }
+    const bytes = await readFile(file);
     const { id } = await uploadMedia(actor, { name: m.file, bytes: new Uint8Array(bytes) }, {});
     const db = await ready();
     const existing = await db.select({ uploadedBy: s.media.uploadedBy, title: s.media.title }).from(s.media).where(eq(s.media.id, id)).get();

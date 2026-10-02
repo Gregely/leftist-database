@@ -2,7 +2,8 @@ import type { CorpusBatch } from "../../src/lib/corpus/types";
 
 /**
  * Batch 8 — Images. A small set of public-domain images from Wikimedia
- * Commons, downloaded at 1200–1280 px. Each record keeps the Commons page
+ * Commons, at up to 1280 px. Files not yet in the media folder are fetched by
+ * `npm run corpus -- media` and skipped by the import until they exist. Each record keeps the Commons page
  * (sourceText) so a reviewer can re-check provenance and licence.
  */
 export const batch8: CorpusBatch = {
@@ -12,6 +13,7 @@ export const batch8: CorpusBatch = {
     {
       key: "marx-mayall-1875",
       file: "karl-marx-mayall-1875.jpg",
+      download: "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d4/Karl_Marx_001.jpg/1280px-Karl_Marx_001.jpg",
       title: "Karl Marx, photographed by John Jabez Edwin Mayall",
       altText: "Black-and-white studio portrait of Karl Marx in later life, with full white beard and hair, wearing a dark frock coat.",
       caption: "Karl Marx in London, photographed before August 1875.",
@@ -27,6 +29,7 @@ export const batch8: CorpusBatch = {
     {
       key: "engels-1877",
       file: "friedrich-engels-1877.jpg",
+      download: "https://upload.wikimedia.org/wikipedia/commons/2/21/Friedrich_Engels_portrait_%28cropped%29.jpg",
       title: "Friedrich Engels, 1877",
       altText: "Black-and-white portrait photograph of Friedrich Engels in middle age, with a full beard, wearing a dark jacket.",
       caption: "Friedrich Engels in 1877, the year he began the articles that became Anti-Dühring.",
@@ -43,6 +46,7 @@ export const batch8: CorpusBatch = {
     {
       key: "luxemburg-portrait",
       file: "rosa-luxemburg.jpg",
+      download: "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/52/Rosa_Luxemburg.jpg/1280px-Rosa_Luxemburg.jpg",
       title: "Rosa Luxemburg",
       altText: "Black-and-white portrait photograph of Rosa Luxemburg, with dark hair pinned up, looking slightly to the side.",
       caption: "Rosa Luxemburg, probably in the 1910s.",
@@ -58,6 +62,7 @@ export const batch8: CorpusBatch = {
     {
       key: "manifesto-1848-cover",
       file: "communist-manifesto-1848.png",
+      download: "https://upload.wikimedia.org/wikipedia/commons/8/86/Communist-manifesto.png",
       title: "Manifest der Kommunistischen Partei, first edition (1848)",
       altText: "Title page of the first German edition of the Communist Manifesto, printed in London in February 1848, in black Gothic type.",
       caption: "The first edition, printed in London in February 1848 for the Communist League.",
@@ -74,6 +79,7 @@ export const batch8: CorpusBatch = {
     {
       key: "capital-1867-zurich",
       file: "das-kapital-1867-zurich.jpg",
+      download: "https://upload.wikimedia.org/wikipedia/commons/8/8d/Zentralbibliothek_Z%C3%BCrich_Das_Kapital_Marx_1867.jpg",
       title: "Das Kapital, volume I (Hamburg, 1867), Zentralbibliothek Zürich copy",
       altText: "Title page of the first edition of Das Kapital, volume one, published by Otto Meissner in Hamburg in 1867.",
       caption: "Title page of the first edition of Capital, volume I, 1867 (Saitzew Collection, Zurich Central Library).",
@@ -89,6 +95,7 @@ export const batch8: CorpusBatch = {
     {
       key: "commune-barricade-1871",
       file: "barricade-menilmontant-1871.jpg",
+      download: "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f5/Barricade18March1871.jpg/1280px-Barricade18March1871.jpg",
       title: "Barricade on the Chaussée Ménilmontant, 18 March 1871",
       altText: "Sepia photograph of a waist-high barricade of paving stones across a wide cobbled Paris junction. Dozens of uniformed National Guards stand along and behind it, several kneel in front with rifles, and one man poses on top beside a flag; a shop sign behind reads “Aux Travailleurs – Nouveautés”.",
       caption: "A barricade in Ménilmontant on 18 March 1871, the first day of the Commune.",

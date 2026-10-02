@@ -91,7 +91,11 @@ export async function dashboard(actor: Actor) {
     list(undefined, 10),
     listAudit({ limit: 14 }),
   ]);
-  return { byStatus, byKind, mine, queue, revisionRequests, approved, recent, activity: activity.items };
+  // The dashboard shows the oldest few; the badge needs the full count.
+  const queueCount = atLeast(actor, "reviewer")
+    ? Number((await db.select({ n: sql<number>`count(*)` }).from(s.entities).where(queueWhere).get())?.n ?? 0)
+    : 0;
+  return { byStatus, byKind, mine, queue, queueCount, revisionRequests, approved, recent, activity: activity.items };
 }
 
 export const BROWSE_FLAGS = {

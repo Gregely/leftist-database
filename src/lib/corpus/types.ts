@@ -130,6 +130,8 @@ export interface CorpusMedia {
   key: string;
   /** File in the corpus media folder. */
   file: string;
+  /** Where `npm run corpus -- media` downloads the file from if it is missing. */
+  download?: string;
   title: string;
   altText: string;
   caption: string;

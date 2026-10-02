@@ -9,7 +9,8 @@
  *  - sources: web pages must load and mention the expected title; books are
  *    looked up in the Open Library catalogue by title and author.
  */
-import { readFile, writeFile } from "node:fs/promises";
+import { existsSync, statSync } from "node:fs";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import type { Corpus, VerificationRecord } from "./types";
 
@@ -125,4 +126,40 @@ export async function verifyCorpus(corpus: Corpus, log: (l: string) => void = ()
   } catch {}
   await writeFile(file, JSON.stringify(record, null, 2) + "\n");
   return record;
+}
+
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+/**
+ * Download image files that a corpus lists but does not have yet. Requests are
+ * spaced out and back off when the server answers 429, as Wikimedia asks.
+ */
+export async function downloadMedia(corpus: Corpus, log: (l: string) => void = () => {}) {
+  const dir = path.join(process.cwd(), corpus.dir, "media");
+  await mkdir(dir, { recursive: true });
+  for (const m of corpus.batches.flatMap((b) => b.media ?? [])) {
+    const file = path.join(dir, m.file);
+    if (existsSync(file) && statSync(file).size > 0) continue;
+    if (!m.download) {
+      log(`✗ ${m.file} — missing, and no download URL`);
+      continue;
+    }
+    let done = false;
+    for (let attempt = 0, wait = 20_000; attempt < 5 && !done; attempt++, wait *= 2) {
+      const res = await fetch(m.download, { headers: { "User-Agent": UA } }).catch(() => null);
+      if (res?.ok) {
+        await writeFile(file, new Uint8Array(await res.arrayBuffer()));
+        log(`✓ ${m.file}`);
+        done = true;
+      } else if (res?.status === 429 || !res) {
+        log(`… ${m.file}: ${res ? "rate-limited" : "network error"}; retrying in ${wait / 1000}s`);
+        await sleep(wait);
+      } else {
+        log(`✗ ${m.file} — HTTP ${res.status}`);
+        break;
+      }
+    }
+    if (!done) log(`✗ ${m.file} — not downloaded; run the command again later`);
+    await sleep(5_000);
+  }
 }

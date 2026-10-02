@@ -20,7 +20,7 @@ export default async function DeskLayout({ children }: { children: React.ReactNo
     { href: "/admin", label: "Desk" },
     { href: "/admin/content", label: "Content" },
     ...(can(user, "entity.startReview", { authorId: null, status: "submitted", live: false, publishedRevision: null })
-      ? [{ href: "/admin/review", label: "Review queue", badge: d.queue.length }]
+      ? [{ href: "/admin/review", label: "Review queue", badge: d.queueCount }]
       : []),
     { href: "/admin/relationships", label: "Relationships" },
     { href: "/admin/sources", label: "Sources" },

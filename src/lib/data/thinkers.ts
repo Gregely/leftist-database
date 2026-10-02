@@ -48,7 +48,8 @@ export async function getThinker(slug: string, preview?: PreviewSpec) {
   const influenced = relations.filter((r) => r.kind === "thinker" && r.direction === "out" && r.type === "INFLUENCED");
   const collaborators = pick(relations, "ASSOCIATED_WITH", undefined, "thinker");
   const disagreements = relations.filter((r) => r.family === "critique" || r.type === "RESPONDED_TO");
-  const events = relations.filter((r) => r.kind === "event");
+  // One entry per event, however many relationships connect the thinker to it.
+  const events = uniqueById(relations.filter((r) => r.kind === "event"));
   const relatedThinkers = uniqueById(relations.filter((r) => r.kind === "thinker")).slice(0, 8);
 
   const timeline = [

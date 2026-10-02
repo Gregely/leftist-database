@@ -2,6 +2,7 @@
  * Research corpora: import, verify, check and report.
  *
  *   npm run corpus -- verify  [corpus]                    online checks → <dir>/verification.json
+ *   npm run corpus -- media   [corpus]                    download missing image files into <dir>/media
  *   npm run corpus -- import  [corpus] [--batch id …] [--submit]
  *   npm run corpus -- check   [corpus] [--batch id] [--http http://localhost:3000 --as editor@…]
  *   npm run corpus -- report  [corpus] [--http … --as …]   → docs/corpus/<corpus>-review.md
@@ -14,7 +15,7 @@ import { CORPORA } from "../corpus";
 import { checkData, checkDatabase, checkHttp, type CheckIssue } from "../src/lib/corpus/check";
 import { importCorpus } from "../src/lib/corpus/ingest";
 import { buildReport } from "../src/lib/corpus/report";
-import { verifyCorpus } from "../src/lib/corpus/verify";
+import { downloadMedia, verifyCorpus } from "../src/lib/corpus/verify";
 
 const args = process.argv.slice(2);
 const command = args[0];
@@ -51,10 +52,13 @@ async function main() {
       console.log(
         `\nCreated ${summary.created.length}, amended ${summary.amended.length}, unchanged ${summary.unchanged.length}; ` +
           `sources +${summary.sources.created} ~${summary.sources.updated} (reused ${summary.sources.reused}); ` +
-          `relationships ${summary.relationships}, citations +${summary.citations}, excerpts +${summary.excerpts}, media ${summary.media}, notes +${summary.notes}, submitted ${summary.submitted}.`,
+          `relationships ${summary.relationships}, citations +${summary.citations}, excerpts +${summary.excerpts}, media ${summary.media}${summary.mediaMissing ? ` (${summary.mediaMissing} not downloaded yet)` : ""}, notes +${summary.notes}, submitted ${summary.submitted}.`,
       );
       break;
     }
+    case "media":
+      await downloadMedia(corpus, console.log);
+      break;
     case "check": {
       const issues = [...(await checkData(corpus, opt("--batch"))), ...(await checkDatabase(corpus))];
       if (opt("--http")) issues.push(...(await checkHttp(corpus, opt("--http")!, opt("--as") ?? "editor@atlas.test")));
@@ -70,7 +74,7 @@ async function main() {
       break;
     }
     default:
-      console.log("Usage: npm run corpus -- verify|import|check|report [corpus] [options]");
+      console.log("Usage: npm run corpus -- verify|media|import|check|report [corpus] [options]");
   }
 }
 

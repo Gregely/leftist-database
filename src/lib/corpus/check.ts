@@ -13,6 +13,8 @@ import "server-only";
  *    and pages do not contain draft material.
  */
 import { createHash, randomBytes } from "node:crypto";
+import { existsSync, statSync } from "node:fs";
+import path from "node:path";
 import { eq, inArray, sql } from "drizzle-orm";
 import { ready } from "@/lib/db/client";
 import * as s from "@/lib/db/schema";
@@ -164,6 +166,14 @@ export async function checkData(corpus: Corpus, upTo?: string): Promise<CheckIss
       for (const k of Object.keys(p.stances)) if (!props.has(k)) issues.push({ level: "error", area: "data", key: d.debate, message: `${p.label}: stance on unknown proposition ${k}.` });
       for (const k of [p.holder, ...(p.links ?? [])].filter(Boolean) as string[]) if (!(await known(k))) issues.push({ level: "error", area: "data", key: d.debate, message: `${p.label}: unknown entry ${k}.` });
     }
+  }
+
+  // Images: the file must be in the corpus media folder (or downloadable).
+  for (const b of batches) for (const m of b.media ?? []) {
+    const file = path.join(process.cwd(), corpus.dir, "media", m.file);
+    if (!existsSync(file) || statSync(file).size === 0)
+      issues.push({ level: m.download ? "warning" : "error", area: "data", key: m.key, message: m.download ? `Image file ${m.file} is not downloaded yet (npm run corpus -- media); the import skips it.` : `Image file ${m.file} is missing and has no download URL.` });
+    if (!m.altText.trim() || !m.license.trim() || !m.sourceText.trim()) issues.push({ level: "error", area: "data", key: m.key, message: "Images need alt text, a licence and a source." });
   }
 
   // Paths: prerequisites come first
