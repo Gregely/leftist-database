@@ -160,6 +160,8 @@ export interface Corpus {
   collection: string;
   /** Folder (relative to the repository) holding media and verification records. */
   dir: string;
+  /** Every entry the finished corpus will define, so earlier batches can link ahead. */
+  planned?: EntityKey[];
   batches: CorpusBatch[];
 }
 

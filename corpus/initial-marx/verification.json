@@ -1,0 +1,552 @@
+{
+  "checkedAt": "2026-10-02T00:33:53.994Z",
+  "quotes": {
+    "hegel-pr-owl": {
+      "url": "https://www.marxists.org/reference/archive/hegel/works/pr/preface.htm",
+      "status": 200,
+      "matched": true,
+      "provenance": "translated: S W Dyde, 1896 Introduction (next section) Hegel-by-HyperText Home Page @ marxists.org",
+      "detail": "verbatim"
+    },
+    "hegel-pr-rational": {
+      "url": "https://www.marxists.org/reference/archive/hegel/works/pr/preface.htm",
+      "status": 200,
+      "matched": true,
+      "provenance": "translated: S W Dyde, 1896 Introduction (next section) Hegel-by-HyperText Home Page @ marxists.org",
+      "detail": "verbatim"
+    },
+    "capital-afterword-head": {
+      "url": "https://www.marxists.org/archive/marx/works/1867-c1/p3.htm",
+      "status": 200,
+      "matched": true,
+      "detail": "verbatim"
+    }
+  },
+  "sources": {
+    "src_mecw": {
+      "status": 200,
+      "ok": true,
+      "detail": "Open Library: “Collected Works”, Karl Marx, first published 1986"
+    },
+    "src_sep_marx": {
+      "status": 200,
+      "ok": true,
+      "detail": "page mentions “Karl Marx”"
+    },
+    "src_sep_hegel": {
+      "status": 200,
+      "ok": true,
+      "detail": "page mentions “Georg Wilhelm Friedrich Hegel”"
+    },
+    "src_sep_hegel_dialectics": {
+      "status": 200,
+      "ok": true,
+      "detail": "page mentions “Hegel”"
+    },
+    "src_sep_feuerbach": {
+      "status": 200,
+      "ok": true,
+      "detail": "page mentions “Ludwig Andreas Feuerbach”"
+    },
+    "src_sep_smith": {
+      "status": 200,
+      "ok": true,
+      "detail": "page mentions “Adam Smith”"
+    },
+    "src_sep_socialism": {
+      "status": 200,
+      "ok": true,
+      "detail": "page mentions “Socialism”"
+    },
+    "src_sep_alienation": {
+      "status": 200,
+      "ok": true,
+      "detail": "page mentions “Alienation”"
+    },
+    "src_sep_exploitation": {
+      "status": 200,
+      "ok": true,
+      "detail": "page mentions “Exploitation”"
+    },
+    "src_sep_luxemburg": {
+      "status": 200,
+      "ok": true,
+      "detail": "page mentions “Rosa Luxemburg”"
+    },
+    "src_sep_ideology": {
+      "status": 200,
+      "ok": true,
+      "detail": "page mentions “Ideology”"
+    },
+    "src_sep_idealism": {
+      "status": 200,
+      "ok": true,
+      "detail": "page mentions “Idealism”"
+    },
+    "src_hegel_phenomenology_miller": {
+      "status": 200,
+      "ok": true,
+      "detail": "Open Library: “Phenomenology of spirit”, Georg Wilhelm Friedrich Hegel, first published 1998"
+    },
+    "src_hegel_pr_nisbet": {
+      "status": 200,
+      "ok": true,
+      "detail": "Open Library: “Elements of the philosophy of right”, Georg Wilhelm Friedrich Hegel, first published 1991"
+    },
+    "src_mia_hegel_pr": {
+      "status": 200,
+      "ok": true,
+      "detail": "page mentions “owl of Minerva”"
+    },
+    "src_feuerbach_essence": {
+      "status": 200,
+      "ok": true,
+      "detail": "page mentions “Essence of Christianity”"
+    },
+    "src_smith_wealth": {
+      "status": 200,
+      "ok": true,
+      "detail": "Open Library: “The Wealth of Nations”, Adam Smith, first published 1776"
+    },
+    "src_ricardo_principles": {
+      "status": 200,
+      "ok": true,
+      "detail": "Open Library: “Principles of political economy and taxation”, David Ricardo, M. H. Dobb, first published 1817"
+    },
+    "src_owen_new_view": {
+      "status": 200,
+      "ok": true,
+      "detail": "Open Library: “A new view of society and other writings”, Robert Owen, first published 1927"
+    },
+    "src_mia_proudhon_property": {
+      "status": 200,
+      "ok": true,
+      "detail": "page mentions “What is Property”"
+    },
+    "src_taylor_hegel": {
+      "status": 200,
+      "ok": true,
+      "detail": "Open Library: “Hegel”, Charles Taylor, first published 1975"
+    },
+    "src_beiser_companion": {
+      "status": 200,
+      "ok": true,
+      "detail": "Open Library: “The Cambridge companion to Hegel”, Frederick C. Beiser, first published 1993"
+    },
+    "src_harvey_feuerbach": {
+      "status": 200,
+      "ok": true,
+      "detail": "Open Library: “Feuerbach and the interpretation of religion”, Van Austin Harvey, first published 1995"
+    },
+    "src_breckman": {
+      "status": 200,
+      "ok": true,
+      "detail": "Open Library: “Marx, the Young Hegelians, and the Origins of Radical Social Theory”, Warren Breckman, first published 1998"
+    },
+    "src_leopold_young_marx": {
+      "status": 200,
+      "ok": true,
+      "detail": "Open Library: “The Young Karl Marx”, David Leopold, first published 2007"
+    },
+    "src_meek_labour_value": {
+      "status": 200,
+      "ok": true,
+      "detail": "Open Library: “Studies in the labour theory of value”, Ronald L. Meek, first published 1956"
+    },
+    "src_schumpeter_hea": {
+      "status": 200,
+      "ok": true,
+      "detail": "Open Library: “History of Economic Analysis”, Joseph Alois Schumpeter, Elizabeth Boody Schumpeter, first published 1954"
+    },
+    "src_manuel_saint_simon": {
+      "status": 200,
+      "ok": true,
+      "detail": "Open Library: “The new world of Henri Saint-Simon”, Frank E. Manuel, first published 1956"
+    },
+    "src_beecher_fourier": {
+      "status": 200,
+      "ok": true,
+      "detail": "Open Library: “The Utopian vision of Charles Fourier”, Charles Fourier, Jonathan Beecher, Richard Bienvenu, first published 1971"
+    },
+    "src_taylor_utopian": {
+      "status": 200,
+      "ok": true,
+      "detail": "Open Library: “Political Ideas of the Utopian Socialists”, Keith Taylor, first published 2013"
+    },
+    "src_claeys_citizens": {
+      "status": 200,
+      "ok": true,
+      "detail": "Open Library: “Citizens and saints”, Gregory Claeys, first published 1989"
+    },
+    "src_harrison_owen": {
+      "status": 200,
+      "ok": true,
+      "detail": "Open Library: “Robert Owen and the Owenites in Britain and America”, Harrison, John, first published 2009"
+    },
+    "src_woodcock_proudhon": {
+      "status": 200,
+      "ok": true,
+      "detail": "Open Library: “Pierre-Joseph Proudhon”, George Woodcock, first published 1956"
+    },
+    "src_ehrenberg_proudhon": {
+      "status": 200,
+      "ok": true,
+      "detail": "Open Library: “Proudhon and his age”, John Ehrenberg, first published 1996"
+    },
+    "src_mia_critique_hpr_intro": {
+      "status": 200,
+      "ok": true,
+      "detail": "page mentions “sigh of the oppressed creature”"
+    },
+    "src_mia_epm_labour": {
+      "status": 200,
+      "ok": true,
+      "detail": "page mentions “Estranged Labour”"
+    },
+    "src_mia_german_ideology": {
+      "status": 200,
+      "ok": true,
+      "detail": "page mentions “German Ideology”"
+    },
+    "src_mia_poverty_philosophy": {
+      "status": 200,
+      "ok": true,
+      "detail": "page mentions “Poverty of Philosophy”"
+    },
+    "src_mia_wage_labour": {
+      "status": 200,
+      "ok": true,
+      "detail": "page mentions “Wage Labour and Capital”"
+    },
+    "src_mia_brumaire": {
+      "status": 200,
+      "ok": true,
+      "detail": "page mentions “make their own history”"
+    },
+    "src_mia_preface_1859": {
+      "status": 200,
+      "ok": true,
+      "detail": "page mentions “relations of production”"
+    },
+    "src_grundrisse_nicolaus": {
+      "status": 200,
+      "ok": true,
+      "detail": "Open Library: “Grundrisse der Kritik der politischen Ökonomie”, Karl Marx, first published 1953"
+    },
+    "src_mia_value_price_profit": {
+      "status": 200,
+      "ok": true,
+      "detail": "page mentions “Value, Price and Profit”"
+    },
+    "src_mia_capital_moore": {
+      "status": 200,
+      "ok": true,
+      "detail": "page mentions “Capital”"
+    },
+    "src_mia_civil_war": {
+      "status": 200,
+      "ok": true,
+      "detail": "page mentions “Civil War in France”"
+    },
+    "src_mia_gotha": {
+      "status": 200,
+      "ok": true,
+      "detail": "page mentions “according to his needs”"
+    },
+    "src_mia_zasulich": {
+      "status": 200,
+      "ok": true,
+      "detail": "page mentions “Zasulich”"
+    },
+    "src_mia_engels_outlines": {
+      "status": 200,
+      "ok": true,
+      "detail": "page mentions “Political Economy”"
+    },
+    "src_mia_condition": {
+      "status": 200,
+      "ok": true,
+      "detail": "page mentions “Working Class”"
+    },
+    "src_mia_anti_duhring": {
+      "status": 200,
+      "ok": true,
+      "detail": "page mentions “Anti-D”"
+    },
+    "src_mia_soc_utopian": {
+      "status": 200,
+      "ok": true,
+      "detail": "page mentions “Socialism: Utopian and Scientific”"
+    },
+    "src_mia_ludwig_feuerbach": {
+      "status": 200,
+      "ok": true,
+      "detail": "page mentions “Ludwig Feuerbach”"
+    },
+    "src_mia_engels_bloch": {
+      "status": 200,
+      "ok": true,
+      "detail": "page mentions “ultimately determining element”"
+    },
+    "src_mia_engels_1895": {
+      "status": 200,
+      "ok": true,
+      "detail": "page mentions “Class Struggles in France”"
+    },
+    "src_mia_communist_league": {
+      "status": 200,
+      "ok": true,
+      "detail": "page mentions “Communist League”"
+    },
+    "src_mia_iwma": {
+      "status": 200,
+      "ok": true,
+      "detail": "page mentions “International Workingmen”"
+    },
+    "src_stedman_jones_marx": {
+      "status": 200,
+      "ok": true,
+      "detail": "Open Library: “Karl Marx”, Gareth Stedman Jones, first published 2016"
+    },
+    "src_sperber_marx": {
+      "status": 200,
+      "ok": true,
+      "detail": "Open Library: “Karl Marx”, Jonathan Sperber, first published 2013"
+    },
+    "src_mclellan_marx": {
+      "status": 200,
+      "ok": true,
+      "detail": "Open Library: “Karl Marx; his life and thought”, McLellan, David., first published 1973"
+    },
+    "src_avineri": {
+      "status": 200,
+      "ok": true,
+      "detail": "Open Library: “The social and political thought of Karl Marx”, Shlomo Avineri, first published 1968"
+    },
+    "src_cohen_history": {
+      "status": 200,
+      "ok": true,
+      "detail": "Open Library: “Karl Marx's theory of history”, G. A. Cohen, first published 1978"
+    },
+    "src_wood_marx": {
+      "status": 200,
+      "ok": true,
+      "detail": "Open Library: “Karl Marx”, Allen Wood, first published 2004"
+    },
+    "src_harvey_companion": {
+      "status": 200,
+      "ok": true,
+      "detail": "Open Library: “A Companion to Marx's Capital”, David Harvey, first published 2010"
+    },
+    "src_carver_relationship": {
+      "status": 200,
+      "ok": true,
+      "detail": "Open Library: “Marx & Engels”, Terrell Carver, first published 1983"
+    },
+    "src_hunt_engels": {
+      "status": 200,
+      "ok": true,
+      "detail": "Open Library: “Marx's general”, Tristram Hunt, first published 2009"
+    },
+    "src_shanin_late_marx": {
+      "status": 200,
+      "ok": true,
+      "detail": "Open Library: “Late Marx and the Russian Road”, Teodor Shanin, first published 1983"
+    },
+    "src_walicki": {
+      "status": 200,
+      "ok": true,
+      "detail": "Open Library: “Marxism and the Leap to the Kingdom of Freedom”, Andrzej Walicki, first published 1995"
+    },
+    "src_hobsbawm_capital": {
+      "status": 200,
+      "ok": true,
+      "detail": "Open Library: “The Age of Capital”, Eric Hobsbawm, first published 1975"
+    },
+    "src_hobsbawm_empire": {
+      "status": 200,
+      "ok": true,
+      "detail": "Open Library: “The age of empire, 1875-1914”, Eric Hobsbawm, first published 1987"
+    },
+    "src_sperber_1848": {
+      "status": 200,
+      "ok": true,
+      "detail": "Open Library: “The European revolutions, 1848-1851”, Jonathan Sperber, first published 1994"
+    },
+    "src_tombs_commune": {
+      "status": 200,
+      "ok": true,
+      "detail": "Open Library: “The Paris Commune, 1871”, Robert Tombs, first published 1999"
+    },
+    "src_schorske_spd": {
+      "status": 200,
+      "ok": true,
+      "detail": "Open Library: “German social democracy, 1905-1917”, Carl E. Schorske, first published 1955"
+    },
+    "src_haupt_war": {
+      "status": 200,
+      "ok": true,
+      "detail": "Open Library: “Socialism and the Great War”, Georges Haupt, first published 1972"
+    },
+    "src_ascher_1905": {
+      "status": 200,
+      "ok": true,
+      "detail": "Open Library: “The Revolution of 1905”, Abraham Ascher, first published 1988"
+    },
+    "src_smith_russia": {
+      "status": 200,
+      "ok": true,
+      "detail": "Open Library: “Russia in Revolution”, S. A. Smith, first published 2018"
+    },
+    "src_fitzpatrick_revolution": {
+      "status": 200,
+      "ok": true,
+      "detail": "Open Library: “The Russian Revolution (Opus Books)”, Sheila Fitzpatrick, Sheila Fitzpatrick, first published 1982"
+    },
+    "src_mia_erfurt_program": {
+      "status": 200,
+      "ok": true,
+      "detail": "page mentions “Erfurt”"
+    },
+    "src_mia_kautsky_class_struggle": {
+      "status": 200,
+      "ok": true,
+      "detail": "page mentions “Class Struggle”"
+    },
+    "src_mia_kautsky_road": {
+      "status": 200,
+      "ok": true,
+      "detail": "page mentions “revolution-making party”"
+    },
+    "src_mia_kautsky_dictatorship": {
+      "status": 200,
+      "ok": true,
+      "detail": "page mentions “Dictatorship of the Proletariat”"
+    },
+    "src_mia_bernstein_evsoc": {
+      "status": 200,
+      "ok": true,
+      "detail": "page mentions “final aim of socialism”"
+    },
+    "src_mia_plekhanov_struggle": {
+      "status": 200,
+      "ok": true,
+      "detail": "page mentions “Political Struggle”"
+    },
+    "src_mia_plekhanov_monist": {
+      "status": 200,
+      "ok": true,
+      "detail": "page mentions “Monist View”"
+    },
+    "src_mia_plekhanov_individual": {
+      "status": 200,
+      "ok": true,
+      "detail": "page mentions “Individual in History”"
+    },
+    "src_mia_luxemburg_org": {
+      "status": 200,
+      "ok": true,
+      "detail": "page mentions “Central Committee”"
+    },
+    "src_mia_luxemburg_mass_strike": {
+      "status": 200,
+      "ok": true,
+      "detail": "page mentions “Mass Strike”"
+    },
+    "src_mia_junius": {
+      "status": 200,
+      "ok": true,
+      "detail": "page mentions “barbarism”"
+    },
+    "src_mia_luxemburg_russian_rev": {
+      "status": 200,
+      "ok": true,
+      "detail": "page mentions “thinks differently”"
+    },
+    "src_mia_witbd": {
+      "status": 200,
+      "ok": true,
+      "detail": "page mentions “What Is To Be Done”"
+    },
+    "src_mia_onestep": {
+      "status": 200,
+      "ok": true,
+      "detail": "page mentions “One Step Forward”"
+    },
+    "src_mia_two_tactics": {
+      "status": 200,
+      "ok": true,
+      "detail": "page mentions “Two Tactics”"
+    },
+    "src_mia_imperialism": {
+      "status": 200,
+      "ok": true,
+      "detail": "page mentions “Imperialism”"
+    },
+    "src_mia_april_theses": {
+      "status": 200,
+      "ok": true,
+      "detail": "page mentions “April”"
+    },
+    "src_mia_renegade": {
+      "status": 200,
+      "ok": true,
+      "detail": "page mentions “Renegade Kautsky”"
+    },
+    "src_mia_basel": {
+      "status": 200,
+      "ok": true,
+      "detail": "page mentions “Basel”"
+    },
+    "src_mia_zimmerwald": {
+      "status": 200,
+      "ok": true,
+      "detail": "page mentions “Zimmerwald”"
+    },
+    "src_gay_bernstein": {
+      "status": 200,
+      "ok": true,
+      "detail": "Open Library: “The dilemma of democratic socialism”, Peter Gay, first published 1952"
+    },
+    "src_steger_bernstein": {
+      "status": 200,
+      "ok": true,
+      "detail": "Open Library: “The Quest for Evolutionary Socialism”, Manfred B. Steger, first published 1997"
+    },
+    "src_salvadori_kautsky": {
+      "status": 200,
+      "ok": true,
+      "detail": "Open Library: “Karl Kautsky and the socialist revolution, 1880-1938”, Massimo Salvadori, first published 1979"
+    },
+    "src_steenson_kautsky": {
+      "status": 200,
+      "ok": true,
+      "detail": "Open Library: “Karl Kautsky, 1854-1938”, Gary P. Steenson, first published 1978"
+    },
+    "src_nettl_luxemburg": {
+      "status": 200,
+      "ok": true,
+      "detail": "Open Library: “Le vie et l'oeuvre de Rosa Luxemburg”, J. P. Nettl, John Peter Nettl, John Peter Nettl, J. P Nettl, first published 1899"
+    },
+    "src_baron_plekhanov": {
+      "status": 200,
+      "ok": true,
+      "detail": "Open Library: “Plekhanov”, Samuel H. Baron, first published 1963"
+    },
+    "src_harding_lenin": {
+      "status": 200,
+      "ok": true,
+      "detail": "Open Library: “Lenin's political thought”, Neil Harding, first published 1977"
+    },
+    "src_lih_lenin": {
+      "status": 200,
+      "ok": true,
+      "detail": "Open Library: “Lenin rediscovered”, Lars T. Lih, first published 2005"
+    },
+    "src_service_lenin": {
+      "status": 200,
+      "ok": true,
+      "detail": "Open Library: “Lenin”, Robert Service, first published 1985"
+    }
+  }
+}

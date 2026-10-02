@@ -22,6 +22,9 @@ export function normaliseText(t: string) {
     .replace(/[–—]/g, "-")
     .replace(/ /g, " ")
     .replace(/\s+/g, " ")
+    // Archive markup often leaves a space before punctuation that follows italics.
+    .replace(/ ([,.;:!?)\]])/g, "$1")
+    .replace(/([(\[]) /g, "$1")
     .trim()
     .toLowerCase();
 }
@@ -49,9 +52,13 @@ async function fetchText(url: string): Promise<{ status: number; text: string }>
   return { status: res.status, text: buf.toString(enc) };
 }
 
+/** The transcription's own header: where it says the text comes from (source edition, translation). */
 function provenance(text: string) {
-  const m = /Source\s*:\s*([^\n]{10,240}?)(?:\s{2,}|Transcri|Translat|First Published|Proofread|Online Version|HTML|Markup|$)/i.exec(text);
-  return m?.[1]?.trim();
+  const flat = text.replace(/\s+/g, " ");
+  const src = /Source\s*:\s*(.{10,220}?)(?=\s(?:Transcri\w*|Translat\w*|First Published|Proofread\w*|Online Version|HTML|Markup|Copyleft|Public Domain)\b|$)/i.exec(flat);
+  const tr = /Translated(?: by)?\s*:?\s*(.{4,120}?)(?=;|\s(?:Source|Transcri\w*|Proofread\w*|Online Version|HTML|Markup)\b|$)/i.exec(flat);
+  const parts = [src?.[1]?.trim(), tr ? `translated: ${tr[1].trim()}` : undefined].filter(Boolean);
+  return parts.length ? parts.join("; ").slice(0, 300) : undefined;
 }
 
 export async function verifyCorpus(corpus: Corpus, log: (l: string) => void = () => {}): Promise<VerificationRecord> {

@@ -68,6 +68,13 @@ export async function checkData(corpus: Corpus, upTo?: string): Promise<CheckIss
     keys.set(e.key, e);
   }
   const known = async (key: string) => keys.has(key) || !!(await resolveKey(key as EntityKey));
+  // Prose may link ahead to entries defined in later batches; structure may not.
+  const laterKeys = new Set<string>([...allEntities(corpus).map((e) => e.key), ...(corpus.planned ?? [])]);
+  const linkable = async (key: string) => laterKeys.has(key) || (await known(key));
+  if (!upTo || upTo === corpus.batches.at(-1)?.id) {
+    const defined = new Set(allEntities(corpus).map((e) => e.key));
+    for (const k of corpus.planned ?? []) if (!defined.has(k)) issues.push({ level: "warning", area: "data", key: k, message: "Planned entry is not defined by any batch." });
+  }
 
   // Sources
   const sources = new Map<string, { used: number }>();
@@ -100,7 +107,11 @@ export async function checkData(corpus: Corpus, upTo?: string): Promise<CheckIss
       }
     }
     const prose = defs.filter((d) => d.type === "richtext").map((d) => String(e.fields[d.name] ?? ""));
-    for (const r of extractRefs(...prose)) if (!(await known(`${r.kind}:${r.slug}`))) issues.push({ level: "error", area: "links", key: e.key, message: `Link to unknown entry [[${r.kind}:${r.slug}]].` });
+    for (const r of extractRefs(...prose)) {
+      const k = `${r.kind}:${r.slug}`;
+      if (!(await linkable(k))) issues.push({ level: "error", area: "links", key: e.key, message: `Link to unknown entry [[${k}]].` });
+      else if (!(await known(k))) issues.push({ level: "info", area: "links", key: e.key, message: `Links ahead to [[${k}]] (a later batch); it reads as plain text until then.` });
+    }
     for (const c of extractCites(...prose)) useSource(c.source, e.key);
     for (const c of e.citations ?? []) useSource(c.source, e.key);
     const ys = e.fields.yearStart as number | null | undefined;
@@ -179,6 +190,7 @@ export async function checkDatabase(corpus: Corpus): Promise<CheckIssue[]> {
   const db = await ready();
   const rows = await corpusRows(corpus.collection);
   const ids = new Set(rows.map((r) => r.id));
+  const planned = corpus.planned ?? [];
   const everything = await db.select({ id: s.entities.id, kind: s.entities.kind, title: s.entities.title, aliases: s.entities.aliases }).from(s.entities);
 
   // Possible duplicates: same kind and a matching title or alias.
@@ -204,7 +216,15 @@ export async function checkDatabase(corpus: Corpus): Promise<CheckIssue[]> {
     const key = `${row.kind}:${row.slug}`;
     const fields = await readWorkingFields(row);
     for (const i of await validateEntity(row, fields)) {
-      if (i.level !== "info") issues.push({ level: i.level === "error" ? "error" : "warning", area: "schema", key, message: i.message });
+      if (i.level === "info") continue;
+      // Within an unpublished collection, links between its own entries are expected to be hidden until
+      // they are published together, and links ahead to planned entries resolve when their batch is imported.
+      if (i.code === "link-unpublished" || i.code === "relationship-unpublished") continue;
+      if (i.code === "broken-link" && planned.some((p) => i.message.includes(`called “${p.split(":")[1]}”`))) {
+        issues.push({ level: "info", area: "links", key, message: `${i.message} (planned for a later batch)` });
+        continue;
+      }
+      issues.push({ level: i.level === "error" ? "error" : "warning", area: "schema", key, message: i.message });
     }
     const graph = await deskNeighborhood(row.id);
     if (graph.edges.length === 0 && row.kind !== "path") issues.push({ level: "warning", area: "graph", key, message: "No relationships: the entry is isolated on the map." });

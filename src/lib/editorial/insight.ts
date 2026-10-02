@@ -6,7 +6,7 @@ import "server-only";
  * missing field, a broken link, an unverified quotation — and deliberately do
  * not attempt to judge whether an interpretation is right.
  */
-import { and, eq, inArray, like, or, sql } from "drizzle-orm";
+import { and, eq, inArray, isNull, like, or, sql } from "drizzle-orm";
 import { ready } from "@/lib/db/client";
 import * as s from "@/lib/db/schema";
 import { isEntityKind, KINDS, RELATIONSHIP_TYPES, type EntityKind, type RelationshipType } from "@/lib/content/model";
@@ -32,22 +32,27 @@ async function gather(row: s.EntityRow, fields: FieldValues) {
     .filter((f) => f.type === "richtext")
     .map((f) => ({ name: f.name, text: String(fields[f.name] ?? "") }));
   const all = texts.map((t) => t.text);
+  const workingRows = (column: typeof s.pathSteps.stagedFor | typeof s.debatePositions.stagedFor | typeof s.debatePropositions.stagedFor) =>
+    row.stagedStructure ? eq(column, row.id) : isNull(column);
   const [out, inc, cites, excerpts, media, positions, propositions, steps, heldPositions] = await Promise.all([
     db.select({ r: s.relationships, o: s.entities }).from(s.relationships).innerJoin(s.entities, eq(s.entities.id, s.relationships.toId)).where(eq(s.relationships.fromId, row.id)),
     db.select({ r: s.relationships, o: s.entities }).from(s.relationships).innerJoin(s.entities, eq(s.entities.id, s.relationships.fromId)).where(eq(s.relationships.toId, row.id)),
     db.select({ c: s.citations, src: s.sources }).from(s.citations).innerJoin(s.sources, eq(s.sources.id, s.citations.sourceId)).where(eq(s.citations.entityId, row.id)),
     db.select().from(s.excerpts).where(eq(s.excerpts.entityId, row.id)),
     db.select({ a: s.entityMedia, m: s.media }).from(s.entityMedia).innerJoin(s.media, eq(s.media.id, s.entityMedia.mediaId)).where(eq(s.entityMedia.entityId, row.id)),
-    db.select().from(s.debatePositions).where(eq(s.debatePositions.debateId, row.id)),
-    db.select().from(s.debatePropositions).where(eq(s.debatePropositions.debateId, row.id)),
-    db.select().from(s.pathSteps).where(eq(s.pathSteps.pathId, row.id)),
+    // Debate and path structure: the set being edited (the staged copy while one exists).
+    db.select().from(s.debatePositions).where(and(eq(s.debatePositions.debateId, row.id), workingRows(s.debatePositions.stagedFor))),
+    db.select().from(s.debatePropositions).where(and(eq(s.debatePropositions.debateId, row.id), workingRows(s.debatePropositions.stagedFor))),
+    db.select().from(s.pathSteps).where(and(eq(s.pathSteps.pathId, row.id), workingRows(s.pathSteps.stagedFor))),
     db.select({ id: s.debatePositions.id }).from(s.debatePositions).where(eq(s.debatePositions.holderId, row.id)),
   ]);
+  // Sources cited inline in the working copy count even before publication writes them as citations.
+  const inlineSources = [...new Set(extractCites(...all).map((c) => c.source))];
   const rels = [
     ...out.map((x) => ({ ...x.r, other: x.o, dir: "out" as const })),
     ...inc.map((x) => ({ ...x.r, other: x.o, dir: "in" as const })),
   ];
-  return { kind, texts, all, rels, cites, excerpts, media, positions, propositions, steps, heldPositions };
+  return { kind, texts, all, rels, cites, inlineSources, excerpts, media, positions, propositions, steps, heldPositions };
 }
 
 export async function validateEntity(row: s.EntityRow, fieldsIn?: FieldValues): Promise<Issue[]> {
@@ -105,7 +110,7 @@ export async function validateEntity(row: s.EntityRow, fieldsIn?: FieldValues): 
   }
 
   // Sourcing.
-  if (!g.cites.length) add("warning", "no-sources", "No sources are attached. Every entry should be traceable to sources.");
+  if (!g.cites.length && !g.inlineSources.length) add("warning", "no-sources", "No sources are attached. Every entry should be traceable to sources.");
   for (const c of g.cites) {
     const gaps = sourceGaps(c.src);
     if (gaps.length) add("warning", "incomplete-source", `“${c.src.title}” is missing ${gaps.join(", ")}.`);
@@ -154,7 +159,7 @@ export async function completeness(row: s.EntityRow, fieldsIn?: FieldValues): Pr
   const fields = fieldsIn ?? (await readWorkingFields(row));
   const g = await gather(row, fields);
   const rel = (pred: (r: (typeof g.rels)[number]) => boolean) => g.rels.some(pred);
-  const sources = g.cites.length > 0;
+  const sources = g.cites.length > 0 || g.inlineSources.length > 0;
   const item = (section: string, done: boolean, hint?: string): CompletenessItem => ({ section, done, hint });
   switch (g.kind) {
     case "thinker":
