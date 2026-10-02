@@ -36,6 +36,18 @@ any (editor) → ARCHIVED → restore → DRAFT / UNPUBLISHED
 Whether an entry is public is the `live` flag; `status` is where its current edit cycle stands. Public queries,
 search, maps, timelines and `/api/*` only ever read live entries.
 
+### Staged changes on live entries
+
+Structural changes to a live entry are **staged** until its next publication, just like its fields:
+
+- New relationships, citations, excerpts and images attached to a live entry are stored with `staged_for` = that
+  entry and marked *◌ with next publication* in the desk. Publishing the entry releases them; until then the public
+  site does not see them.
+- Editing a live debate's positions, stances and arguments, or a live path's route, works on a **staged copy** of the
+  whole structure. Publishing replaces the public structure with it. (There is no desk button yet to discard a staged copy;
+  `resetStructure()` in `lib/editorial/structure.ts` does this for the corpus importer.)
+- Removing a public row from a live entry is reserved for editors.
+
 ## Editing an entry
 
 The entry editor (`/admin/entries/[id]`) has tabs:
@@ -98,6 +110,20 @@ Content is stored as Atlas markup (`src/lib/content/markup.ts`), a small superse
 - **Media** (`/admin/media`) holds images with title, alt text (required), caption, creator, credit, source, licence,
   rights notes, year and tags. Uploads are checked by content (JPEG, PNG, WebP, GIF; no SVG; 12 MB max) and identical
   files are stored once. An image is publicly served only while attached to a live entry. Files live in `MEDIA_DIR`.
+
+## Collections
+
+An entry can carry editorial **collection** tags (`entities.editorial_tags`), for example the *Initial Marx Corpus*.
+Collections are internal: the Content list can be filtered by collection, and the preview of any entry in a
+collection offers *Include unpublished “…” entries*, which renders the page with the rest of the collection's drafts
+and pending versions visible — links, relationships, maps, timelines and paths included — so a reviewer can read a
+body of new work as a whole before any of it is published. The scope applies only to that preview request.
+
+## Research corpora
+
+Researched content can be prepared as data under `corpus/` and loaded through the editorial library with
+`npm run corpus`. Nothing is published by an import; flags become editorial notes. See
+[`docs/CORPUS.md`](CORPUS.md).
 
 ## Audit
 

@@ -70,8 +70,14 @@ Copy `.env.example` to `.env.local` to configure the database URL and the media 
 - [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) — layers, data access, rendering, design system, scaling
 - [`docs/DATA_MODEL.md`](docs/DATA_MODEL.md) — entities, relationship types, sources and citations, debates, paths
 - [`docs/EDITORIAL.md`](docs/EDITORIAL.md) — the editorial desk: roles, workflow, revisions, rich text, sources, media; the sample-content policy
+- [`docs/CORPUS.md`](docs/CORPUS.md) — research corpora: format, verification, import and review (`npm run corpus`)
+- [`docs/corpus/initial-marx-review.md`](docs/corpus/initial-marx-review.md) — the review queue for the *Initial Marx Corpus*
 
 ## Content policy for this build
+
+The **Initial Marx Corpus** (`corpus/initial-marx/`) is a researched introduction to Marx, his predecessors and the
+Marxism of 1890–1919. Load it with `npm run corpus -- import` after seeding; every entry it touches stays unpublished
+and awaits human review (see [`docs/CORPUS.md`](docs/CORPUS.md)).
 
 All seeded entries are flagged **sample** (`is_sample`) and labelled as such on the site. Summaries are brief and conventional.
 Only a handful of very widely reproduced quotations are included, each tied to a cited edition and flagged

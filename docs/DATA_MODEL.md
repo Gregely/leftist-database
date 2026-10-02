@@ -115,6 +115,21 @@ with a framing note. `track = 'main'` steps form the route; `track = 'branch'` s
 | `audit_log` | Who did what to which target, with scrubbed metadata |
 | `slug_history` | Old `(kind, slug)` pairs pointing at an entity, for permanent redirects |
 
+Columns that support staging and collections:
+
+| Column | Purpose |
+| --- | --- |
+| `entities.staged_changes` | The live entry has staged structural rows waiting for its next publication |
+| `entities.staged_structure` | A live debate or path is being edited as a staged copy of its structure |
+| `entities.editorial_tags` | JSON array of internal collection names (e.g. `"Initial Marx Corpus"`) |
+| `relationships` / `citations` / `excerpts` / `entity_media` `.staged_for` | The live entry whose publication releases the row; `NULL` for released rows |
+| `debate_positions` / `debate_propositions` / `debate_arguments` / `path_steps` `.staged_for`, `.origin_id` | Rows of a staged copy of a debate or path, and the released row each was copied from |
+
+Relationship uniqueness is enforced separately for released rows (`relationships_unique`, `WHERE staged_for IS NULL`)
+and staged rows (`relationships_staged_unique`), so a staged edit can shadow a public relationship until release.
+Public queries read only released rows of live entries; the request-scoped preview scope (`lib/data/scope.ts`) widens
+this for desk previews.
+
 ## Search index
 
 `search_index` is an FTS5 virtual table (`entity_id`, `kind`, `title`, `aliases`, `body`) created in

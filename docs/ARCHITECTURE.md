@@ -113,6 +113,12 @@ combobox/listbox pattern and focus trapping; comparison data is a real `<table>`
   half an hour are folded into one open version. For an entry that is not live, saves also write the tables; for a live
   entry the tables keep the published version and the working copy lives only in revisions until **publish** copies it
   across. Restoring writes the old snapshot as a new version.
+- **Staging.** Structural rows of live entries (relationships, citations, excerpts, images, debate and path
+  structure) are staged until publication (`lib/editorial/staging.ts`); `releaseStaged()` runs inside publish.
+- **Preview scope.** `lib/data/scope.ts` holds a per-request scope (React `cache`). Public requests see only live
+  entries and released rows; a desk preview enters a scope listing the entries (or the whole collection) whose working
+  copies may be shown. Every data helper consults `entityVisible()` / `stagedVisible()` rather than reading `live`
+  directly, so preview and public rendering share one code path.
 - **Concurrency.** `entities.lock_version` is compared-and-set on every save; a stale save fails with a conflict that
   the editor shows to the user.
 - **Publication propagates** by setting `live`, reindexing search and calling `revalidatePath("/", "layout")`, which

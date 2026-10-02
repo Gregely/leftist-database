@@ -378,6 +378,7 @@ async function importBatch(
     for (const a of m.attach) {
       const row = await requireKey(a.entity);
       await attachMedia(actor, row.id, id, a.role, a.caption ?? "");
+      if (m.flag) summary.notes += await flagNote(actor, row.id, { ...m.flag, note: `Image “${m.title}”: ${m.flag.note}` });
       touched.add(row.id);
     }
     summary.media++;

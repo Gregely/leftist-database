@@ -141,6 +141,8 @@ export interface CorpusMedia {
   year?: string;
   tags?: string[];
   attach: { entity: EntityKey; role: MediaRole; caption?: string }[];
+  /** Becomes an internal note on each entry the image is attached to. */
+  flag?: Flag;
 }
 
 export interface CorpusBatch {
