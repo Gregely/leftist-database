@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-10-02T00:33:53.994Z",
+  "checkedAt": "2026-10-02T00:42:43.926Z",
   "quotes": {
     "hegel-pr-owl": {
       "url": "https://www.marxists.org/reference/archive/hegel/works/pr/preface.htm",
@@ -17,6 +17,50 @@
     },
     "capital-afterword-head": {
       "url": "https://www.marxists.org/archive/marx/works/1867-c1/p3.htm",
+      "status": 200,
+      "matched": true,
+      "detail": "verbatim"
+    },
+    "critique-hpr-opium": {
+      "url": "https://www.marxists.org/archive/marx/works/1843/critique-hpr/intro.htm",
+      "status": 200,
+      "matched": true,
+      "detail": "verbatim"
+    },
+    "critique-hpr-head-heart": {
+      "url": "https://www.marxists.org/archive/marx/works/1843/critique-hpr/intro.htm",
+      "status": 200,
+      "matched": true,
+      "detail": "verbatim"
+    },
+    "epm-poorer": {
+      "url": "https://www.marxists.org/archive/marx/works/1844/manuscripts/labour.htm",
+      "status": 200,
+      "matched": true,
+      "detail": "verbatim"
+    },
+    "theses-xi": {
+      "url": "https://www.marxists.org/archive/marx/works/1845/theses/theses.htm",
+      "status": 200,
+      "matched": true,
+      "provenance": "Marx/Engels Selected Works, Volume One, p. 13 – 15. Note that this version differs from the version of Engels’ edition published in MECW Volume 5, pp. 6-8; Publisher: Progress Publishers, Moscow, USSR, 1969;; translated: W. Lough from the German",
+      "detail": "verbatim"
+    },
+    "theses-vi": {
+      "url": "https://www.marxists.org/archive/marx/works/1845/theses/theses.htm",
+      "status": 200,
+      "matched": true,
+      "provenance": "Marx/Engels Selected Works, Volume One, p. 13 – 15. Note that this version differs from the version of Engels’ edition published in MECW Volume 5, pp. 6-8; Publisher: Progress Publishers, Moscow, USSR, 1969;; translated: W. Lough from the German",
+      "detail": "verbatim"
+    },
+    "german-ideology-ruling-ideas": {
+      "url": "https://www.marxists.org/archive/marx/works/1845/german-ideology/ch01b.htm",
+      "status": 200,
+      "matched": true,
+      "detail": "verbatim"
+    },
+    "engels-feuerbachians": {
+      "url": "https://www.marxists.org/archive/marx/works/1886/ludwig-feuerbach/ch01.htm",
       "status": 200,
       "matched": true,
       "detail": "verbatim"
