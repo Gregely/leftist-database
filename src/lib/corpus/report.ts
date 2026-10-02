@@ -41,11 +41,14 @@ export async function buildReport(corpus: Corpus, checks: CheckIssue[] = []): Pr
   const flagged = new Map<string, { type: FlagType | null; field: string | null; body: string }[]>();
   for (const n of notes) {
     if (n.kind === "approval") continue;
+    // The import's own workflow notes (e.g. on submission) are not findings.
+    if (n.authorId === importer && !flagOf(n.body)) continue;
     flagged.set(n.entityId, [...(flagged.get(n.entityId) ?? []), { type: flagOf(n.body), field: n.field, body: n.body }]);
   }
   const issuesById = new Map<string, { level: string; message: string }[]>();
   for (const r of rows) {
-    const list = (await validateEntity(r, await readWorkingFields(r))).filter((i) => i.level !== "info");
+    // Links between unpublished entries are expected in a corpus under review; they resolve as entries are published.
+    const list = (await validateEntity(r, await readWorkingFields(r))).filter((i) => i.level !== "info" && i.code !== "link-unpublished" && i.code !== "relationship-unpublished");
     issuesById.set(r.id, list);
   }
   const ready_ = rows.filter((r) => !(flagged.get(r.id)?.length) && !(issuesById.get(r.id) ?? []).some((i) => i.level === "error"));
@@ -53,13 +56,17 @@ export async function buildReport(corpus: Corpus, checks: CheckIssue[] = []): Pr
   const L: string[] = [];
   L.push(`# ${corpus.collection} — review summary`, "");
   L.push(`Generated ${new Date().toISOString().slice(0, 10)} from the database by \`npm run corpus -- report\`. Every entry below is **unpublished**: new entries are drafts, and entries that already existed as public sample records have a pending new version whose text and structure stay off the public site until an editor publishes them. Read them in the desk, or as a connected whole in the collection preview (Preview → *Include unpublished “${corpus.collection}” entries*).`, "");
+  L.push(`Research decisions, known problems, gaps and architecture notes are in [\`${corpus.dir.split("/").pop()}-notes.md\`](${corpus.dir.split("/").pop()}-notes.md).`, "");
   L.push("## Totals", "");
   L.push("| | Count |", "| --- | --- |");
   for (const k of KIND_ORDER) L.push(`| ${KINDS[k].plural} | ${byKind[k].length} (${count(byKind[k], (r) => !r.isSample && r.publishedRevision == null)} new, ${count(byKind[k], (r) => r.publishedRevision != null)} amending existing sample entries) |`);
   L.push(`| Sources catalogued by the corpus | ${corpusSources.length} (plus ${new Set(cites.map((c) => c.sourceId)).size - corpusSources.filter((x) => cites.some((c) => c.sourceId === x.id)).length} existing records reused) |`);
   L.push(`| Relationships recorded by the corpus | ${corpusRels.length} (${count(corpusRels, (r) => !!r.sourceId)} with a source) |`);
   L.push(`| Citations on corpus entries | ${cites.length} |`);
-  L.push(`| Excerpts | ${excerpts.length} — ${Object.entries(VERIFICATION_LABELS).map(([k, l]) => `${count(excerpts, (x) => x.verification === k)} ${l.toLowerCase()}`).join(", ")} |`);
+  const ownExcerpts = excerpts.filter((x) => x.createdBy === importer);
+  const tally = (xs: typeof excerpts) => Object.entries(VERIFICATION_LABELS).map(([k, l]) => `${count(xs, (x) => x.verification === k)} ${l.toLowerCase()}`).join(", ");
+  L.push(`| Excerpts added by the corpus | ${ownExcerpts.length} — ${tally(ownExcerpts)} |`);
+  L.push(`| Existing sample excerpts on amended entries | ${excerpts.length - ownExcerpts.length} — ${tally(excerpts.filter((x) => x.createdBy !== importer))} |`);
   L.push("");
   L.push("## Editorial state", "");
   L.push("| State | Entries |", "| --- | --- |");
@@ -77,7 +84,7 @@ export async function buildReport(corpus: Corpus, checks: CheckIssue[] = []): Pr
   }
   L.push("");
 
-  L.push("## Review queue", "", "Each entry with what needs checking. Notes are internal (Review tab of the entry) and never public.", "");
+  L.push("## Review queue", "", "Each entry with what needs checking. Notes are internal (Review tab of the entry) and never public. Warnings that a linked entry is not yet published are omitted: links between corpus entries resolve as the entries are published.", "");
   for (const k of KIND_ORDER) {
     if (!byKind[k].length) continue;
     L.push(`### ${KINDS[k].plural}`, "");
