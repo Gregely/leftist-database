@@ -81,9 +81,9 @@ export function can(actor: Actor | null, permission: Permission, entity?: Entity
       return editor || (isAuthor(actor, entity) && AUTHOR_EDITABLE.includes(entity.status));
 
     case "entity.editStructure":
-      // Structural changes (relationships, citations, media…) take effect
-      // immediately, so on live entries they are reserved for editors.
-      return can(actor, "entity.edit", entity) && (!entity!.live || editor);
+      // Structural changes to a live entry are staged until it is published
+      // (lib/editorial/staging.ts), so they follow the same rule as text edits.
+      return can(actor, "entity.edit", entity);
 
     case "entity.submit":
       if (!entity) return false;

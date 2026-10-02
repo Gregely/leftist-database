@@ -1,17 +1,18 @@
 import "server-only";
 import { and, asc, eq, sql } from "drizzle-orm";
 import { ready } from "@/lib/db/client";
-import { citations, entities, excerpts, relationships, sources } from "@/lib/db/schema";
+import { citations, entities, excerpts, sources } from "@/lib/db/schema";
 import type { SourceType } from "@/lib/content/model";
 import { isPublic, PUBLIC_SOURCE, toSource, toSummary } from "./core";
+import { stagedVisible } from "./scope";
 
 export async function listSources(opts: { type?: SourceType } = {}) {
   const db = await ready();
   const rows = await db
     .select({
       s: sources,
-      cited: sql<number>`(SELECT count(*) FROM citations c JOIN entities e ON e.id = c.entity_id WHERE c.source_id = sources.id AND e.live = 1)
-        + (SELECT count(*) FROM excerpts x JOIN entities e ON e.id = x.entity_id WHERE x.source_id = sources.id AND e.live = 1)`,
+      cited: sql<number>`(SELECT count(*) FROM citations c JOIN entities e ON e.id = c.entity_id WHERE c.source_id = sources.id AND e.live = 1 AND c.staged_for IS NULL)
+        + (SELECT count(*) FROM excerpts x JOIN entities e ON e.id = x.entity_id WHERE x.source_id = sources.id AND e.live = 1 AND x.staged_for IS NULL)`,
     })
     .from(sources)
     .where(and(sql`${PUBLIC_SOURCE}`, opts.type ? eq(sources.sourceType, opts.type) : undefined))
@@ -28,12 +29,12 @@ export async function getSource(id: string) {
       .select({ c: citations, e: entities })
       .from(citations)
       .innerJoin(entities, eq(entities.id, citations.entityId))
-      .where(and(eq(citations.sourceId, id), isPublic())),
+      .where(and(eq(citations.sourceId, id), isPublic(), stagedVisible(citations.stagedFor))),
     db
       .select({ x: excerpts, e: entities })
       .from(excerpts)
       .innerJoin(entities, eq(entities.id, excerpts.entityId))
-      .where(and(eq(excerpts.sourceId, id), isPublic())),
+      .where(and(eq(excerpts.sourceId, id), isPublic(), stagedVisible(excerpts.stagedFor))),
   ]);
   return {
     source: toSource(row),

@@ -111,6 +111,8 @@ export const AUDIT_ACTIONS = [
   "note_add",
   "note_resolve",
   "structure_edit",
+  "tags_set",
+  "import",
   "user_create",
   "role_change",
   "user_deactivate",

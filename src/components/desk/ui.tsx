@@ -147,3 +147,12 @@ export function ViewSwitch({ id, active, className = "", tone = "paper" }: { id:
     </nav>
   );
 }
+
+/** Marks a record that waits for the entry's next publication before it appears on the public site. */
+export function PendingMark({ className = "" }: { className?: string }) {
+  return (
+    <span className={`label ml-2 text-ochre ${className}`} title="Added to a live entry: it reaches the public site when the entry is next published.">
+      ◌ with next publication
+    </span>
+  );
+}

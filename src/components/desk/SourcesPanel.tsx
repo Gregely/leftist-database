@@ -6,6 +6,7 @@ import { addCitationAction, addExcerptAction, removeCitationAction, removeExcerp
 import { EXCERPT_VERIFICATION, SOURCE_TYPE_LABELS, VERIFICATION_LABELS, type ExcerptVerification, type SourceType } from "@/lib/content/model";
 import { EntityPicker, type PickedEntity } from "./EntityPicker";
 import { SourcePicker, type PickedSource } from "./SourcePicker";
+import { PendingMark } from "./ui";
 
 export interface CitationRow {
   id: string;
@@ -13,6 +14,10 @@ export interface CitationRow {
   locator: string | null;
   note: string;
   source: { id: string; title: string; author: string; publicationDate: string | null; sourceType: SourceType; gaps: string[] };
+  /** Waits for the entry's next publication. */
+  staged?: boolean;
+  /** May the current user remove it? */
+  canRemove?: boolean;
 }
 
 export interface ExcerptRow {
@@ -24,6 +29,8 @@ export interface ExcerptRow {
   text: { id: string; title: string } | null;
   speaker: { id: string; title: string } | null;
   source: { id: string; title: string } | null;
+  staged?: boolean;
+  canRemove?: boolean;
 }
 
 function useMsg() {
@@ -63,10 +70,11 @@ export function CitationsPanel({ entityId, citations, canEdit }: { entityId: str
                 {c.locator && <span>, {c.locator}</span>}
                 <span className="label ml-2 text-faint">{SOURCE_TYPE_LABELS[c.source.sourceType]}</span>
                 {c.field === "inline" && <span className="label ml-2 text-olive">cited in text</span>}
+                {c.staged && <PendingMark />}
                 {c.source.gaps.length > 0 && <span className="label ml-2 text-ochre">missing {c.source.gaps.join(", ")}</span>}
                 {c.note && <span className="block text-muted">{c.note}</span>}
               </span>
-              {canEdit && c.field !== "inline" && (
+              {canEdit && c.canRemove !== false && c.field !== "inline" && (
                 <button
                   type="button"
                   onClick={() =>
@@ -156,6 +164,7 @@ export function ExcerptsPanel({ entityId, excerpts, canEdit, canVerify }: { enti
                 {x.text && <span className="italic">{x.text.title}</span>}
                 {x.locator && <span>, {x.locator}</span>}
                 {x.source && <span> · edition: {x.source.title}</span>}
+                {x.staged && <PendingMark />}
               </p>
               <div className="mt-2 flex flex-wrap items-center gap-3">
                 <label className="sr-only" htmlFor={`ver-${x.id}`}>
@@ -187,7 +196,7 @@ export function ExcerptsPanel({ entityId, excerpts, canEdit, canVerify }: { enti
                 <span className="label-mono text-faint" title="Embed in prose with the Excerpt tool">
                   {x.id}
                 </span>
-                {canEdit && (
+                {canEdit && x.canRemove !== false && (
                   <button
                     type="button"
                     onClick={() =>

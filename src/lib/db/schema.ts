@@ -85,6 +85,12 @@ export const entities = sqliteTable(
     publishedRevision: integer("published_revision"),
     publishedAt: text("published_at"),
     submittedAt: text("submitted_at"),
+    /** A live entry has structural changes (relationships, citations…) waiting for its next publication. */
+    stagedChanges: integer("staged_changes", { mode: "boolean" }).notNull().default(false),
+    /** A live debate's or path's structure is being edited as a staged copy that replaces it on publication. */
+    stagedStructure: integer("staged_structure", { mode: "boolean" }).notNull().default(false),
+    /** Internal collection labels (JSON array), e.g. "Initial Marx Corpus". Never shown publicly. */
+    editorialTags: text("editorial_tags").notNull().default("[]"),
     ...timestamps,
   },
   (t) => [
@@ -204,6 +210,10 @@ export const pathSteps = sqliteTable(
     track: text("track").notNull().default("main"),
     /** For branches and alternatives: the main-route stop they leave from. */
     parentStepId: text("parent_step_id"),
+    /** Set while this row waits for the publication of the named (live) entry; null when public-eligible. */
+    stagedFor: text("staged_for"),
+    /** For a staged copy: the live row it was copied from. */
+    originId: text("origin_id"),
   },
   (t) => [index("path_steps_path").on(t.pathId, t.position)],
 );
@@ -228,6 +238,10 @@ export const debatePositions = sqliteTable(
     assumptions: text("assumptions").notNull().default("[]"),
     criticisms: text("criticisms").notNull().default("[]"),
     position: integer("position").notNull().default(0),
+    /** Set while this row waits for the publication of the named (live) entry; null when public-eligible. */
+    stagedFor: text("staged_for"),
+    /** For a staged copy: the live row it was copied from. */
+    originId: text("origin_id"),
   },
   (t) => [index("debate_positions_debate").on(t.debateId, t.position)],
 );
@@ -242,6 +256,10 @@ export const debatePropositions = sqliteTable(
       .references(() => entities.id, { onDelete: "cascade" }),
     statement: text("statement").notNull(),
     position: integer("position").notNull().default(0),
+    /** Set while this row waits for the publication of the named (live) entry; null when public-eligible. */
+    stagedFor: text("staged_for"),
+    /** For a staged copy: the live row it was copied from. */
+    originId: text("origin_id"),
   },
   (t) => [index("debate_propositions_debate").on(t.debateId, t.position)],
 );
@@ -290,6 +308,10 @@ export const debateArguments = sqliteTable(
     respondsToId: text("responds_to_id"),
     body: text("body").notNull(),
     position: integer("position").notNull().default(0),
+    /** Set while this row waits for the publication of the named (live) entry; null when public-eligible. */
+    stagedFor: text("staged_for"),
+    /** For a staged copy: the live row it was copied from. */
+    originId: text("origin_id"),
   },
   (t) => [index("debate_arguments_debate").on(t.debateId, t.position)],
 );
@@ -321,10 +343,14 @@ export const relationships = sqliteTable(
     /** Longer editorial context for the claim. */
     context: text("context").notNull().default(""),
     createdBy: text("created_by"),
+    /** Set while this row waits for the publication of the named (live) entry; null when public-eligible. */
+    stagedFor: text("staged_for"),
     ...timestamps,
   },
   (t) => [
-    uniqueIndex("relationships_unique").on(t.fromId, t.type, t.toId),
+    // One public relationship per (from, type, to); a staged one may wait to replace it.
+    uniqueIndex("relationships_unique").on(t.fromId, t.type, t.toId).where(sql`staged_for IS NULL`),
+    uniqueIndex("relationships_staged_unique").on(t.fromId, t.type, t.toId, t.stagedFor).where(sql`staged_for IS NOT NULL`),
     index("relationships_from").on(t.fromId),
     index("relationships_to").on(t.toId),
   ],
@@ -377,6 +403,8 @@ export const citations = sqliteTable(
     field: text("field"),
     note: text("note").notNull().default(""),
     position: integer("position").notNull().default(0),
+    /** Set while this row waits for the publication of the named (live) entry; null when public-eligible. */
+    stagedFor: text("staged_for"),
   },
   (t) => [index("citations_entity").on(t.entityId), index("citations_source").on(t.sourceId)],
 );
@@ -404,6 +432,9 @@ export const excerpts = sqliteTable(
     /** Who said or wrote the passage, if catalogued (usually a thinker). */
     speakerId: text("speaker_id").references(() => entities.id, { onDelete: "set null" }),
     position: integer("position").notNull().default(0),
+    /** Set while this row waits for the publication of the named (live) entry; null when public-eligible. */
+    stagedFor: text("staged_for"),
+
     createdBy: text("created_by"),
   },
   (t) => [index("excerpts_entity").on(t.entityId)],
@@ -458,6 +489,8 @@ export const entityMedia = sqliteTable(
     /** Overrides the media caption in this context. */
     caption: text("caption").notNull().default(""),
     position: integer("position").notNull().default(0),
+    /** Set while this row waits for the publication of the named (live) entry; null when public-eligible. */
+    stagedFor: text("staged_for"),
   },
   (t) => [uniqueIndex("entity_media_unique").on(t.entityId, t.mediaId, t.role), index("entity_media_media").on(t.mediaId)],
 );

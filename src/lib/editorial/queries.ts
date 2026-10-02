@@ -6,6 +6,7 @@ import { entityHref, isEntityKind, RELATIONSHIP_TYPES, REVIEW_QUEUE_STATUSES, ST
 import type { Graph } from "@/lib/data/types";
 import { listAudit } from "./audit";
 import { atLeast, type Actor } from "./permissions";
+import { hasTag } from "./collections";
 
 const reviewer = aliasedTable(s.users, "reviewer");
 
@@ -43,7 +44,7 @@ function toRow(r: { e: s.EntityRow; authorName: string | null; reviewerName: str
     status: r.e.status as WorkflowStatus,
     live: r.e.live,
     isSample: r.e.isSample,
-    pending: r.e.live && r.e.revision > (r.e.publishedRevision ?? 0),
+    pending: r.e.live && (r.e.revision > (r.e.publishedRevision ?? 0) || r.e.stagedChanges),
     updatedAt: r.e.updatedAt,
     authorName: r.authorName,
     reviewerName: r.reviewerName,
@@ -116,6 +117,8 @@ export interface BrowseQuery {
   status?: string;
   author?: string;
   reviewer?: string;
+  /** Editorial collection label, e.g. "Initial Marx Corpus". */
+  collection?: string;
   flag?: string;
   sort?: string;
   page?: number;
@@ -134,6 +137,7 @@ export async function browse(q: BrowseQuery) {
   else if (q.status && (WORKFLOW_STATUSES as readonly string[]).includes(q.status)) where.push(eq(s.entities.status, q.status));
   if (q.author) where.push(eq(s.entities.authorId, q.author));
   if (q.reviewer) where.push(eq(s.entities.reviewerId, q.reviewer));
+  if (q.collection) where.push(hasTag(q.collection));
   switch (q.flag as BrowseFlag) {
     case "notes":
       where.push(sql`EXISTS (SELECT 1 FROM editorial_notes n WHERE n.entity_id = entities.id AND n.resolved = 0 AND n.kind != 'approval')`);
@@ -145,7 +149,7 @@ export async function browse(q: BrowseQuery) {
       where.push(sql`NOT EXISTS (SELECT 1 FROM citations c WHERE c.entity_id = entities.id)`);
       break;
     case "pending":
-      where.push(sql`${s.entities.live} = 1 AND ${s.entities.revision} > coalesce(${s.entities.publishedRevision}, 0)`);
+      where.push(sql`${s.entities.live} = 1 AND (${s.entities.revision} > coalesce(${s.entities.publishedRevision}, 0) OR ${s.entities.stagedChanges} = 1)`);
       break;
     case "sample":
       where.push(eq(s.entities.isSample, true));

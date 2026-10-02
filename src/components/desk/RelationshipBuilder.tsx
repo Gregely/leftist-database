@@ -16,6 +16,7 @@ import {
 } from "@/lib/content/model";
 import { EntityPicker, type PickedEntity } from "./EntityPicker";
 import { SourcePicker, type PickedSource } from "./SourcePicker";
+import { PendingMark } from "./ui";
 
 export interface ExistingRelationship {
   id: string;
@@ -29,6 +30,8 @@ export interface ExistingRelationship {
   locator: string | null;
   other: { id: string; title: string; kind: EntityKind; live: boolean; status: WorkflowStatus };
   canDelete: boolean;
+  /** Waits for the entry's next publication. */
+  staged?: boolean;
 }
 
 
@@ -210,6 +213,7 @@ export function RelationshipBuilder({
                           </a>
                           <span className="label ml-2 text-faint">{KINDS[r.other.kind].label}</span>
                           {!r.other.live && <span className="label ml-2 text-ochre">{STATUS_LABELS[r.other.status]} · not public</span>}
+                          {r.staged && <PendingMark />}
                           {r.note && <span className="block text-sm text-muted">{r.note}</span>}
                           {(r.sourceTitle || r.yearStart) && (
                             <span className="label-mono block text-faint">

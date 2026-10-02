@@ -20,6 +20,7 @@ import "server-only";
 import { and, desc, eq, inArray, sql } from "drizzle-orm";
 import { ready } from "@/lib/db/client";
 import * as s from "@/lib/db/schema";
+import { releaseStaged } from "./staging";
 import { indexEntity, removeFromIndex } from "@/lib/db/search-index";
 import { KINDS, type EntityKind, type WorkflowStatus } from "@/lib/content/model";
 import { extractCites, extractFigures } from "@/lib/content/markup";
@@ -92,8 +93,9 @@ export function gateOf(row: s.EntityRow): EntityGate {
   };
 }
 
-export const hasPendingChanges = (row: Pick<s.EntityRow, "live" | "revision" | "publishedRevision">) =>
-  row.live && row.revision > (row.publishedRevision ?? 0);
+/** Does a live entry have changes (text or staged structure) that are not yet public? */
+export const hasPendingChanges = (row: Pick<s.EntityRow, "live" | "revision" | "publishedRevision" | "stagedChanges">) =>
+  row.live && (row.revision > (row.publishedRevision ?? 0) || row.stagedChanges);
 
 function aliasesToText(json: string) {
   try {
@@ -484,6 +486,7 @@ export async function transition(
   if (t === "publish") {
     const working = await readWorkingFields(row);
     await writeTables(db, row, working);
+    await releaseStaged(db, row);
     set.live = true;
     set.publishedRevision = row.revision;
     set.publishedAt = new Date().toISOString();

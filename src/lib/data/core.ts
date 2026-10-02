@@ -15,6 +15,7 @@ import {
   type SourceType,
 } from "@/lib/content/model";
 import { citeKey, extractExcerptIds, extractFigures, extractNotes, extractRefs, footnoteKey } from "@/lib/content/markup";
+import { entityVisible, previewScope, stagedVisible } from "./scope";
 import type {
   EntitySummary,
   ExcerptRecord,
@@ -29,12 +30,21 @@ import type {
 /**
  * The one public-visibility rule: an entry is public when it is live
  * (published and neither unpublished nor archived). Drafts, entries in review
- * and pending changes to live entries never pass this filter.
+ * and pending changes to live entries never pass this filter. Only the
+ * authenticated preview widens it (see ./scope).
  */
-export const isPublic = () => eq(entities.live, true);
+export const isPublic = () => entityVisible();
+
+/** An entry's address; inside a collection preview, links to unpublished entries stay in the preview. */
+export function hrefFor(row: Pick<EntityRow, "id" | "kind" | "slug" | "live">): string {
+  const scope = previewScope();
+  if (scope && !row.live && scope.ids.includes(row.id)) return `/preview/${row.id}${scope.linkQuery ? `?${scope.linkQuery}` : ""}`;
+  return entityHref(row.kind as EntityKind, row.slug);
+}
 
 export function toSummary(row: EntityRow): EntitySummary {
   const kind = row.kind as EntityKind;
+  const href = hrefFor(row);
   return {
     id: row.id,
     kind,
@@ -46,7 +56,7 @@ export function toSummary(row: EntityRow): EntitySummary {
     yearEnd: row.yearEnd,
     status: row.status as WorkflowStatus,
     sample: row.isSample,
-    href: entityHref(kind, row.slug),
+    href,
   };
 }
 
@@ -210,14 +220,14 @@ export async function getRelations(entityId: string, filter: RelationFilter = {}
           .select({ rel: relationships, other: entities })
           .from(relationships)
           .innerJoin(entities, eq(entities.id, relationships.toId))
-          .where(and(eq(relationships.fromId, entityId), isPublic(), typeWhere, kindWhere)),
+          .where(and(eq(relationships.fromId, entityId), isPublic(), stagedVisible(relationships.stagedFor), typeWhere, kindWhere)),
     filter.direction === "out"
       ? []
       : db
           .select({ rel: relationships, other: entities })
           .from(relationships)
           .innerJoin(entities, eq(entities.id, relationships.fromId))
-          .where(and(eq(relationships.toId, entityId), isPublic(), typeWhere, kindWhere)),
+          .where(and(eq(relationships.toId, entityId), isPublic(), stagedVisible(relationships.stagedFor), typeWhere, kindWhere)),
   ]);
 
   const toRelated = (r: { rel: typeof relationships.$inferSelect; other: EntityRow }, direction: "out" | "in"): RelatedEntity => {
@@ -234,9 +244,16 @@ export async function getRelations(entityId: string, filter: RelationFilter = {}
     };
   };
 
-  return [...outRows.map((r) => toRelated(r, "out")), ...inRows.map((r) => toRelated(r, "in"))].sort(
+  return [...preferStaged(outRows).map((r) => toRelated(r, "out")), ...preferStaged(inRows).map((r) => toRelated(r, "in"))].sort(
     (a, b) => b.weight - a.weight || (a.yearStart ?? 9999) - (b.yearStart ?? 9999) || a.title.localeCompare(b.title),
   );
+}
+
+/** In a preview, a staged relationship shadows the released one it will replace. */
+function preferStaged<T extends { rel: typeof relationships.$inferSelect }>(rows: T[]): T[] {
+  const key = (r: T) => `${r.rel.fromId}|${r.rel.type}|${r.rel.toId}`;
+  const staged = new Set(rows.filter((r) => r.rel.stagedFor).map(key));
+  return rows.filter((r) => r.rel.stagedFor || !staged.has(key(r)));
 }
 
 export function pick(rel: RelatedEntity[], type: RelationshipType, direction?: "out" | "in", kind?: EntityKind) {
@@ -259,13 +276,13 @@ export async function resolveRefs(refs: { kind: string; slug: string }[]): Promi
   if (!valid.length) return {};
   const db = await ready();
   const rows = await db
-    .select({ kind: entities.kind, slug: entities.slug, title: entities.title })
+    .select({ id: entities.id, kind: entities.kind, slug: entities.slug, title: entities.title, live: entities.live })
     .from(entities)
     .where(and(isPublic(), or(...valid.map((r) => and(eq(entities.kind, r.kind), eq(entities.slug, r.slug))))));
   const out: ProseContext["refs"] = {};
   for (const r of rows) {
     const kind = r.kind as EntityKind;
-    out[`${kind}:${r.slug}`] = { title: r.title, href: entityHref(kind, r.slug), kind };
+    out[`${kind}:${r.slug}`] = { title: r.title, href: hrefFor(r), kind };
   }
   return out;
 }
@@ -276,7 +293,7 @@ export async function getCitations(entityId: string) {
     .select({ c: citations, s: sources })
     .from(citations)
     .innerJoin(sources, eq(sources.id, citations.sourceId))
-    .where(eq(citations.entityId, entityId))
+    .where(and(eq(citations.entityId, entityId), stagedVisible(citations.stagedFor)))
     .orderBy(asc(citations.position));
   return rows.map((r) => ({ ...r.c, source: toSource(r.s) }));
 }
@@ -374,7 +391,7 @@ export async function getMediaFor(entityId: string): Promise<PublicMedia[]> {
     .select({ a: entityMedia, m: media })
     .from(entityMedia)
     .innerJoin(media, eq(media.id, entityMedia.mediaId))
-    .where(eq(entityMedia.entityId, entityId))
+    .where(and(eq(entityMedia.entityId, entityId), stagedVisible(entityMedia.stagedFor)))
     .orderBy(asc(entityMedia.position));
   return rows.map((r) => toPublicMedia(r.m, r.a.role as MediaRole, r.a.caption));
 }
@@ -407,7 +424,7 @@ async function hydrateExcerpts(rows: (typeof excerpts.$inferSelect)[]): Promise<
 export async function getExcerpts(where: { entityId?: string; textId?: string }): Promise<ExcerptRecord[]> {
   const db = await ready();
   const cond = where.entityId ? eq(excerpts.entityId, where.entityId) : eq(excerpts.textId, where.textId!);
-  const rows = await db.select().from(excerpts).where(cond).orderBy(asc(excerpts.position));
+  const rows = await db.select().from(excerpts).where(and(cond, stagedVisible(excerpts.stagedFor))).orderBy(asc(excerpts.position));
   if (where.entityId) return hydrateExcerpts(rows);
   // Passages from a text, gathered across entries: only those on live entries.
   const liveIds = new Set((await getEntitiesByIds([...new Set(rows.map((r) => r.entityId))])).map((e) => e.id));
@@ -417,7 +434,7 @@ export async function getExcerpts(where: { entityId?: string; textId?: string })
 async function getExcerptsByIds(entityId: string, ids: string[]): Promise<ExcerptRecord[]> {
   if (!ids.length) return [];
   const db = await ready();
-  return hydrateExcerpts(await db.select().from(excerpts).where(and(eq(excerpts.entityId, entityId), inArray(excerpts.id, ids))));
+  return hydrateExcerpts(await db.select().from(excerpts).where(and(eq(excerpts.entityId, entityId), inArray(excerpts.id, ids), stagedVisible(excerpts.stagedFor))));
 }
 
 /** Totals shown in mastheads. */
@@ -428,16 +445,16 @@ export async function getArchiveStats() {
     db
       .select({ n: sql<number>`count(*)` })
       .from(relationships)
-      .where(sql`EXISTS (SELECT 1 FROM entities a WHERE a.id = ${relationships.fromId} AND a.live = 1) AND EXISTS (SELECT 1 FROM entities b WHERE b.id = ${relationships.toId} AND b.live = 1)`)
+      .where(sql`${relationships.stagedFor} IS NULL AND EXISTS (SELECT 1 FROM entities a WHERE a.id = ${relationships.fromId} AND a.live = 1) AND EXISTS (SELECT 1 FROM entities b WHERE b.id = ${relationships.toId} AND b.live = 1)`)
       .get(),
     db.select({ n: sql<number>`count(*)` }).from(sources).where(sql`${PUBLIC_SOURCE}`).get(),
   ]);
   return { entities: Number(e?.n ?? 0), relationships: Number(r?.n ?? 0), sources: Number(s?.n ?? 0) };
 }
 
-/** A source is public once something live cites, quotes or relies on it. */
+/** A source is public once something live cites, quotes or relies on it (staged structure does not count). */
 export const PUBLIC_SOURCE = sql`(
-  EXISTS (SELECT 1 FROM citations c JOIN entities e ON e.id = c.entity_id WHERE c.source_id = sources.id AND e.live = 1)
-  OR EXISTS (SELECT 1 FROM excerpts x JOIN entities e ON e.id = x.entity_id WHERE x.source_id = sources.id AND e.live = 1)
-  OR EXISTS (SELECT 1 FROM relationships r JOIN entities a ON a.id = r.from_id JOIN entities b ON b.id = r.to_id WHERE r.source_id = sources.id AND a.live = 1 AND b.live = 1)
+  EXISTS (SELECT 1 FROM citations c JOIN entities e ON e.id = c.entity_id WHERE c.source_id = sources.id AND e.live = 1 AND c.staged_for IS NULL)
+  OR EXISTS (SELECT 1 FROM excerpts x JOIN entities e ON e.id = x.entity_id WHERE x.source_id = sources.id AND e.live = 1 AND x.staged_for IS NULL)
+  OR EXISTS (SELECT 1 FROM relationships r JOIN entities a ON a.id = r.from_id JOIN entities b ON b.id = r.to_id WHERE r.source_id = sources.id AND a.live = 1 AND b.live = 1 AND r.staged_for IS NULL)
 )`;

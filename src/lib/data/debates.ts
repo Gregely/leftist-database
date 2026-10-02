@@ -1,5 +1,5 @@
 import "server-only";
-import { asc, eq, inArray } from "drizzle-orm";
+import { and, asc, eq, inArray } from "drizzle-orm";
 import { ready } from "@/lib/db/client";
 import {
   debateArguments,
@@ -11,6 +11,7 @@ import {
 } from "@/lib/db/schema";
 import type { Stance } from "@/lib/content/model";
 import { buildProse, getEntitiesByIds, getEntityRow, getMediaFor, getRelations, parseJsonArray, toSummary, uniqueById, withPreview } from "./core";
+import { structureVisible } from "./scope";
 import type { EntitySummary, PreviewSpec, StanceCell } from "./types";
 
 export interface DebatePosition {
@@ -43,9 +44,21 @@ export async function getDebate(slug: string, preview?: PreviewSpec) {
   const db = await ready();
   const [storedDetails, propositions, positions, args, relations, media] = await Promise.all([
     db.select().from(debateDetails).where(eq(debateDetails.entityId, row.id)).get(),
-    db.select().from(debatePropositions).where(eq(debatePropositions.debateId, row.id)).orderBy(asc(debatePropositions.position)),
-    db.select().from(debatePositions).where(eq(debatePositions.debateId, row.id)).orderBy(asc(debatePositions.position)),
-    db.select().from(debateArguments).where(eq(debateArguments.debateId, row.id)).orderBy(asc(debateArguments.position)),
+    db
+      .select()
+      .from(debatePropositions)
+      .where(and(eq(debatePropositions.debateId, row.id), structureVisible(debatePropositions.stagedFor, debatePropositions.debateId)))
+      .orderBy(asc(debatePropositions.position)),
+    db
+      .select()
+      .from(debatePositions)
+      .where(and(eq(debatePositions.debateId, row.id), structureVisible(debatePositions.stagedFor, debatePositions.debateId)))
+      .orderBy(asc(debatePositions.position)),
+    db
+      .select()
+      .from(debateArguments)
+      .where(and(eq(debateArguments.debateId, row.id), structureVisible(debateArguments.stagedFor, debateArguments.debateId)))
+      .orderBy(asc(debateArguments.position)),
     getRelations(row.id),
     getMediaFor(row.id),
   ]);
@@ -122,7 +135,7 @@ export async function getDebatePositionLabels(debateIds: string[]): Promise<Reco
   const rows = await db
     .select({ debateId: debatePositions.debateId, label: debatePositions.label })
     .from(debatePositions)
-    .where(inArray(debatePositions.debateId, debateIds))
+    .where(and(inArray(debatePositions.debateId, debateIds), structureVisible(debatePositions.stagedFor, debatePositions.debateId)))
     .orderBy(asc(debatePositions.position));
   const out: Record<string, string[]> = {};
   for (const r of rows) (out[r.debateId] ??= []).push(r.label);

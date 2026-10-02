@@ -112,21 +112,71 @@ test("an editor publishes, renames with a redirect, then archives after seeing d
   await expect(page.getByRole("button", { name: "Restore from archive" })).toBeVisible();
 });
 
-test("editors edit a debate's stance matrix and a path's route", async ({ browser }) => {
+test("changes to a live debate's structure are staged until it is published", async ({ browser }) => {
   const page = await deskAs(browser, "editor");
-  await page.goto("/admin/entries/db_class-consciousness?tab=structure");
-  await page.getByLabel("Marx on: Culture and common sense are decisive terrains.").selectOption("qualified");
-  await page.getByRole("button", { name: "Save stances" }).click();
-  await expect(page.getByLabel("Marx on: Culture and common sense are decisive terrains.")).toHaveValue("qualified");
+  const cell = "Marx on: Culture and common sense are decisive terrains.";
+  const row = (p: Page) => p.locator("#compare tbody tr").filter({ hasText: "Culture and common sense" }).locator("td").first();
+  // Choose a stance that differs from what the public page shows now.
   await page.goto("/debates/class-consciousness");
-  const row = page.locator("#compare tbody tr").filter({ hasText: "Culture and common sense" });
-  await expect(row.locator("td").first()).toContainText("Qualified");
+  const before = (await row(page).textContent()) ?? "";
+  const [value, label] = before.includes("Qualified") ? ["rejects", "Rejects"] : ["qualified", "Qualified"];
+
+  await page.goto("/admin/entries/db_class-consciousness?tab=structure");
+  await expect(page.getByText(/Your first change here starts a staged copy|You are editing a staged copy/)).toBeVisible();
+  await page.getByLabel(cell).selectOption(value);
+  await page.getByRole("button", { name: "Save stances" }).click();
+  await expect(page.getByText("You are editing a staged copy")).toBeVisible();
+  await expect(page.getByLabel(cell)).toHaveValue(value);
+
+  // The public debate is unchanged; the preview shows the staged copy.
+  await page.goto("/debates/class-consciousness");
+  await expect(row(page)).not.toContainText(label);
+  await page.goto("/preview/db_class-consciousness");
+  await expect(row(page)).toContainText(label);
+
+  await page.goto("/admin/entries/db_class-consciousness");
+  for (const step of ["Submit for review", "Start review", "Approve", "Publish changes"]) await fire(page, step);
+  await page.goto("/debates/class-consciousness");
+  await expect(row(page)).toContainText(label);
 
   await page.goto("/admin/entries/pa_anarchism?tab=structure");
   const steps = page.getByRole("button", { name: /^Move .* down$/ });
   const first = (await steps.first().getAttribute("aria-label"))!.replace(/^Move | down$/g, "");
   await steps.first().click();
   await expect(page.getByRole("button", { name: /^Move .* down$/ }).first()).not.toHaveAttribute("aria-label", `Move ${first} down`);
+});
+
+test("relationships added to a live entry wait for its next publication", async ({ browser }) => {
+  const page = await deskAs(browser, "editor");
+  const tag = Date.now().toString(36);
+  const title = `Staging Test ${tag}`;
+  const id = await createEntry(page, "Concept", title);
+  await page.getByLabel("Summary").fill(`A test concept used to check staged relationships ${tag}.`);
+  await page.locator(".rt", { has: page.locator("#field-brief") }).locator(".ProseMirror").click();
+  await page.keyboard.type("A short plain-language explanation written for the test suite.");
+  await expectSaved(page);
+  const slug = await page.getByLabel("Slug").inputValue();
+  for (const step of ["Submit for review", "Start review", "Approve", "Publish"]) await fire(page, step);
+
+  // From the live concept, connect it to a live thinker.
+  await page.goto(`/admin/entries/${id}?tab=connections`);
+  await expect(page.getByText("Anything you add here waits for its next publication")).toBeVisible();
+  const rel = page.getByRole("group", { name: "Add a relationship" });
+  await rel.getByLabel("Type").selectOption("ASSOCIATED_WITH");
+  await rel.getByRole("combobox", { name: "To" }).fill("Karl Marx");
+  await page.getByRole("listbox").getByRole("option", { name: /Karl Marx/ }).first().click();
+  await rel.getByRole("button", { name: "Add relationship" }).click();
+  await expect(page.getByText("◌ with next publication").first()).toBeVisible();
+
+  expect(await (await page.request.get(`/concepts/${slug}`)).text()).not.toContain("Karl Marx");
+  expect(await (await page.request.get("/thinkers/marx")).text()).not.toContain(title);
+  expect(await (await page.request.get(`/preview/${id}`)).text()).toContain("Karl Marx");
+
+  await page.goto(`/admin/entries/${id}`);
+  await expect(page.getByText(/Unpublished changes/)).toBeVisible();
+  for (const step of ["Submit for review", "Start review", "Approve", "Publish changes"]) await fire(page, step);
+  expect(await (await page.request.get(`/concepts/${slug}`)).text()).toContain("Karl Marx");
+  expect(await (await page.request.get("/thinkers/marx")).text()).toContain(title);
 });
 
 async function saveVersion(page: Page, note: string) {

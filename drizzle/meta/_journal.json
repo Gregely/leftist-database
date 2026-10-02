@@ -29,6 +29,13 @@
       "when": 1790888610867,
       "tag": "0003_excerpt_verification",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1790894144642,
+      "tag": "0004_staged_structure",
+      "breakpoints": true
     }
   ]
 }

@@ -9,7 +9,7 @@ import * as schema from "./schema";
  */
 export const DEFAULT_DATABASE_URL = "file:data/atlas.db";
 
-type Db = LibSQLDatabase<typeof schema>;
+export type Db = LibSQLDatabase<typeof schema>;
 
 const globalForDb = globalThis as unknown as {
   __atlasClient?: Client;

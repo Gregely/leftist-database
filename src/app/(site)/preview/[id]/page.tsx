@@ -15,14 +15,21 @@ import type { PreviewSpec } from "@/lib/data/types";
 import { STATUS_LABELS, type WorkflowStatus } from "@/lib/content/model";
 import { hasPendingChanges, loadEntity, previewOverlay } from "@/lib/editorial/content";
 import { assertCan } from "@/lib/editorial/permissions";
+import { idsInCollection, parseTags } from "@/lib/editorial/collections";
+import { enterPreviewScope } from "@/lib/data/scope";
 
 export const metadata: Metadata = { title: "Preview", robots: { index: false, follow: false } };
 
-type Props = { params: Promise<{ id: string }>; searchParams: Promise<{ depth?: string; step?: string; embed?: string }> };
+type Props = { params: Promise<{ id: string }>; searchParams: Promise<{ depth?: string; step?: string; embed?: string; with?: string }> };
 
 /**
  * Authenticated preview of an entry's working copy, rendered with the same
  * view components as the public site. Never cached, never indexed.
+ *
+ * The entry's staged structure is always included. With `?with=<collection>`
+ * the other unpublished entries of that editorial collection are treated as
+ * published too, so a whole body of draft work can be read — and navigated —
+ * as it would appear once released.
  */
 export default async function PreviewPage({ params, searchParams }: Props) {
   const [{ id }, sp] = await Promise.all([params, searchParams]);
@@ -30,6 +37,12 @@ export default async function PreviewPage({ params, searchParams }: Props) {
   const row = await loadEntity(id);
   if (!row) notFound();
   assertCan(user, "entity.view");
+  const tags = parseTags(row.editorialTags);
+  const collection = sp.with && tags.includes(sp.with) ? sp.with : null;
+  enterPreviewScope(
+    collection ? [id, ...(await idsInCollection(collection))] : [id],
+    collection ? `with=${encodeURIComponent(collection)}` : "",
+  );
   const overlay = await previewOverlay(row);
   const preview: PreviewSpec = { entityId: id, entity: overlay.entity, details: overlay.details };
   const slug = row.slug;
@@ -81,7 +94,16 @@ export default async function PreviewPage({ params, searchParams }: Props) {
           <p className="label">
             Preview · v{row.revision} · {STATUS_LABELS[row.status as WorkflowStatus]}
             {row.live ? (hasPendingChanges(row) ? " · live version differs" : " · matches the live page") : " · not public"}
+            {collection && ` · with the rest of “${collection}”`}
           </p>
+          {sp.embed !== "1" && tags.length > 0 && (
+            <Link
+              href={collection ? `/preview/${id}` : `/preview/${id}?with=${encodeURIComponent(tags[0])}`}
+              className="label underline underline-offset-4"
+            >
+              {collection ? "Show this entry alone" : `Include unpublished “${tags[0]}” entries`}
+            </Link>
+          )}
           {sp.embed !== "1" && (
             <>
               <ViewSwitch id={id} active="preview" tone="red" className="lg:hidden" />

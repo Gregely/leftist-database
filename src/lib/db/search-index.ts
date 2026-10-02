@@ -30,7 +30,7 @@ const SELECT_DOCUMENTS = sql`
       (SELECT brief || ' ' || standard || ' ' || deep FROM concept_details WHERE entity_id = e.id),
       (SELECT COALESCE(original_title,'') || ' ' || COALESCE(publication_note,'') || ' ' || form FROM text_details WHERE entity_id = e.id),
       (SELECT COALESCE(period_label,'') FROM tendency_details WHERE entity_id = e.id),
-      (SELECT intro || ' ' || COALESCE((SELECT group_concat(label || ' ' || central_claim || ' ' || summary, ' ') FROM debate_positions WHERE debate_id = e.id), '') FROM debate_details WHERE entity_id = e.id),
+      (SELECT intro || ' ' || COALESCE((SELECT group_concat(label || ' ' || central_claim || ' ' || summary, ' ') FROM debate_positions WHERE debate_id = e.id AND staged_for IS NULL), '') FROM debate_details WHERE entity_id = e.id),
       (SELECT COALESCE(date_label,'') || ' ' || COALESCE(place,'') || ' ' || event_type FROM event_details WHERE entity_id = e.id),
       (SELECT entry_line || ' ' || level FROM path_details WHERE entity_id = e.id)
     ) AS extra

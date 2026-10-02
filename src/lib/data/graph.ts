@@ -3,13 +3,13 @@ import { and, eq, inArray, or } from "drizzle-orm";
 import { ready } from "@/lib/db/client";
 import { entities, relationships, tendencyDetails } from "@/lib/db/schema";
 import {
-  entityHref,
   RELATIONSHIP_TYPES,
   type EntityKind,
   type RelationshipFamily,
   type RelationshipType,
 } from "@/lib/content/model";
-import { isPublic } from "./core";
+import { hrefFor, isPublic } from "./core";
+import { stagedVisible } from "./scope";
 import type { Graph, GraphEdge, GraphNode } from "./types";
 
 const DEFAULT_FAMILIES: RelationshipFamily[] = ["influence", "critique", "response", "affinity"];
@@ -23,7 +23,7 @@ async function tendencyFor(ids: string[]): Promise<Map<string, { color: string; 
     .from(relationships)
     .innerJoin(entities, eq(entities.id, relationships.toId))
     .innerJoin(tendencyDetails, eq(tendencyDetails.entityId, entities.id))
-    .where(and(eq(relationships.type, "MEMBER_OF"), inArray(relationships.fromId, ids)));
+    .where(and(eq(relationships.type, "MEMBER_OF"), inArray(relationships.fromId, ids), isPublic(), stagedVisible(relationships.stagedFor)));
   const out = new Map<string, { color: string; group: string; sort: number }>();
   for (const r of rows) {
     const prev = out.get(r.thinker);
@@ -40,10 +40,13 @@ async function buildGraph(nodeIds: string[], families: RelationshipFamily[], inc
     db
       .select()
       .from(relationships)
-      .where(and(inArray(relationships.fromId, nodeIds), inArray(relationships.toId, nodeIds))),
+      .where(and(inArray(relationships.fromId, nodeIds), inArray(relationships.toId, nodeIds), stagedVisible(relationships.stagedFor))),
   ]);
   const present = new Set(rows.map((r) => r.id));
+  // A staged relationship shadows the released one it will replace.
+  const shadowed = new Set(rels.filter((r) => r.stagedFor).map((r) => `${r.fromId}|${r.type}|${r.toId}`));
   const edges: GraphEdge[] = rels
+    .filter((r) => r.stagedFor || !shadowed.has(`${r.fromId}|${r.type}|${r.toId}`))
     .filter((r) => present.has(r.fromId) && present.has(r.toId))
     .filter((r) => families.includes(RELATIONSHIP_TYPES[r.type as RelationshipType]?.family))
     .map((r) => {
@@ -71,7 +74,7 @@ async function buildGraph(nodeIds: string[], families: RelationshipFamily[], inc
     title: r.title,
     subtitle: r.subtitle,
     summary: r.summary,
-    href: entityHref(r.kind as EntityKind, r.slug),
+    href: hrefFor(r),
     yearStart: r.yearStart,
     yearEnd: r.yearEnd,
     color: tendencies.get(r.id)?.color ?? null,
@@ -127,6 +130,7 @@ export async function getNeighborhood(
       .where(
         and(
           inArray(relationships.type, allowedTypes),
+          stagedVisible(relationships.stagedFor),
           or(inArray(relationships.fromId, frontier), inArray(relationships.toId, frontier)),
         ),
       );

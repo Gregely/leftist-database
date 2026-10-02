@@ -5,6 +5,7 @@ import { DeskHeading, DeskPage, Notice } from "@/components/desk/ui";
 import { requireUser } from "@/lib/auth/session";
 import { ENTITY_KINDS, KINDS, STATUS_LABELS, WORKFLOW_STATUSES } from "@/lib/content/model";
 import { browse, BROWSE_FLAGS, BROWSE_SORTS, staffList } from "@/lib/editorial/queries";
+import { listCollections } from "@/lib/editorial/collections";
 
 export const metadata: Metadata = { title: "Content" };
 
@@ -14,9 +15,10 @@ export default async function ContentBrowser({ searchParams }: Props) {
   await requireUser();
   const sp = await searchParams;
   const page = Math.max(1, Number(sp.page) || 1);
-  const [res, staff] = await Promise.all([
-    browse({ q: sp.q, kind: sp.kind, status: sp.status, author: sp.author, reviewer: sp.reviewer, flag: sp.flag, sort: sp.sort, page }),
+  const [res, staff, collections] = await Promise.all([
+    browse({ q: sp.q, kind: sp.kind, status: sp.status, author: sp.author, reviewer: sp.reviewer, collection: sp.collection, flag: sp.flag, sort: sp.sort, page }),
     staffList(),
+    listCollections(),
   ]);
   const pages = Math.ceil(res.total / res.perPage);
   const qs = (o: Record<string, string | undefined>) => {
@@ -46,7 +48,7 @@ export default async function ContentBrowser({ searchParams }: Props) {
           <Notice tone="success">The draft was deleted.</Notice>
         </div>
       )}
-      <form className="mt-6 grid gap-3 border-b border-rule pb-6 sm:grid-cols-2 lg:grid-cols-8" role="search" aria-label="Filter content">
+      <form className="mt-6 grid gap-3 border-b border-rule pb-6 sm:grid-cols-2 lg:grid-cols-9" role="search" aria-label="Filter content">
         <div className="sm:col-span-2 lg:col-span-2">
           <label htmlFor="f-q" className="label mb-1 block text-faint">
             Search
@@ -57,6 +59,7 @@ export default async function ContentBrowser({ searchParams }: Props) {
         {select("status", "Status", [["live", "Live (public)"], ...WORKFLOW_STATUSES.map((s) => [s, STATUS_LABELS[s]] as [string, string])], sp.status)}
         {select("author", "Author", staff.map((u) => [u.id, u.name]), sp.author)}
         {select("reviewer", "Reviewer", staff.filter((u) => u.role !== "contributor").map((u) => [u.id, u.name]), sp.reviewer)}
+        {select("collection", "Collection", collections.map((c) => [c.tag, `${c.tag} (${c.count})`]), sp.collection)}
         {select("flag", "Flagged", Object.entries(BROWSE_FLAGS), sp.flag)}
         <div>
           <label htmlFor="f-sort" className="label mb-1 block text-faint">
@@ -70,7 +73,7 @@ export default async function ContentBrowser({ searchParams }: Props) {
             ))}
           </select>
         </div>
-        <div className="flex items-end gap-3 sm:col-span-2 lg:col-span-8">
+        <div className="flex items-end gap-3 sm:col-span-2 lg:col-span-9">
           <button type="submit" className="btn">
             Apply
           </button>

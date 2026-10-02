@@ -1,7 +1,8 @@
 import "server-only";
 import { and, eq, inArray } from "drizzle-orm";
 import { ready } from "@/lib/db/client";
-import { debatePositions, entities, thinkerDetails } from "@/lib/db/schema";
+import { debatePositions, entities, relationships, thinkerDetails } from "@/lib/db/schema";
+import { stagedVisible, structureVisible } from "./scope";
 import { entityHref } from "@/lib/content/model";
 import { buildProse, getEntityRow, getExcerpts, getMediaFor, getRelations, isPublic, pick, toSummary, uniqueById, withPreview } from "./core";
 import type { PreviewSpec } from "./types";
@@ -28,7 +29,7 @@ export async function getThinker(slug: string, preview?: PreviewSpec) {
       .select({ position: debatePositions, debate: entities })
       .from(debatePositions)
       .innerJoin(entities, eq(entities.id, debatePositions.debateId))
-      .where(and(eq(debatePositions.holderId, row.id), isPublic())),
+      .where(and(eq(debatePositions.holderId, row.id), isPublic(), structureVisible(debatePositions.stagedFor, debatePositions.debateId))),
     getExcerpts({ entityId: row.id }),
     getNeighborhood(row.id, { depth: 1, kinds: ["thinker"], limit: 24, includeIds: preview ? [row.id] : [] }),
     buildProse(row.id, [row.body, details.context, details.legacy]),
@@ -93,12 +94,13 @@ export async function withTendencies<T extends { id: string }>(items: T[]) {
   const db = await ready();
   const ids = items.map((i) => i.id);
   const memberships = ids.length
-    ? await db.query.relationships.findMany({
-        where: (r, { and: a, eq: e, inArray: inn }) => a(e(r.type, "MEMBER_OF"), inn(r.fromId, ids)),
-      })
+    ? await db
+        .select()
+        .from(relationships)
+        .where(and(eq(relationships.type, "MEMBER_OF"), inArray(relationships.fromId, ids), stagedVisible(relationships.stagedFor)))
     : [];
   const tendencyIds = [...new Set(memberships.map((m) => m.toId))];
-  const tendencies = tendencyIds.length ? await db.select().from(entities).where(inArray(entities.id, tendencyIds)) : [];
+  const tendencies = tendencyIds.length ? await db.select().from(entities).where(and(inArray(entities.id, tendencyIds), isPublic())) : [];
   const tById = new Map(tendencies.map((t) => [t.id, toSummary(t)]));
   return items.map((r) => ({
     ...r,

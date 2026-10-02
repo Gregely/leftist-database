@@ -46,6 +46,15 @@ const rich = (name: string, label: string, help?: string, compact?: boolean): Fi
 const curation: FieldDef[] = [
   { name: "featured", label: "Feature on the home page and maps", type: "checkbox", store: "entity", section: "Curation", width: "half" },
   { name: "sortOrder", label: "Editorial order", type: "number", store: "entity", section: "Curation", width: "third", help: "Lower comes first." },
+  {
+    name: "isSample",
+    label: "Sample record",
+    type: "checkbox",
+    store: "entity",
+    section: "Curation",
+    width: "half",
+    help: "Seeded demonstration content, labelled as such on the public site. Clear it when the entry has been properly researched.",
+  },
 ];
 
 function section(name: string, defs: FieldDef[]): FieldDef[] {
@@ -89,7 +98,9 @@ export const KIND_FIELDS: Record<EntityKind, FieldDef[]> = {
       { name: "originalTitle", label: "Original title", type: "text", store: "details", section: "", width: "half" },
       { name: "language", label: "Language", type: "text", store: "details", section: "", width: "third" },
       { name: "form", label: "Form", type: "select", store: "details", section: "", options: TEXT_FORMS, width: "third" },
-      ...years("First published", "Completed (if a span)", true),
+      ...years("Year written", "Completed (if a span)", true).map((f) =>
+        f.name === "yearStart" ? { ...f, help: "When the work was written (or first published, if that is the same). Places it on the timeline; record a later publication in the note." } : f,
+      ),
       { name: "publicationNote", label: "Publication note", type: "text", store: "details", section: "", placeholder: "Written 1845–46; first published 1932" },
       { name: "edition", label: "Recommended edition", type: "text", store: "details", section: "", placeholder: "trans. Ben Fowkes, Penguin, 1976" },
       { name: "difficulty", label: "Difficulty", type: "select", store: "details", section: "", options: ["1", "2", "3"], width: "third", help: "1 accessible · 2 demanding · 3 specialist" },

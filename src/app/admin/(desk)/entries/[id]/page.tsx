@@ -22,6 +22,7 @@ import { completeness, dependencies, validateEntity } from "@/lib/editorial/insi
 import { mediaGaps } from "@/lib/editorial/media";
 import { notesFor } from "@/lib/editorial/notes";
 import { atLeast, availableActions, can } from "@/lib/editorial/permissions";
+import { parseTags } from "@/lib/editorial/collections";
 import { deskNeighborhood } from "@/lib/editorial/queries";
 import { sourceGaps } from "@/lib/editorial/sources";
 import { citationsFor, debateStructure, excerptsFor, mediaFor, pathSteps, relationshipsFor } from "@/lib/editorial/structure";
@@ -56,6 +57,23 @@ export default async function EntryPage({ params, searchParams }: Props) {
   const gate = gateOf(row);
   const canEdit = can(user, "entity.edit", gate);
   const canStructure = can(user, "entity.editStructure", gate);
+  // Removing something that is already public is immediate, so on a live entry it is an editor's call.
+  const canRemove = (stagedFor: string | null) => canStructure && (!row.live || !!stagedFor || atLeast(user, "editor"));
+  const tags = parseTags(row.editorialTags);
+  const stagedNotice = row.live ? (
+    <Notice>
+      This entry is live. Anything you add here waits for its next publication — marked <span className="label text-ochre">◌ with next publication</span> — and
+      can be checked in Preview first.
+    </Notice>
+  ) : null;
+  const structureNotice =
+    row.live && canStructure ? (
+      <Notice>
+        {row.stagedStructure
+          ? `You are editing a staged copy of this ${kind === "debate" ? "debate's structure" : "route"}. The public version stays as it is until the entry is next published.`
+          : `This entry is live. Your first change here starts a staged copy of its ${kind === "debate" ? "structure" : "route"}; the public version stays as it is until the entry is next published.`}
+      </Notice>
+    ) : null;
   const pending = hasPendingChanges(row);
   const hasStructure = kind === "debate" || kind === "path";
   const tab = TABS.some((t) => t.id === sp.tab) && (sp.tab !== "structure" || hasStructure) ? sp.tab! : "content";
@@ -131,7 +149,7 @@ export default async function EntryPage({ params, searchParams }: Props) {
     const timeline = y != null ? await getTimeline({ from: y - 12, to: y + 12 }) : [];
     body = (
       <div className="space-y-12">
-        {!canStructure && canEdit && <Notice>This entry is live, so its connections are changed by editors. Leave a note in Review to suggest one.</Notice>}
+        {canStructure && stagedNotice}
         <RelationshipBuilder
           from={{ id, kind, slug: row.slug, title: row.title }}
           canEdit={canStructure}
@@ -146,7 +164,8 @@ export default async function EntryPage({ params, searchParams }: Props) {
             sourceTitle: r.sourceTitle,
             locator: r.locator,
             other: { id: r.other.id, title: r.other.title, kind: r.other.kind as EntityKind, live: r.other.live, status: r.other.status as WorkflowStatus },
-            canDelete: canStructure,
+            canDelete: canRemove(r.stagedFor),
+            staged: !!r.stagedFor,
           }))}
         />
         {graph.nodes.length > 1 && (
@@ -181,7 +200,7 @@ export default async function EntryPage({ params, searchParams }: Props) {
   } else if (tab === "sources") {
     body = (
       <div className="space-y-12">
-        {!canStructure && canEdit && <Notice>This entry is live, so its sources and excerpts are changed by editors.</Notice>}
+        {canStructure && stagedNotice}
         <Panel title={`Sources · ${cites.length}`}>
           <CitationsPanel
             entityId={id}
@@ -192,6 +211,8 @@ export default async function EntryPage({ params, searchParams }: Props) {
               locator: c.c.locator,
               note: c.c.note,
               source: { id: c.src.id, title: c.src.title, author: c.src.author, publicationDate: c.src.publicationDate, sourceType: c.src.sourceType as never, gaps: sourceGaps(c.src) },
+              staged: !!c.c.stagedFor,
+              canRemove: canRemove(c.c.stagedFor),
             }))}
           />
         </Panel>
@@ -209,6 +230,8 @@ export default async function EntryPage({ params, searchParams }: Props) {
               text: x.text,
               speaker: x.speaker,
               source: x.source ? { id: x.source.id, title: x.source.title } : null,
+              staged: !!x.stagedFor,
+              canRemove: canRemove(x.stagedFor),
             }))}
           />
         </Panel>
@@ -227,6 +250,8 @@ export default async function EntryPage({ params, searchParams }: Props) {
             caption: x.a.caption,
             media: { id: x.m.id, title: x.m.title, altText: x.m.altText, credit: x.m.credit, license: x.m.license, rights: x.m.rights, width: x.m.width, height: x.m.height },
             gaps: mediaGaps(x.m),
+            staged: !!x.a.stagedFor,
+            canRemove: canRemove(x.a.stagedFor),
           }))}
         />
       </Panel>
@@ -234,44 +259,53 @@ export default async function EntryPage({ params, searchParams }: Props) {
   } else if (tab === "structure" && kind === "debate") {
     const d = await debateStructure(id);
     body = (
-      <DebateEditor
-        debateId={id}
-        canEdit={canStructure}
-        data={{
-          propositions: d.propositions.map((p) => ({ id: p.id, statement: p.statement })),
-          positions: d.positions.map((p) => {
-            const h = d.holders.find((x) => x.id === p.holderId);
-            return {
-              id: p.id,
-              label: p.label,
-              holder: h ? { id: h.id, kind: h.kind as EntityKind, slug: h.slug, title: h.title } : null,
-              centralClaim: p.centralClaim,
-              summary: p.summary,
-              assumptions: JSON.parse(p.assumptions),
-              criticisms: JSON.parse(p.criticisms),
-              links: d.links.filter((l) => l.positionId === p.id).map((l) => ({ id: l.entity.id, title: l.entity.title, kind: l.entity.kind as EntityKind })),
-            };
-          }),
-          stances: d.stances.map((s) => ({ positionId: s.positionId, propositionId: s.propositionId, stance: s.stance, note: s.note })),
-          args: d.args.map((a) => ({ id: a.id, kind: a.kind, body: a.body, positionId: a.positionId, respondsToId: a.respondsToId })),
-        }}
-      />
+      <div className="space-y-8">
+        {structureNotice}
+        <DebateEditor
+          key={d.staged ? "staged" : "released"}
+          debateId={id}
+          canEdit={canStructure}
+          data={{
+            propositions: d.propositions.map((p) => ({ id: p.id, statement: p.statement })),
+            positions: d.positions.map((p) => {
+              const h = d.holders.find((x) => x.id === p.holderId);
+              return {
+                id: p.id,
+                label: p.label,
+                holder: h ? { id: h.id, kind: h.kind as EntityKind, slug: h.slug, title: h.title } : null,
+                centralClaim: p.centralClaim,
+                summary: p.summary,
+                assumptions: JSON.parse(p.assumptions),
+                criticisms: JSON.parse(p.criticisms),
+                links: d.links.filter((l) => l.positionId === p.id).map((l) => ({ id: l.entity.id, title: l.entity.title, kind: l.entity.kind as EntityKind })),
+              };
+            }),
+            stances: d.stances.map((s) => ({ positionId: s.positionId, propositionId: s.propositionId, stance: s.stance, note: s.note })),
+            args: d.args.map((a) => ({ id: a.id, kind: a.kind, body: a.body, positionId: a.positionId, respondsToId: a.respondsToId })),
+          }}
+        />
+      </div>
     );
   } else if (tab === "structure" && kind === "path") {
     const steps = await pathSteps(id);
+    const routeKey = row.stagedStructure ? "staged" : "released";
     body = (
-      <PathEditor
-        pathId={id}
-        canEdit={canStructure}
-        steps={steps.map(({ step, e }) => ({
-          id: step.id,
-          position: step.position,
-          framing: step.framing,
-          track: step.track as "main",
-          parentStepId: step.parentStepId,
-          entity: { id: e.id, title: e.title, kind: e.kind as EntityKind, live: e.live },
-        }))}
-      />
+      <div className="space-y-8">
+        {structureNotice}
+        <PathEditor
+          key={routeKey}
+          pathId={id}
+          canEdit={canStructure}
+          steps={steps.map(({ step, e }) => ({
+            id: step.id,
+            position: step.position,
+            framing: step.framing,
+            track: step.track as "main",
+            parentStepId: step.parentStepId,
+            entity: { id: e.id, title: e.title, kind: e.kind as EntityKind, live: e.live },
+          }))}
+        />
+      </div>
     );
   } else if (tab === "review") {
     body = (
@@ -360,6 +394,11 @@ export default async function EntryPage({ params, searchParams }: Props) {
             <StatusBadge status={row.status as WorkflowStatus} />
             <LiveBadge live={row.live} pending={pending} />
             {row.isSample && <span className="label text-faint">Sample entry</span>}
+            {tags.map((t) => (
+              <Link key={t} href={`/admin/content?collection=${encodeURIComponent(t)}`} className="label border border-rule px-1.5 py-0.5 text-muted hover:border-ink hover:text-ink">
+                {t}
+              </Link>
+            ))}
           </div>
           <h1 className="display mt-2 text-[2.2rem] sm:text-[3rem]">{fields.title || row.title}</h1>
           <p className="label-mono mt-1 text-faint">

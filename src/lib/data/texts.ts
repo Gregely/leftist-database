@@ -3,6 +3,7 @@ import { and, asc, eq, inArray, sql } from "drizzle-orm";
 import { ready } from "@/lib/db/client";
 import { entities, relationships, textDetails } from "@/lib/db/schema";
 import { buildProse, getEntityRow, getExcerpts, getMediaFor, getRelations, isPublic, pick, toSummary, withPreview } from "./core";
+import { stagedVisible } from "./scope";
 import type { PreviewSpec } from "./types";
 
 export async function getText(slug: string, preview?: PreviewSpec) {
@@ -58,7 +59,7 @@ export async function listTexts(opts: { form?: string; order?: "year" | "title";
         .select({ textId: relationships.toId, name: entities.title })
         .from(relationships)
         .innerJoin(entities, eq(entities.id, relationships.fromId))
-        .where(and(eq(relationships.type, "WROTE"), inArray(relationships.toId, ids)))
+        .where(and(eq(relationships.type, "WROTE"), inArray(relationships.toId, ids), isPublic(), stagedVisible(relationships.stagedFor)))
     : [];
   return {
     total: Number(count?.n ?? 0),

@@ -4,6 +4,7 @@ import { ready } from "@/lib/db/client";
 import { entities, pathDetails, pathSteps } from "@/lib/db/schema";
 import { buildProse, getEntitiesByIds, getEntityRow, getRelations, isPublic, toSummary, withPreview } from "./core";
 import { getConceptBriefs } from "./concepts";
+import { structureVisible } from "./scope";
 import type { EntitySummary, PreviewSpec } from "./types";
 
 export interface PathStep {
@@ -23,7 +24,11 @@ export async function getPath(slug: string, preview?: PreviewSpec) {
   const db = await ready();
   const [storedDetails, stepRows] = await Promise.all([
     db.select().from(pathDetails).where(eq(pathDetails.entityId, row.id)).get(),
-    db.select().from(pathSteps).where(eq(pathSteps.pathId, row.id)).orderBy(asc(pathSteps.position)),
+    db
+      .select()
+      .from(pathSteps)
+      .where(and(eq(pathSteps.pathId, row.id), structureVisible(pathSteps.stagedFor, pathSteps.pathId)))
+      .orderBy(asc(pathSteps.position)),
   ]);
   const details = storedDetails ? withPreview(storedDetails, preview) : null;
   const ents = await getEntitiesByIds(stepRows.map((s) => s.entityId));
@@ -76,7 +81,7 @@ export async function listPaths() {
         .select({ pathId: pathSteps.pathId, title: entities.title, kind: entities.kind })
         .from(pathSteps)
         .innerJoin(entities, eq(entities.id, pathSteps.entityId))
-        .where(and(inArray(pathSteps.pathId, ids), eq(pathSteps.track, "main"), isPublic()))
+        .where(and(inArray(pathSteps.pathId, ids), eq(pathSteps.track, "main"), isPublic(), structureVisible(pathSteps.stagedFor, pathSteps.pathId)))
         .orderBy(asc(pathSteps.position))
     : [];
   return rows.map((r) => ({

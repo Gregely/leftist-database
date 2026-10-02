@@ -5,6 +5,7 @@ import { useState, useTransition } from "react";
 import { attachMediaAction, detachMediaAction } from "@/app/admin/actions";
 import { MEDIA_ROLES, type MediaRole } from "@/lib/content/model";
 import { MediaPicker } from "./MediaPicker";
+import { PendingMark } from "./ui";
 
 export interface AttachedMedia {
   attachmentId: string;
@@ -12,6 +13,8 @@ export interface AttachedMedia {
   caption: string;
   media: { id: string; title: string; altText: string; credit: string; license: string; rights: string; width: number | null; height: number | null };
   gaps: string[];
+  staged?: boolean;
+  canRemove?: boolean;
 }
 
 const ROLE_HELP: Record<MediaRole, string> = {
@@ -40,14 +43,17 @@ export function MediaPanel({ entityId, attached, canEdit, defaultRole }: { entit
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={`/media/${a.media.id}`} alt={a.media.altText} className="aspect-[4/3] w-full bg-beige/40 object-cover" />
               <div className="p-3 text-sm">
-                <p className="label text-red">{a.role}</p>
+                <p className="label text-red">
+                  {a.role}
+                  {a.staged && <PendingMark />}
+                </p>
                 <p className="font-serif text-base">{a.media.title || "Untitled"}</p>
                 {a.gaps.length > 0 && <p className="label mt-1 text-ochre">Missing {a.gaps.join(", ")}</p>}
                 <div className="mt-2 flex gap-4">
                   <a href={`/admin/media/${a.media.id}`} className="label text-muted hover:text-red">
                     Details &amp; rights
                   </a>
-                  {canEdit && (
+                  {canEdit && a.canRemove !== false && (
                     <button
                       type="button"
                       disabled={pending}

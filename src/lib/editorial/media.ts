@@ -10,7 +10,7 @@ import "server-only";
 import { createHash } from "node:crypto";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
-import { and, desc, eq, like, or, sql } from "drizzle-orm";
+import { and, desc, eq, isNull, like, or, sql } from "drizzle-orm";
 import { ready } from "@/lib/db/client";
 import * as s from "@/lib/db/schema";
 import { newId } from "@/lib/util/id";
@@ -183,7 +183,7 @@ export async function isMediaPublic(id: string) {
     .select({ n: sql<number>`count(*)` })
     .from(s.entityMedia)
     .innerJoin(s.entities, eq(s.entities.id, s.entityMedia.entityId))
-    .where(and(eq(s.entityMedia.mediaId, id), eq(s.entities.live, true)))
+    .where(and(eq(s.entityMedia.mediaId, id), eq(s.entities.live, true), isNull(s.entityMedia.stagedFor)))
     .get();
   return Number(r?.n ?? 0) > 0;
 }

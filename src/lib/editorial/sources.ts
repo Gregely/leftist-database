@@ -54,11 +54,19 @@ function clean(f: SourceInput) {
   };
 }
 
-export async function createSource(actor: Actor, f: SourceInput) {
+/**
+ * Catalogue a source. `opts.id` gives it a stable id (used by imports whose
+ * prose cites sources as [cite:src_…]); it must be unused.
+ */
+export async function createSource(actor: Actor, f: SourceInput, opts: { id?: string } = {}) {
   assertCan(actor, "source.create");
   const values = clean(f);
   const db = await ready();
-  const id = newId("src");
+  if (opts.id && !/^src_[a-z0-9_-]{2,80}$/.test(opts.id)) throw new ValidationError({ id: "Source ids look like src_name_of_work." });
+  if (opts.id && (await db.select({ id: s.sources.id }).from(s.sources).where(eq(s.sources.id, opts.id)).get())) {
+    throw new ValidationError({ id: `A source with id ${opts.id} already exists.` });
+  }
+  const id = opts.id ?? newId("src");
   await db.insert(s.sources).values({ id, ...values, createdBy: actor.id });
   await audit(actor.id, "source_create", { type: "source", id, label: values.title }, { sourceType: values.sourceType });
   return id;
