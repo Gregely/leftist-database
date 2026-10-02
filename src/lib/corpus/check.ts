@@ -193,13 +193,25 @@ export async function checkDatabase(corpus: Corpus): Promise<CheckIssue[]> {
   const planned = corpus.planned ?? [];
   const everything = await db.select({ id: s.entities.id, kind: s.entities.kind, title: s.entities.title, aliases: s.entities.aliases }).from(s.entities);
 
-  // Possible duplicates: same kind and a matching title or alias.
+  // Possible duplicates: same kind and a matching title or alias. Corpus
+  // entries are compared by their working copy, which replaces what is public.
+  const working = new Map<string, { title: string; aliases: string[] }>();
+  for (const row of rows) {
+    const f = await readWorkingFields(row);
+    const aliases = String(f.aliases ?? "").split("\n").map((x) => x.trim()).filter(Boolean);
+    working.set(row.id, { title: String(f.title ?? row.title), aliases });
+  }
   const names = new Map<string, { id: string; title: string }[]>();
   for (const e of everything) {
     let aliases: string[] = [];
     try {
       aliases = JSON.parse(e.aliases);
     } catch {}
+    const w = working.get(e.id);
+    if (w) {
+      e.title = w.title;
+      aliases = w.aliases;
+    }
     for (const n of new Set([e.title, ...aliases].map(norm).filter((x) => x.length > 3))) {
       const k = `${e.kind}|${n}`;
       names.set(k, [...(names.get(k) ?? []), { id: e.id, title: e.title }]);

@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-10-02T00:48:53.174Z",
+  "checkedAt": "2026-10-02T00:59:06.744Z",
   "quotes": {
     "hegel-pr-owl": {
       "url": "https://www.marxists.org/reference/archive/hegel/works/pr/preface.htm",
@@ -109,6 +109,48 @@
     },
     "class-struggles-locomotives": {
       "url": "https://www.marxists.org/archive/marx/works/1850/class-struggles-france/ch03.htm",
+      "status": 200,
+      "matched": true,
+      "detail": "verbatim"
+    },
+    "capital-immense-accumulation": {
+      "url": "https://www.marxists.org/archive/marx/works/1867-c1/ch01.htm",
+      "status": 200,
+      "matched": true,
+      "detail": "verbatim"
+    },
+    "capital-fetishism": {
+      "url": "https://www.marxists.org/archive/marx/works/1867-c1/ch01.htm",
+      "status": 200,
+      "matched": true,
+      "detail": "verbatim"
+    },
+    "capital-double-free": {
+      "url": "https://www.marxists.org/archive/marx/works/1867-c1/ch06.htm",
+      "status": 200,
+      "matched": true,
+      "detail": "verbatim"
+    },
+    "capital-vampire": {
+      "url": "https://www.marxists.org/archive/marx/works/1867-c1/ch10.htm",
+      "status": 200,
+      "matched": true,
+      "detail": "verbatim"
+    },
+    "capital-two-poles": {
+      "url": "https://www.marxists.org/archive/marx/works/1867-c1/ch25.htm",
+      "status": 200,
+      "matched": true,
+      "detail": "verbatim"
+    },
+    "capital-labour-process": {
+      "url": "https://www.marxists.org/archive/marx/works/1867-c1/ch07.htm",
+      "status": 200,
+      "matched": true,
+      "detail": "verbatim"
+    },
+    "engels-graveside-surplus": {
+      "url": "https://www.marxists.org/archive/marx/works/1883/death/burial.htm",
       "status": 200,
       "matched": true,
       "detail": "verbatim"
@@ -664,6 +706,26 @@
       "status": 200,
       "ok": true,
       "detail": "page mentions “historico-philosophic theory”"
+    },
+    "src_mia_engels_graveside": {
+      "status": 200,
+      "ok": true,
+      "detail": "page mentions “discovery of surplus value”"
+    },
+    "src_bohm_bawerk": {
+      "status": 200,
+      "ok": true,
+      "detail": "Open Library: “Karl Marx and the Close of His System”, Eugen von Böhm-Bawerk, first published 1976"
+    },
+    "src_rosdolsky": {
+      "status": 200,
+      "ok": true,
+      "detail": "Open Library: “Making of Marx's Capital”, Roman Rosdolsky, Burgess Pete, first published 2004"
+    },
+    "src_hobsbawm_formations": {
+      "status": 200,
+      "ok": true,
+      "detail": "Open Library: “Pre-capitalist economic formations”, Karl Marx, first published 1964"
     }
   }
 }
