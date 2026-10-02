@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-10-02T01:18:58.936Z",
+  "checkedAt": "2026-10-02T01:29:07.945Z",
   "quotes": {
     "hegel-pr-owl": {
       "url": "https://www.marxists.org/reference/archive/hegel/works/pr/preface.htm",
@@ -272,6 +272,66 @@
       "status": 200,
       "matched": true,
       "provenance": "German History in Documents and Images ;",
+      "detail": "verbatim"
+    },
+    "bernstein-movement-everything": {
+      "url": "https://www.marxists.org/reference/archive/bernstein/works/1899/evsoc/preface.htm",
+      "status": 200,
+      "matched": true,
+      "detail": "verbatim"
+    },
+    "luxemburg-means-aim": {
+      "url": "https://www.marxists.org/archive/luxemburg/1900/reform-revolution/intro.htm",
+      "status": 200,
+      "matched": true,
+      "detail": "verbatim"
+    },
+    "luxemburg-different-goal": {
+      "url": "https://www.marxists.org/archive/luxemburg/1900/reform-revolution/ch08.htm",
+      "status": 200,
+      "matched": true,
+      "detail": "verbatim"
+    },
+    "witbd-trade-union-consciousness": {
+      "url": "https://www.marxists.org/archive/lenin/works/1901/witbd/ii.htm",
+      "status": 200,
+      "matched": true,
+      "detail": "verbatim"
+    },
+    "witbd-kautsky-from-without": {
+      "url": "https://www.marxists.org/archive/lenin/works/1901/witbd/ii.htm",
+      "status": 200,
+      "matched": true,
+      "detail": "verbatim"
+    },
+    "witbd-from-without-political": {
+      "url": "https://www.marxists.org/archive/lenin/works/1901/witbd/iii.htm",
+      "status": 200,
+      "matched": true,
+      "detail": "verbatim"
+    },
+    "luxemburg-errors-fruitful": {
+      "url": "https://www.marxists.org/archive/luxemburg/1904/questions-rsd/ch02.htm",
+      "status": 200,
+      "matched": true,
+      "detail": "verbatim"
+    },
+    "luxemburg-overseer": {
+      "url": "https://www.marxists.org/archive/luxemburg/1904/questions-rsd/ch01.htm",
+      "status": 200,
+      "matched": true,
+      "detail": "verbatim"
+    },
+    "lenin-jacobin": {
+      "url": "https://www.marxists.org/archive/lenin/works/1904/onestep/q.htm",
+      "status": 200,
+      "matched": true,
+      "detail": "verbatim"
+    },
+    "mass-strike-method-of-motion": {
+      "url": "https://www.marxists.org/archive/luxemburg/1906/mass-strike/ch04.htm",
+      "status": 200,
+      "matched": true,
       "detail": "verbatim"
     }
   },
@@ -940,6 +1000,16 @@
       "status": 200,
       "ok": true,
       "detail": "Open Library: “The Second International, 1889-1914”, James Joll, first published 1955"
+    },
+    "src_mia_poverty_ch2": {
+      "status": 200,
+      "ok": true,
+      "detail": "page mentions “not yet for itself”"
+    },
+    "src_mia_bernstein_conclusion": {
+      "status": 200,
+      "ok": true,
+      "detail": "page mentions “Kant against Cant”"
     }
   }
 }
