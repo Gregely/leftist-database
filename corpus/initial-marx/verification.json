@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-10-02T00:42:43.926Z",
+  "checkedAt": "2026-10-02T00:48:53.174Z",
   "quotes": {
     "hegel-pr-owl": {
       "url": "https://www.marxists.org/reference/archive/hegel/works/pr/preface.htm",
@@ -61,6 +61,54 @@
     },
     "engels-feuerbachians": {
       "url": "https://www.marxists.org/archive/marx/works/1886/ludwig-feuerbach/ch01.htm",
+      "status": 200,
+      "matched": true,
+      "detail": "verbatim"
+    },
+    "manifesto-class-struggles": {
+      "url": "https://www.marxists.org/archive/marx/works/1848/communist-manifesto/ch01.htm",
+      "status": 200,
+      "matched": true,
+      "detail": "verbatim"
+    },
+    "manifesto-grave-diggers": {
+      "url": "https://www.marxists.org/archive/marx/works/1848/communist-manifesto/ch01.htm",
+      "status": 200,
+      "matched": true,
+      "detail": "verbatim"
+    },
+    "manifesto-proletariat-def": {
+      "url": "https://www.marxists.org/archive/marx/works/1848/communist-manifesto/ch01.htm",
+      "status": 200,
+      "matched": true,
+      "detail": "verbatim"
+    },
+    "preface-1859-consciousness": {
+      "url": "https://www.marxists.org/archive/marx/works/1859/critique-pol-economy/preface.htm",
+      "status": 200,
+      "matched": true,
+      "detail": "verbatim"
+    },
+    "preface-1859-no-social-order": {
+      "url": "https://www.marxists.org/archive/marx/works/1859/critique-pol-economy/preface.htm",
+      "status": 200,
+      "matched": true,
+      "detail": "verbatim"
+    },
+    "brumaire-make-history": {
+      "url": "https://www.marxists.org/archive/marx/works/1852/18th-brumaire/ch01.htm",
+      "status": 200,
+      "matched": true,
+      "detail": "verbatim"
+    },
+    "weydemeyer-no-credit": {
+      "url": "https://www.marxists.org/archive/marx/works/1852/letters/52_03_05-ab.htm",
+      "status": 200,
+      "matched": true,
+      "detail": "verbatim"
+    },
+    "class-struggles-locomotives": {
+      "url": "https://www.marxists.org/archive/marx/works/1850/class-struggles-france/ch03.htm",
       "status": 200,
       "matched": true,
       "detail": "verbatim"
@@ -591,6 +639,31 @@
       "status": 200,
       "ok": true,
       "detail": "Open Library: “Lenin”, Robert Service, first published 1985"
+    },
+    "src_mia_class_struggles_france": {
+      "status": 200,
+      "ok": true,
+      "detail": "page mentions “locomotives of history”"
+    },
+    "src_mia_address_1850": {
+      "status": 200,
+      "ok": true,
+      "detail": "page mentions “revolution permanent”"
+    },
+    "src_mia_weydemeyer_1852": {
+      "status": 200,
+      "ok": true,
+      "detail": "page mentions “no credit is due to me”"
+    },
+    "src_mia_amsterdam_1872": {
+      "status": 200,
+      "ok": true,
+      "detail": "page mentions “peaceful means”"
+    },
+    "src_mia_letter_1877": {
+      "status": 200,
+      "ok": true,
+      "detail": "page mentions “historico-philosophic theory”"
     }
   }
 }

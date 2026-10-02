@@ -247,7 +247,19 @@ async function importBatch(
       .filter(Boolean)
       .join(" ");
     const verificationStatus = matched ? "needs_review" : "unverified";
-    const existing = (await excerptsFor(entity.id)).find((r) => r.body === x.body.trim());
+    const sameWording = (await excerptsFor(entity.id)).filter((r) => r.body === x.body.trim());
+    // Only the import's own excerpts are updated. An excerpt someone else made (for example a public
+    // sample excerpt) is never modified: changing it would change the public site immediately.
+    const existing = sameWording.find((r) => r.createdBy === actor.id);
+    const foreign = sameWording.find((r) => r.createdBy !== actor.id);
+    if (!existing && foreign) {
+      summary.notes += await flagNote(actor, entity.id, {
+        type: "sample-overlap",
+        note: `An existing excerpt (${foreign.id}) already has the wording “${x.body.slice(0, 60)}…”. The research import left it unchanged and did not add a duplicate. Its verification: ${matched ? `matches ${x.archiveUrl}` : "not matched"}; locator suggested: ${x.locator ?? "—"}.`,
+      });
+      touched.add(entity.id);
+      continue;
+    }
     if (existing) {
       if (existing.note !== note || existing.verification !== verificationStatus || existing.locator !== (x.locator ?? null)) {
         await updateExcerpt(actor, existing.id, { note, verification: verificationStatus, locator: x.locator ?? "" });

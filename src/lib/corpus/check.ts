@@ -13,7 +13,7 @@ import "server-only";
  *    and pages do not contain draft material.
  */
 import { createHash, randomBytes } from "node:crypto";
-import { eq, inArray } from "drizzle-orm";
+import { eq, inArray, sql } from "drizzle-orm";
 import { ready } from "@/lib/db/client";
 import * as s from "@/lib/db/schema";
 import { ALL_RELATIONSHIP_TYPES, entityHref, normaliseRelationship, RELATIONSHIP_TYPES, type EntityKind, type RelationshipType } from "@/lib/content/model";
@@ -243,6 +243,26 @@ export async function checkDatabase(corpus: Corpus): Promise<CheckIssue[]> {
     const res = await search(row.title, { limit: 30 });
     if (JSON.stringify(res).includes(`"${row.id}"`)) issues.push({ level: "error", area: "privacy", key: `${row.kind}:${row.slug}`, message: "Draft appears in public search." });
   }
+  // Nothing the import wrote may be public: on live entries its structure must be staged, and it must
+  // not have edited records it did not create.
+  const importer = await db.select({ id: s.users.id }).from(s.users).where(eq(s.users.email, "research-import@atlas.invalid")).get();
+  if (importer) {
+    const leaks = (await db.all(sql`
+      SELECT 'relationship' AS kind, r.id FROM relationships r JOIN entities a ON a.id = r.from_id JOIN entities b ON b.id = r.to_id
+        WHERE r.created_by = ${importer.id} AND r.staged_for IS NULL AND a.live = 1 AND b.live = 1
+      UNION ALL SELECT 'excerpt', x.id FROM excerpts x JOIN entities e ON e.id = x.entity_id
+        WHERE x.created_by = ${importer.id} AND x.staged_for IS NULL AND e.live = 1
+    `)) as { kind: string; id: string }[];
+    for (const l of leaks) issues.push({ level: "error", area: "privacy", key: l.id, message: `Import-created ${l.kind} is public on a live entry.` });
+    const edits = (await db.all(sql`
+      SELECT a.metadata FROM audit_log a WHERE a.actor_id = ${importer.id} AND a.action = 'excerpt_edit'
+    `)) as { metadata: string }[];
+    for (const e of edits) {
+      const exId = (JSON.parse(e.metadata) as { excerptId?: string }).excerptId;
+      const x = exId ? await db.select().from(s.excerpts).where(eq(s.excerpts.id, exId)).get() : null;
+      if (x && x.createdBy !== importer.id) issues.push({ level: "warning", area: "privacy", key: exId, message: "The import edited an excerpt it did not create (check it has been restored)." });
+    }
+  }
   // Staged structure must not be counted as public.
   const stagedRels = await db.select({ id: s.relationships.id }).from(s.relationships).where(inArray(s.relationships.stagedFor, [...ids]));
   if (stagedRels.length) issues.push({ level: "info", area: "relationships", message: `${stagedRels.length} relationships are staged on live entries and wait for their publication.` });
@@ -270,8 +290,10 @@ export async function checkHttp(corpus: Corpus, baseUrl: string, email: string):
       const key = `${row.kind}:${row.slug}`;
       const preview = await get(`/preview/${row.id}?${q}`, true);
       const html = await preview.text();
+      // A live entry's pending title lives in its working copy, not in the table.
+      const title = String((await readWorkingFields(row)).title ?? row.title);
       if (preview.status !== 200) issues.push({ level: "error", area: "render", key, message: `Preview returned ${preview.status}.` });
-      else if (!html.includes(row.title.replace(/&/g, "&amp;").replace(/'/g, "&#x27;").replace(/"/g, "&quot;").slice(0, 20)) && !html.includes(row.title.slice(0, 20))) {
+      else if (!html.includes(title.replace(/&/g, "&amp;").replace(/'/g, "&#x27;").replace(/"/g, "&quot;").slice(0, 20)) && !html.includes(title.slice(0, 20))) {
         issues.push({ level: "warning", area: "render", key, message: "Preview does not show the title." });
       }
       const pub = await get(entityHref(row.kind as EntityKind, row.slug));
