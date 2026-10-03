@@ -17,3 +17,13 @@ Read `README.md` and `docs/ARCHITECTURE.md` first. Key rules:
 - Do not invent quotations or scholarly claims in seed data; see `docs/EDITORIAL.md`.
 - Use only the design tokens in `src/app/globals.css`; keep the editorial idiom (rules, labels, serif display, restrained red).
 - Verify with `npm run typecheck` and `npm run test:e2e`.
+
+## Writing style
+
+For all original public-facing prose, explanations, thinker summaries, concept explanations, introductions, debates, timelines, learning-path copy, and other editorial writing:
+
+- Use the `avoid-ai-writing` skill as a final prose audit before saving the content.
+- Preserve factual accuracy, citations, quotations, attribution, and the intended meaning.
+- Prefer clear, natural, specific writing over generic polished or promotional language.
+- Do not apply rewriting to source quotations, citations, code, configuration, structured data, or database mechanics.
+- Do not invent facts or alter scholarly claims just to make prose sound more natural.
