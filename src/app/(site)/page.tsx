@@ -1,8 +1,9 @@
 import Link from "next/link";
 import { MapFigure } from "@/components/graph/MapFigure";
 import { ArrowLink, Container, Label, SectionHead, lifespan } from "@/components/editorial/primitives";
-import { CollectionIndex, type CollectionGroup } from "@/components/home/CollectionIndex";
-import { GuidedFeature } from "@/components/home/GuidedFeature";
+import { CollectionIndex, type CollectionItem } from "@/components/home/CollectionIndex";
+import { RoutesSection } from "@/components/home/RoutesSection";
+import { WaysIn } from "@/components/home/WaysIn";
 import { HomeSearch } from "@/components/search/HomeSearch";
 import { MiniTimeline } from "@/components/timeline/MiniTimeline";
 import { getHomeData } from "@/lib/data";
@@ -13,30 +14,17 @@ export default async function HomePage() {
   const [lead, ...concepts] = d.concepts;
 
   const titles = (items: { title: string }[], n = 4) => items.slice(0, n).map((t) => t.title).join(" · ");
-  const collection: CollectionGroup[] = [
-    {
-      title: "People and ideas",
-      items: [
-        { label: "Thinkers", href: "/thinkers", count: d.counts.thinker, description: "Lives, works and intellectual relationships", examples: d.thinkers.map((t) => t.title.split(" ").pop()).join(" · ") },
-        { label: "Concepts", href: "/concepts", count: d.counts.concept, description: "Key terms, each explained at three depths", examples: titles(d.concepts) },
-        { label: "Tendencies", href: "/tendencies", count: d.counts.tendency, description: "Schools, currents and movements", examples: titles(d.tendencies, 3) },
-      ],
-    },
-    {
-      title: "Works and arguments",
-      items: [
-        { label: "Texts", href: "/texts", count: d.counts.text, description: "Primary and foundational works", examples: titles(d.texts, 2) },
-        { label: "Debates", href: "/debates", count: d.counts.debate, description: "Open questions and the positions taken on them", examples: titles(d.debates, 2) },
-      ],
-    },
-    {
-      title: "History and connections",
-      items: [
-        { label: "Timeline", href: "/timeline", count: d.counts.event, description: "Events and periods in sequence", examples: `${PERIODS[0].from} to the present, in ${PERIODS.length} periods` },
-        { label: "Explore", href: "/explore", count: d.stats.entities, description: "The whole library, with the full Theory Map", examples: `${d.stats.relationships} relationships · ${d.stats.sources} sources` },
-        { label: "Search", href: "/search", description: "Find an entry by name, term or alias" },
-      ],
-    },
+  // Every area of the site at equal weight, in reading order.
+  const collection: CollectionItem[] = [
+    { label: "Thinkers", href: "/thinkers", count: d.counts.thinker, description: "Lives, works and intellectual relationships", examples: d.thinkers.map((t) => t.title.split(" ").pop()).join(" · ") },
+    { label: "Concepts", href: "/concepts", count: d.counts.concept, description: "Key terms, each explained at three depths", examples: titles(d.concepts) },
+    { label: "Texts", href: "/texts", count: d.counts.text, description: "Primary and foundational works", examples: titles(d.texts, 2) },
+    { label: "Debates", href: "/debates", count: d.counts.debate, description: "Open questions and the positions taken on them", examples: titles(d.debates, 2) },
+    { label: "Tendencies", href: "/tendencies", count: d.counts.tendency, description: "Schools, currents and movements", examples: titles(d.tendencies, 3) },
+    { label: "Timeline", href: "/timeline", count: d.counts.event, description: "Events and periods in sequence", examples: `${PERIODS[0].from} to the present, in ${PERIODS.length} periods` },
+    { label: "Theory Map", href: "/explore#map", description: "Thinkers connected by influence, critique and response", examples: `${d.stats.relationships} relationships, each an editorial claim` },
+    { label: "Explore", href: "/explore", count: d.stats.entities, description: "The whole library, by kind and period", examples: `${d.stats.sources} sources in the bibliography` },
+    { label: "Search", href: "/search", description: "Find an entry by name, term or alias" },
   ];
 
   return (
@@ -52,32 +40,27 @@ export default async function HomePage() {
           </Label>
         </div>
 
-        <div className="grid gap-10 pb-10 pt-10 sm:pb-12 sm:pt-14 lg:grid-cols-12 lg:gap-8 lg:pb-16">
+        <div className="grid gap-8 pb-8 pt-8 sm:pb-10 sm:pt-12 lg:grid-cols-12 lg:gap-8 lg:pb-12">
           <div className="lg:col-span-7">
-            <h1 className="display text-balance text-[3.4rem] sm:text-[5.2rem] xl:text-[6.6rem]">
+            <h1 className="display text-balance text-[3.2rem] sm:text-[4.8rem] xl:text-[5.8rem]">
               A map of <span className="serif-italic">socialist</span> thought<span className="text-red">.</span>
             </h1>
-            <p className="lede mt-7 max-w-xl text-ink-warm">
+            <p className="lede mt-6 max-w-xl text-ink-warm">
               A reference work on the socialist tradition: its thinkers, concepts, texts, tendencies and debates, and the
-              connections between them.
-            </p>
-            <p className="mt-4 max-w-xl text-muted">
-              {d.guided.length
-                ? "For a structured introduction, follow a Guided journey. Every part of the collection can also be opened directly."
-                : "For a structured introduction, follow a learning path. Every part of the collection can also be opened directly."}
+              connections between them. Search it directly, browse it by section, or follow a Guided route through it.
             </p>
             <HomeSearch label="Search thinkers, concepts, texts and debates" hint="Press / to search from any page." />
           </div>
 
-          <div className="lg:col-span-5 lg:col-start-8 lg:pt-3">
-            <GuidedFeature journeys={d.guided} paths={d.paths} />
+          <div className="lg:col-span-5 lg:col-start-8 lg:pt-2">
+            <WaysIn journeys={d.guided} />
           </div>
         </div>
       </Container>
 
       {/* ——— 01 The collection ——————————————————————————————————————— */}
       <div className="border-t border-ink">
-        <CollectionIndex number="01" groups={collection} />
+        <CollectionIndex number="01" items={collection} />
       </div>
 
       {/* ——— 02–04 Featured: chosen by the editors (entities.featured) ———————— */}
@@ -222,11 +205,14 @@ export default async function HomePage() {
         </div>
       </Container>
 
-      {/* ——— 05 The Theory Map ——————————————————————————————————————— */}
+      {/* ——— 05 Routes: Guided journeys and learning paths ————————————————— */}
+      <RoutesSection number="05" journeys={d.guided} paths={d.paths} />
+
+      {/* ——— 06 The Theory Map ——————————————————————————————————————— */}
       <section aria-labelledby="map-heading" className="border-y border-ink bg-paper-warm">
         <Container className="py-12 sm:py-16">
           <SectionHead
-            number="05"
+            number="06"
             id="map-heading"
             label="The Theory Map"
             title={
@@ -252,10 +238,10 @@ export default async function HomePage() {
         </Container>
       </section>
 
-      {/* ——— 06 Timeline —————————————————————————————————————————————— */}
+      {/* ——— 07 Timeline —————————————————————————————————————————————— */}
       <Container className="py-16 sm:py-24">
         <SectionHead
-          number="06"
+          number="07"
           label="Timeline"
           title={
             <>
@@ -269,10 +255,10 @@ export default async function HomePage() {
         </div>
       </Container>
 
-      {/* ——— 07 About this edition ————————————————————————————————————— */}
+      {/* ——— 08 About this edition ————————————————————————————————————— */}
       <section aria-labelledby="method-heading" className="border-t border-ink">
         <Container className="py-14 sm:py-20">
-          <SectionHead number="07" id="method-heading" label="About this edition" aside={<ArrowLink href="/about">Read more</ArrowLink>} />
+          <SectionHead number="08" id="method-heading" label="About this edition" aside={<ArrowLink href="/about">Read more</ArrowLink>} />
           <div className="mt-8 grid gap-10 lg:grid-cols-12">
             <div className="max-w-[40rem] space-y-4 text-[1.02rem] leading-relaxed text-ink-warm lg:col-span-7">
               <p>
