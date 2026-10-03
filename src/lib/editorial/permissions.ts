@@ -50,6 +50,7 @@ export type Permission =
   | "entity.delete"
   | "entity.restoreRevision"
   | "entity.comment"
+  | "entity.bulkReview"
   | "source.create"
   | "source.edit"
   | "media.upload"
@@ -126,6 +127,11 @@ export function can(actor: Actor | null, permission: Permission, entity?: Entity
       return editor || (!!owner && owner === actor.id);
 
     case "relationship.global":
+      return editor;
+
+    case "entity.bulkReview":
+      // Using the review and publish actions on several entries at once. Each
+      // entry is still checked against its own transition permission.
       return editor;
 
     case "users.manage":

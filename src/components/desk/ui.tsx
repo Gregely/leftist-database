@@ -125,7 +125,8 @@ export function When({ at, className = "" }: { at: string | null | undefined; cl
             ? `${Math.floor(diff / 86400)} d ago`
             : d.toISOString().slice(0, 10);
   return (
-    <time dateTime={d.toISOString()} title={d.toISOString().replace("T", " ").slice(0, 16) + " UTC"} className={className}>
+    // Relative time can differ by a minute between the server render and hydration.
+    <time dateTime={d.toISOString()} title={d.toISOString().replace("T", " ").slice(0, 16) + " UTC"} className={className} suppressHydrationWarning>
       {rel}
     </time>
   );

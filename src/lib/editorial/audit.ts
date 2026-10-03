@@ -113,6 +113,7 @@ export const AUDIT_ACTIONS = [
   "structure_edit",
   "tags_set",
   "import",
+  "bulk_transition",
   "user_create",
   "role_change",
   "user_deactivate",

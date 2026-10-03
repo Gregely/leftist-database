@@ -10,6 +10,7 @@ import { redirect } from "next/navigation";
 import { getCurrentUser, createSession, destroySession } from "@/lib/auth/session";
 import * as users from "@/lib/auth/users";
 import { audit } from "@/lib/editorial/audit";
+import * as bulk from "@/lib/editorial/bulk";
 import * as content from "@/lib/editorial/content";
 import { ConflictError, NotFoundError, ValidationError } from "@/lib/editorial/content";
 import { validateEntity } from "@/lib/editorial/insight";
@@ -102,6 +103,15 @@ export async function transitionAction(id: string, t: Transition, note?: string)
     },
     { publicChange },
   );
+}
+
+/** Apply one review/publish transition to several selected entries (lib/editorial/bulk.ts). */
+export async function bulkTransitionAction(
+  items: bulk.BulkItem[],
+  t: string,
+  opts: { note?: string; confirmCount?: number } = {},
+): Promise<ActionResult<bulk.BulkOutcome[]>> {
+  return run((a) => bulk.bulkTransition(a, items, t, { ...opts, validate: (row) => validateEntity(row) }), { publicChange: t === "publish" });
 }
 
 export async function restoreRevisionAction(id: string, version: number, baseLock: number): Promise<ActionResult<content.SaveResult>> {

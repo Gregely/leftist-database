@@ -1,18 +1,21 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { BulkReview } from "@/components/desk/BulkReview";
 import { ContentTable } from "@/components/desk/ContentTable";
 import { DeskHeading, DeskPage, Notice } from "@/components/desk/ui";
 import { requireUser } from "@/lib/auth/session";
 import { ENTITY_KINDS, KINDS, STATUS_LABELS, WORKFLOW_STATUSES } from "@/lib/content/model";
 import { browse, BROWSE_FLAGS, BROWSE_SORTS, staffList } from "@/lib/editorial/queries";
+import { bulkOptions } from "@/lib/editorial/bulk";
 import { listCollections } from "@/lib/editorial/collections";
+import { can } from "@/lib/editorial/permissions";
 
 export const metadata: Metadata = { title: "Content" };
 
 type Props = { searchParams: Promise<Record<string, string | undefined>> };
 
 export default async function ContentBrowser({ searchParams }: Props) {
-  await requireUser();
+  const user = await requireUser();
   const sp = await searchParams;
   const page = Math.max(1, Number(sp.page) || 1);
   const [res, staff, collections] = await Promise.all([
@@ -21,6 +24,8 @@ export default async function ContentBrowser({ searchParams }: Props) {
     listCollections(),
   ]);
   const pages = Math.ceil(res.total / res.perPage);
+  const bulk = can(user, "entity.bulkReview");
+  const options = bulk ? await bulkOptions(user, res.items.map((i) => i.id)) : {};
   const qs = (o: Record<string, string | undefined>) => {
     const p = new URLSearchParams(Object.entries({ ...sp, ...o }).filter(([, v]) => v) as [string, string][]);
     return `/admin/content${p.toString() ? `?${p}` : ""}`;
@@ -83,7 +88,11 @@ export default async function ContentBrowser({ searchParams }: Props) {
         </div>
       </form>
       <div className="mt-6">
-        <ContentTable rows={res.items} empty="No entries match these filters." />
+        {bulk ? (
+          <BulkReview rows={res.items} options={options} empty="No entries match these filters." scope="Content" />
+        ) : (
+          <ContentTable rows={res.items} empty="No entries match these filters." />
+        )}
       </div>
       {pages > 1 && (
         <nav aria-label="Pages" className="mt-6 flex flex-wrap items-center gap-1">

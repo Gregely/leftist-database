@@ -36,6 +36,22 @@ any (editor) → ARCHIVED → restore → DRAFT / UNPUBLISHED
 Whether an entry is public is the `live` flag; `status` is where its current edit cycle stands. Public queries,
 search, maps, timelines and `/api/*` only ever read live entries.
 
+### Bulk review
+
+Editors can select several entries in the **Review queue** or the **Content** list (checkboxes; *Select all on this
+page*) and apply one workflow step to all of them: **Start review**, **Request revision** (one required note, added
+to each entry), **Approve** (optional note) or **Publish**. It is the same workflow, not a separate system
+(`lib/editorial/bulk.ts`):
+
+- Each entry goes through `transition()` individually, with its own permission check, structural checks (an entry with
+  errors is refused publication), revision sealing and audit record; one extra `bulk_transition` audit record lists
+  what was requested, done and skipped.
+- Only selected entries in a state where the step applies are changed; the confirmation lists them and says how many
+  others will be left as they are. An entry edited since the page was loaded is skipped rather than swept along.
+- Approving or publishing **never resolves or removes notes or flags**; the confirmation counts the open ones.
+- Approval and publication stay separate steps. Publishing in bulk asks for the number of entries to be typed in.
+- Bulk tools are for editors (`entity.bulkReview` in `permissions.ts`); unpublish, archive and delete are not offered.
+
 ### Staged changes on live entries
 
 Structural changes to a live entry are **staged** until its next publication, just like its fields:
