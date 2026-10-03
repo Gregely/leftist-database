@@ -135,6 +135,29 @@ collection offers *Include unpublished “…” entries*, which renders the pag
 and pending versions visible — links, relationships, maps, timelines and paths included — so a reviewer can read a
 body of new work as a whole before any of it is published. The scope applies only to that preview request.
 
+## Guided journeys
+
+Guided journeys (`/guided`) are learning paths offered step by step to readers who do not know where to start. They
+are built from entries that already exist; a journey adds only a few lines of copy around each one.
+
+- **Create** a journey with *New entry → Path*. Give it a title, an entry line (the reader's question, e.g. “I don't
+  know where to start.”), a summary, and on the Content tab tick **Offer this path as a Guided journey** and fill in
+  **What the journey covers**. Rename it or change its description there at any time.
+- **Steps** are managed on the **Route** tab: *Add a stop* picks any existing entry; ↑/↓ reorder the main route;
+  *Remove* drops a stop; *Branch from a stop* adds an optional side route. Open **Guided copy** on a stop to write
+  *Where you are*, *Why it matters* and *Continue* (on the last stop, an optional closing note), choose the
+  **Featured excerpt** from the entry's own excerpts, or **point the stop at a different entry** (its copy is kept).
+  Validation warns about stops missing copy; Completeness lists *Journey overview* and *Guided copy*.
+- **Review and publication** are the ordinary workflow: submit, review, approve, publish, unpublish. Changes to a
+  published journey are staged until it is published again. A journey only ever shows stops whose entries are
+  public, so publish the entries first (or with it); the preview — with *Include unpublished “…” entries* for a
+  collection — shows the journey as readers will see it, drafts included.
+- The step page itself is assembled from the entry: its depth reader levels, excerpts, and connections. To improve
+  what a step says about an idea, edit the entry, not the journey.
+
+The first journey, **Understanding Marx**, was imported from `corpus/guided-understanding-marx` (18 stops, Marx to
+Lenin, built only from the Initial Marx Corpus) and submitted for review; like the corpus, it is not published.
+
 ## Research corpora
 
 Researched content can be prepared as data under `corpus/` and loaded through the editorial library with

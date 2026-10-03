@@ -591,7 +591,11 @@ async function renumber(pathId: string, staged: string | null) {
   for (const [i, x] of steps.entries()) await db.update(s.pathSteps).set({ position: i + 1 }).where(eq(s.pathSteps.id, x.step.id));
 }
 
-export async function addStep(actor: Actor, pathId: string, f: { entityId: string; framing: string; track?: string; parentStepId?: string }) {
+export async function addStep(
+  actor: Actor,
+  pathId: string,
+  f: { entityId: string; framing: string; track?: string; parentStepId?: string; orientation?: string; whyItMatters?: string; nextReason?: string; excerptId?: string | null },
+) {
   if (!f.entityId) throw new ValidationError({ step: "Choose an entry for this stop." });
   const track = f.track === "branch" || f.track === "alternative" ? f.track : "main";
   if (track !== "main" && !f.parentStepId) throw new ValidationError({ step: "Choose the stop this branch leaves from." });
@@ -601,12 +605,20 @@ export async function addStep(actor: Actor, pathId: string, f: { entityId: strin
     .from(s.pathSteps)
     .where(and(eq(s.pathSteps.pathId, pathId), inSet(s.pathSteps.stagedFor, staged)))
     .get();
+  if (f.excerptId) {
+    const ex = await db.select({ entityId: s.excerpts.entityId }).from(s.excerpts).where(eq(s.excerpts.id, f.excerptId)).get();
+    if (!ex || ex.entityId !== f.entityId) throw new ValidationError({ excerptId: "Choose an excerpt of this stop's entry." });
+  }
   const id = newId("step");
   await db.insert(s.pathSteps).values({
     id,
     pathId,
     entityId: f.entityId,
     framing: f.framing.trim(),
+    orientation: (f.orientation ?? "").trim(),
+    whyItMatters: (f.whyItMatters ?? "").trim(),
+    nextReason: (f.nextReason ?? "").trim(),
+    excerptId: f.excerptId || null,
     track,
     parentStepId: track === "main" ? null : await resolveStaged(db, s.pathSteps, f.parentStepId!, staged),
     position: track === "main" ? Number(max?.n ?? 0) + 1 : 0,
@@ -617,11 +629,55 @@ export async function addStep(actor: Actor, pathId: string, f: { entityId: strin
   return id;
 }
 
-export async function updateStep(actor: Actor, pathId: string, id: string, framing: string) {
+/** What can be changed on a stop: its framing, the Guided copy, its featured excerpt and the entry it points to. */
+export interface StepPatch {
+  framing?: string;
+  orientation?: string;
+  whyItMatters?: string;
+  nextReason?: string;
+  /** An excerpt of the stop's entry, or null for none. */
+  excerptId?: string | null;
+  /** Point the stop at a different entry (its featured excerpt is cleared unless it belongs to the new one). */
+  entityId?: string;
+}
+
+const STEP_TEXT_LIMIT = 4000;
+
+export async function updateStep(actor: Actor, pathId: string, id: string, patchIn: string | StepPatch) {
+  const patch: StepPatch = typeof patchIn === "string" ? { framing: patchIn } : patchIn;
   const { db, staged } = await structureSet(actor, pathId);
   const target = await resolveStaged(db, s.pathSteps, id, staged);
-  await db.update(s.pathSteps).set({ framing: framing.trim() }).where(and(eq(s.pathSteps.id, target), eq(s.pathSteps.pathId, pathId), inSet(s.pathSteps.stagedFor, staged)));
-  await structureAudit(actor, pathId, "stop framing edited", staged);
+  const where = and(eq(s.pathSteps.id, target), eq(s.pathSteps.pathId, pathId), inSet(s.pathSteps.stagedFor, staged));
+  const current = await db.select().from(s.pathSteps).where(where).get();
+  if (!current) throw new NotFoundError("That stop no longer exists.");
+
+  const set: Partial<typeof s.pathSteps.$inferInsert> = {};
+  for (const key of ["framing", "orientation", "whyItMatters", "nextReason"] as const) {
+    const v = patch[key];
+    if (v === undefined) continue;
+    if (v.length > STEP_TEXT_LIMIT) throw new ValidationError({ [key]: "Keep this to a few sentences." });
+    set[key] = v.trim();
+  }
+  let entityId = current.entityId;
+  if (patch.entityId !== undefined && patch.entityId !== current.entityId) {
+    const next = await db.select({ id: s.entities.id, status: s.entities.status }).from(s.entities).where(eq(s.entities.id, patch.entityId)).get();
+    if (!next || patch.entityId === pathId) throw new ValidationError({ step: "Choose an existing entry for this stop." });
+    entityId = next.id;
+    set.entityId = entityId;
+  }
+  let excerptId = patch.excerptId === undefined ? current.excerptId : patch.excerptId;
+  if (excerptId) {
+    const ex = await db.select({ entityId: s.excerpts.entityId }).from(s.excerpts).where(eq(s.excerpts.id, excerptId)).get();
+    if (!ex || ex.entityId !== entityId) {
+      if (patch.excerptId) throw new ValidationError({ excerptId: "Choose an excerpt of this stop's entry." });
+      excerptId = null; // the stop now points at another entry
+    }
+  }
+  if (excerptId !== current.excerptId) set.excerptId = excerptId ?? null;
+  if (!Object.keys(set).length) return;
+  await db.update(s.pathSteps).set(set).where(where);
+  const what = Object.keys(set).map((k) => ({ framing: "framing", orientation: "where you are", whyItMatters: "why it matters", nextReason: "continue", excerptId: "featured excerpt", entityId: "entry" })[k] ?? k);
+  await structureAudit(actor, pathId, `stop edited (${what.join(", ")})`, staged);
 }
 
 export async function moveStep(actor: Actor, pathId: string, id: string, delta: -1 | 1) {
@@ -668,4 +724,15 @@ export async function listRelationships(q: { type?: string; q?: string; page?: n
     SELECT count(*) AS n FROM relationships r JOIN entities a ON a.id = r.from_id JOIN entities b ON b.id = r.to_id WHERE ${where}
   `)) as { n: number };
   return { items: rows, total: Number(count.n) };
+}
+
+/** Excerpts of the given entries, for choosing a Guided stop's featured passage. */
+export async function excerptOptions(entityIds: string[]) {
+  if (!entityIds.length) return [];
+  const db = await ready();
+  return db
+    .select({ id: s.excerpts.id, entityId: s.excerpts.entityId, body: s.excerpts.body, locator: s.excerpts.locator, verification: s.excerpts.verification })
+    .from(s.excerpts)
+    .where(inArray(s.excerpts.entityId, entityIds))
+    .orderBy(asc(s.excerpts.position));
 }

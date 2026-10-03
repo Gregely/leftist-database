@@ -36,6 +36,13 @@
       "when": 1790894144642,
       "tag": "0004_staged_structure",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "6",
+      "when": 1791060740423,
+      "tag": "0005_guided_journeys",
+      "breakpoints": true
     }
   ]
 }

@@ -31,7 +31,7 @@ Every explorable thing is a row in `entities`, plus one row in its kind's detail
 | `tendency_details` | `color` (map colour token), `period_label`, `context`, `criticisms`, `legacy` |
 | `debate_details` | `intro`, `context` |
 | `event_details` | `date_label`, `place`, `event_type`, `significance` |
-| `path_details` | `entry_line`, `level`, `estimated_time`, `prerequisites` |
+| `path_details` | `entry_line`, `level`, `estimated_time`, `prerequisites`, `guided`, `overview` |
 
 ## Relationships
 
@@ -96,6 +96,29 @@ The compare view computes, for the selected positions, which propositions they s
 `path_steps(path_id, entity_id, position, framing, track, parent_step_id)` — an ordered route of any entities, each
 with a framing note. `track = 'main'` steps form the route; `track = 'branch'` steps hang off a main step
 (`parent_step_id`) as optional branches. Detours are computed from the relationship graph.
+
+### Guided journeys
+
+A Guided journey is not a separate content type: it is a learning path with `path_details.guided = 1`, shown under
+`/guided` instead of `/paths`. It adds only reading copy around entries that already exist:
+
+| Column | Meaning |
+| --- | --- |
+| `path_details.guided` | Offer this path under Guided (`/paths/<slug>` then redirects to `/guided/<slug>`) |
+| `path_details.overview` | Markup: what the journey covers, shown before the reader starts |
+| `path_steps.orientation` | "Where you are" — what the reader is trying to understand at this stop |
+| `path_steps.why_it_matters` | "Why it matters" — why the idea is needed for what follows |
+| `path_steps.next_reason` | "Continue" — why the next stop follows (on the last stop: an optional closing note) |
+| `path_steps.excerpt_id` | Optional featured excerpt; must belong to the stop's entity (`ON DELETE SET NULL`) |
+
+Everything else on a step page is read from the stop's entity: its existing progressive explanation (for a concept
+`brief` → `standard` → `deep`; for other kinds `summary` → `body` → `context`/`legacy`/`significance`, see `LEVELS`
+in `lib/data/guided.ts`), its excerpts, and its relationships — split into connections to other stops and
+connections beyond the journey. A stop whose entry is not visible to the reader is left out, so a public journey
+never exposes a draft. Because the copy lives on `path_steps`, it is staged on a live journey like any other path
+structure and released when the journey is published. Reading progress is kept in the reader's browser only
+(`localStorage`: visited stops under `atlas:path:<slug>`, shared with learning paths; the last stop read under
+`atlas:guided:last:<slug>`).
 
 ## Media
 

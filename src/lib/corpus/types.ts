@@ -123,7 +123,17 @@ export interface CorpusDebate {
 
 export interface CorpusPath {
   path: EntityKey;
-  steps: { entity: EntityKey; framing: string; branches?: { entity: EntityKey; framing: string; track?: "branch" | "alternative" }[] }[];
+  steps: {
+    entity: EntityKey;
+    framing: string;
+    /** Guided journeys: "Where you are", "Why it matters" and "Continue" copy for this stop (markup). */
+    orientation?: string;
+    whyItMatters?: string;
+    nextReason?: string;
+    /** Guided journeys: feature an existing excerpt of the stop's entry, named by the opening words of its quotation. */
+    excerpt?: string;
+    branches?: { entity: EntityKey; framing: string; track?: "branch" | "alternative" }[];
+  }[];
 }
 
 export interface CorpusMedia {

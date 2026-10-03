@@ -28,6 +28,17 @@ export async function idsInCollection(tag: string): Promise<string[]> {
   return (await db.select({ id: s.entities.id }).from(s.entities).where(hasTag(tag))).map((r) => r.id);
 }
 
+/** The collections a path's stops belong to (staged and released steps), so a preview of the path can include them. */
+export async function stepCollections(pathId: string): Promise<string[]> {
+  const db = await ready();
+  const rows = await db
+    .select({ tags: s.entities.editorialTags })
+    .from(s.pathSteps)
+    .innerJoin(s.entities, eq(s.entities.id, s.pathSteps.entityId))
+    .where(eq(s.pathSteps.pathId, pathId));
+  return [...new Set(rows.flatMap((r) => parseTags(r.tags)))].sort();
+}
+
 export async function listCollections(): Promise<{ tag: string; count: number }[]> {
   const db = await ready();
   const rows = (await db.all(sql`SELECT j.value AS tag, count(*) AS n FROM entities, json_each(entities.editorial_tags) j GROUP BY j.value ORDER BY j.value`)) as {

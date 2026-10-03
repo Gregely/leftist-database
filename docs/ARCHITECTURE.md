@@ -100,6 +100,16 @@ buttons with descriptive labels; the map has a "read as a list" alternative; the
 combobox/listbox pattern and focus trapping; comparison data is a real `<table>`; motion is disabled under
 `prefers-reduced-motion`; colour is never the only carrier of meaning (stances have glyphs and labels).
 
+## Guided journeys
+
+`/guided` is a way of navigating the knowledge base, not a second content architecture. A journey is a learning
+path flagged `guided` (see [`DATA_MODEL.md`](DATA_MODEL.md#guided-journeys)); `lib/data/guided.ts` reads it through
+the same visibility scope as every public page and assembles each step from the stop entity's own fields, excerpts
+and relationships. `components/views/GuidedView.tsx` renders the overview and the step pages for both the public
+route and the desk preview, reusing `PathRoute`, `DepthReader`, `Excerpts`, `Prose` and `Notes`. Journeys are
+created, edited, reviewed and published in the desk like any other path; nothing about a particular journey is
+hard-coded in the frontend.
+
 ## Editorial system & security
 
 - **Authentication.** Accounts live in `users` (scrypt password hashes). Signing in creates a random session token,

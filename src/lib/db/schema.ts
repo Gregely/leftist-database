@@ -31,6 +31,7 @@
 import { sql } from "drizzle-orm";
 import {
   index,
+  type AnySQLiteColumn,
   integer,
   primaryKey,
   sqliteTable,
@@ -191,6 +192,10 @@ export const pathDetails = sqliteTable("path_details", {
   estimatedTime: text("estimated_time"),
   /** What a reader should know first (markup). */
   prerequisites: text("prerequisites").notNull().default(""),
+  /** Offered as a Guided journey (/guided): a path presented step by step with orientation copy. */
+  guided: integer("guided", { mode: "boolean" }).notNull().default(false),
+  /** Guided journeys: what the journey covers (markup). */
+  overview: text("overview").notNull().default(""),
 });
 
 export const pathSteps = sqliteTable(
@@ -206,6 +211,14 @@ export const pathSteps = sqliteTable(
     position: integer("position").notNull(),
     /** Why this step is here, in the context of this path. */
     framing: text("framing").notNull().default(""),
+    /** Guided journeys — "Where you are": what the reader is trying to understand at this point (markup). */
+    orientation: text("orientation").notNull().default(""),
+    /** Guided journeys — "Why it matters" for what comes next (markup). */
+    whyItMatters: text("why_it_matters").notNull().default(""),
+    /** Guided journeys — "Continue": why the next step follows from this one (markup). */
+    nextReason: text("next_reason").notNull().default(""),
+    /** Guided journeys: an existing excerpt of the step's entry to feature. */
+    excerptId: text("excerpt_id").references((): AnySQLiteColumn => excerpts.id, { onDelete: "set null" }),
     /** "main" route, a "branch" off a main stop, or an "alternative" to one. */
     track: text("track").notNull().default("main"),
     /** For branches and alternatives: the main-route stop they leave from. */

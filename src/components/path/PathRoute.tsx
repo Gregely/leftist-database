@@ -46,7 +46,22 @@ function useVisited(slug: string) {
  * The path drawn as a route: stations along a line. Every station is a link,
  * so the reader can jump anywhere; visited stops (kept in this browser) fill in.
  */
-export function PathRoute({ slug, stops, current }: { slug: string; stops: Stop[]; current: number }) {
+export function PathRoute({
+  slug,
+  stops,
+  current,
+  hrefPrefix = "?step=",
+  label = "The route",
+  unit = "stops",
+}: {
+  slug: string;
+  stops: Stop[];
+  current: number;
+  /** Links are `${hrefPrefix}${position}`; a preview passes its own prefix so links stay in the preview. */
+  hrefPrefix?: string;
+  label?: string;
+  unit?: string;
+}) {
   const visited = useVisited(slug);
 
   useEffect(() => {
@@ -72,7 +87,7 @@ export function PathRoute({ slug, stops, current }: { slug: string; stops: Stop[
     <nav aria-label="Path stops">
       <div className="flex items-baseline justify-between gap-4">
         <p className="label text-faint">
-          The route · {n} stops
+          {label} · {n} {unit}
         </p>
         <p className="label-mono text-faint" aria-live="polite">
           {progress}% visited
@@ -99,7 +114,7 @@ export function PathRoute({ slug, stops, current }: { slug: string; stops: Stop[
             return (
               <li key={s.position} className="absolute" style={{ left: `${(xAt(i) / W) * 100}%`, top: `${(yAt(i) / H) * 100}%` }}>
                 <Link
-                  href={`?step=${s.position}`}
+                  href={`${hrefPrefix}${s.position}`}
                   scroll={false}
                   aria-current={on ? "step" : undefined}
                   className="group absolute flex -translate-x-1/2 -translate-y-1/2 flex-col items-center"
@@ -130,7 +145,7 @@ export function PathRoute({ slug, stops, current }: { slug: string; stops: Stop[
           return (
             <li key={s.position}>
               <Link
-                href={`?step=${s.position}`}
+                href={`${hrefPrefix}${s.position}`}
                 scroll={false}
                 aria-current={on ? "step" : undefined}
                 aria-label={`Stop ${s.position}: ${s.title}`}

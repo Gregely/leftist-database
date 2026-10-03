@@ -341,7 +341,26 @@ async function importBatch(
     if (await alreadyImported(row.id, "path-steps", hash)) continue;
     await resetStructure(actor, row.id);
     for (const step of p.steps) {
-      const stepId = await addStep(actor, row.id, { entityId: (await requireKey(step.entity)).id, framing: step.framing });
+      const target = await requireKey(step.entity);
+      let excerptId: string | null = null;
+      if (step.excerpt) {
+        // Point at an existing excerpt of the stop's entry; prefer one with a provenance check over seeded samples.
+        const db = await ready();
+        const found = await db
+          .select({ id: s.excerpts.id, createdBy: s.excerpts.createdBy })
+          .from(s.excerpts)
+          .where(and(eq(s.excerpts.entityId, target.id), sql`${s.excerpts.body} LIKE ${step.excerpt.replace(/[%_]/g, "") + "%"}`));
+        excerptId = (found.find((x) => x.createdBy) ?? found[0])?.id ?? null;
+        if (!excerptId) throw new Error(`${p.path}: no excerpt of ${step.entity} begins “${step.excerpt}”.`);
+      }
+      const stepId = await addStep(actor, row.id, {
+        entityId: target.id,
+        framing: step.framing,
+        orientation: step.orientation,
+        whyItMatters: step.whyItMatters,
+        nextReason: step.nextReason,
+        excerptId,
+      });
       for (const b of step.branches ?? []) {
         await addStep(actor, row.id, { entityId: (await requireKey(b.entity)).id, framing: b.framing, track: b.track ?? "branch", parentStepId: stepId });
       }

@@ -163,6 +163,17 @@ export const KIND_FIELDS: Record<EntityKind, FieldDef[]> = {
       summary,
     ]),
     ...section("Prerequisites", [rich("prerequisites", "Before you start", undefined, true)]),
+    ...section("Guided journey", [
+      {
+        name: "guided",
+        label: "Offer this path as a Guided journey",
+        type: "checkbox",
+        store: "details",
+        section: "",
+        help: "Guided journeys appear under Guided, step by step, with the orientation copy written for each stop on the Route tab. They follow the same review and publication workflow.",
+      },
+      rich("overview", "What the journey covers", "Shown on the Guided page before the reader starts: the questions the journey answers and roughly what they will meet.", true),
+    ]),
     ...curation,
   ],
 };

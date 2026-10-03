@@ -362,9 +362,99 @@ export interface PathStepRow {
   track: "main" | "branch" | "alternative";
   parentStepId: string | null;
   entity: { id: string; title: string; kind: EntityKind; live: boolean };
+  /** Guided journeys: orientation copy and featured excerpt. */
+  orientation: string;
+  whyItMatters: string;
+  nextReason: string;
+  excerptId: string | null;
+  /** The stop entry's excerpts, to choose the featured one from. */
+  excerpts: { id: string; label: string }[];
 }
 
-export function PathEditor({ pathId, steps, canEdit }: { pathId: string; steps: PathStepRow[]; canEdit: boolean }) {
+/** The Guided copy for one stop: short texts around the entry, which itself is never copied. */
+function GuidedStepCopy({ pathId, step, canEdit, last, act, pending }: { pathId: string; step: PathStepRow; canEdit: boolean; last: boolean; act: ReturnType<typeof useAct>["act"]; pending: boolean }) {
+  const [open, setOpen] = useState(false);
+  const [v, setV] = useState({ orientation: step.orientation, whyItMatters: step.whyItMatters, nextReason: step.nextReason, excerptId: step.excerptId ?? "" });
+  const [entity, setEntity] = useState<PickedEntity | null>(null);
+  const dirty =
+    v.orientation !== step.orientation || v.whyItMatters !== step.whyItMatters || v.nextReason !== step.nextReason || v.excerptId !== (step.excerptId ?? "") || !!entity;
+  const missing = [!step.orientation && "where you are", !step.whyItMatters && "why it matters", !last && !step.nextReason && "continue"].filter(Boolean);
+  const area = (key: "orientation" | "whyItMatters" | "nextReason", label: string, help: string) => (
+    <label className="block">
+      <span className="label mb-1 block text-faint">{label}</span>
+      <textarea
+        rows={3}
+        disabled={!canEdit}
+        value={v[key]}
+        onChange={(e) => setV({ ...v, [key]: e.target.value })}
+        className="field text-sm"
+        aria-describedby={`${step.id}-${key}-help`}
+      />
+      <span id={`${step.id}-${key}-help`} className="mt-1 block text-xs text-faint">
+        {help}
+      </span>
+    </label>
+  );
+  return (
+    <div className="sm:col-start-2 sm:col-end-5">
+      <button type="button" onClick={() => setOpen(!open)} aria-expanded={open} className="label text-muted hover:text-ink" data-guided-copy={step.id}>
+        {open ? "▾" : "▸"} Guided copy{" "}
+        {missing.length ? <span className="text-ochre">· missing {missing.join(", ")}</span> : <span className="text-olive">· complete</span>}
+      </button>
+      {open && (
+        <div className="mt-3 grid gap-4 border-l-2 border-red bg-paper-warm p-4" role="group" aria-label={`Guided copy for ${step.entity.title}`}>
+          {area("orientation", "Where you are", "What the reader is trying to understand at this point. Two or three sentences.")}
+          {area("whyItMatters", "Why it matters", "Why this idea is needed for what comes next.")}
+          {area("nextReason", last ? "Closing note" : "Continue", last ? "Optional: a last word at the end of the journey." : "Why the next step follows from this one.")}
+          <label className="block">
+            <span className="label mb-1 block text-faint">Featured excerpt</span>
+            <select disabled={!canEdit || !!entity} value={v.excerptId} onChange={(e) => setV({ ...v, excerptId: e.target.value })} className="field text-sm">
+              <option value="">{step.excerpts.length ? "The entry's first quotation (default)" : "None — the entry has no excerpts"}</option>
+              {step.excerpts.map((x) => (
+                <option key={x.id} value={x.id}>
+                  {x.label}
+                </option>
+              ))}
+            </select>
+          </label>
+          {canEdit && (
+            <div>
+              <EntityPicker label="Point this stop at a different entry (optional)" value={entity} onChange={setEntity} exclude={[pathId, step.entity.id]} />
+              {entity && <p className="mt-1 text-xs text-faint">Saving moves this stop to “{entity.title}”. Its copy is kept; a featured excerpt of the old entry is cleared.</p>}
+            </div>
+          )}
+          {canEdit && (
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                disabled={!dirty || pending}
+                onClick={() =>
+                  act(
+                    () =>
+                      updateStepAction(pathId, step.id, {
+                        orientation: v.orientation,
+                        whyItMatters: v.whyItMatters,
+                        nextReason: v.nextReason,
+                        excerptId: entity ? null : v.excerptId || null,
+                        ...(entity ? { entityId: entity.id } : {}),
+                      }),
+                    () => setEntity(null),
+                  )
+                }
+                className="btn btn-red py-1 text-sm disabled:opacity-50"
+              >
+                Save guided copy
+              </button>
+              {dirty && <span className="label text-ochre">Unsaved</span>}
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+export function PathEditor({ pathId, steps, canEdit, guided = false }: { pathId: string; steps: PathStepRow[]; canEdit: boolean; guided?: boolean }) {
   const { act, pending, el } = useAct();
   const main = steps.filter((s) => s.track === "main");
   const [entity, setEntity] = useState<PickedEntity | null>(null);
@@ -375,7 +465,7 @@ export function PathEditor({ pathId, steps, canEdit }: { pathId: string; steps: 
   const [framings, setFramings] = useState<Record<string, string>>(Object.fromEntries(steps.map((s) => [s.id, s.framing])));
 
   const row = (s: PathStepRow, i?: number) => (
-    <li key={s.id} className={`grid items-start gap-3 py-3 sm:grid-cols-[3rem_14rem_1fr_auto] ${s.track !== "main" ? "border-l-2 border-red pl-3 sm:ml-12" : ""}`}>
+    <li key={s.id} data-path-stop={s.track} className={`grid items-start gap-3 py-3 sm:grid-cols-[3rem_14rem_1fr_auto] ${s.track !== "main" ? "border-l-2 border-red pl-3 sm:ml-12" : ""}`}>
       <span className="numeral text-2xl text-red">{s.track === "main" ? String((i ?? 0) + 1).padStart(2, "0") : "↳"}</span>
       <span>
         <span className="font-serif text-lg">{s.entity.title}</span>
@@ -419,12 +509,21 @@ export function PathEditor({ pathId, steps, canEdit }: { pathId: string; steps: 
           </button>
         </span>
       )}
+      {guided && s.track === "main" && <GuidedStepCopy pathId={pathId} step={s} canEdit={canEdit} last={i === main.length - 1} act={act} pending={pending} />}
     </li>
   );
 
   return (
     <div className="space-y-6">
       {el}
+      {guided ? (
+        <p className="text-sm text-muted">
+          This path is a <strong>Guided journey</strong>. Each stop shows its entry&apos;s own explanations, excerpts and connections; open
+          “Guided copy” to write the few lines that walk the reader through it. Preview shows the journey as readers will see it.
+        </p>
+      ) : (
+        <p className="text-sm text-muted">To offer this path under Guided, tick “Offer this path as a Guided journey” on the Content tab.</p>
+      )}
       <ol className="divide-y divide-rule border-y border-rule">
         {main.flatMap((s, i) => [row(s, i), ...steps.filter((b) => b.parentStepId === s.id).map((b) => row(b))])}
       </ol>

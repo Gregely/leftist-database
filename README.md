@@ -50,6 +50,7 @@ Copy `.env.example` to `.env.local` to configure the database URL and the media 
 | Debates | `/debates`, `/debates/[slug]` | Positions side by side; **compare** two or more to see shared and divergent stances; arguments and counterarguments |
 | Timeline | `/timeline`, `/timeline/[slug]` | Zoomable (century / half-century / decade) multi-lane timeline with contextual panel; vertical list on phones |
 | Texts, tendencies | `/texts…`, `/tendencies…` | Catalogue and traditions |
+| Guided | `/guided`, `/guided/[slug]?step=n` | *Where should I start?* Curated journeys through existing entries, one step at a time: where you are, the idea (with its depth reader), why it matters, a source excerpt, and where it leads; progress and *Continue* kept in the browser |
 | Learning paths | `/paths`, `/paths/[slug]?step=n` | A route through ideas with next / back / explore and detours; progress kept in the browser |
 | Search | overlay (`/` or ⌘K) and `/search` | SQLite FTS5 full-text search grouped by entity type, with related entries |
 | Sources | `/sources`, `/sources/[id]` | Bibliography; every citation and excerpt points here |

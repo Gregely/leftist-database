@@ -25,7 +25,7 @@ import { atLeast, availableActions, can } from "@/lib/editorial/permissions";
 import { parseTags } from "@/lib/editorial/collections";
 import { deskNeighborhood } from "@/lib/editorial/queries";
 import { sourceGaps } from "@/lib/editorial/sources";
-import { citationsFor, debateStructure, excerptsFor, mediaFor, pathSteps, relationshipsFor } from "@/lib/editorial/structure";
+import { citationsFor, debateStructure, excerptOptions as stepExcerptOptions, excerptsFor, mediaFor, pathSteps, relationshipsFor } from "@/lib/editorial/structure";
 import { TRANSITION_PERMISSION, type Transition } from "@/lib/editorial/workflow";
 
 type Props = {
@@ -289,6 +289,7 @@ export default async function EntryPage({ params, searchParams }: Props) {
   } else if (tab === "structure" && kind === "path") {
     const steps = await pathSteps(id);
     const routeKey = row.stagedStructure ? "staged" : "released";
+    const stepExcerpts = await stepExcerptOptions([...new Set(steps.map(({ step }) => step.entityId))]);
     body = (
       <div className="space-y-8">
         {structureNotice}
@@ -296,6 +297,7 @@ export default async function EntryPage({ params, searchParams }: Props) {
           key={routeKey}
           pathId={id}
           canEdit={canStructure}
+          guided={!!fields.guided}
           steps={steps.map(({ step, e }) => ({
             id: step.id,
             position: step.position,
@@ -303,6 +305,13 @@ export default async function EntryPage({ params, searchParams }: Props) {
             track: step.track as "main",
             parentStepId: step.parentStepId,
             entity: { id: e.id, title: e.title, kind: e.kind as EntityKind, live: e.live },
+            orientation: step.orientation,
+            whyItMatters: step.whyItMatters,
+            nextReason: step.nextReason,
+            excerptId: step.excerptId,
+            excerpts: stepExcerpts
+              .filter((x) => x.entityId === step.entityId)
+              .map((x) => ({ id: x.id, label: `${x.body ? `“${x.body.slice(0, 90)}${x.body.length > 90 ? "…" : ""}”` : "(passage reference)"}${x.locator ? ` — ${x.locator}` : ""}` })),
           }))}
         />
       </div>

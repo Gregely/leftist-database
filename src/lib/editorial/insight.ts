@@ -140,6 +140,17 @@ export async function validateEntity(row: s.EntityRow, fieldsIn?: FieldValues): 
     if (g.propositions.length < 2) add("warning", "debate-propositions", "Add at least two propositions so positions can be compared.");
   }
   if (g.kind === "path" && g.steps.filter((x) => x.track === "main").length < 2) add("error", "path-steps", "A learning path needs at least two stops.");
+  if (g.kind === "path" && fields.guided) {
+    // Guided journeys: each stop on the main route carries a little orientation copy.
+    const main = g.steps.filter((x) => x.track === "main").sort((a, b) => a.position - b.position);
+    const missing = (pick: (x: (typeof main)[number]) => string, last = true) => main.filter((x, i) => (last || i < main.length - 1) && !pick(x).trim()).map((x) => x.position);
+    const where = missing((x) => x.orientation);
+    const why = missing((x) => x.whyItMatters);
+    const next = missing((x) => x.nextReason, false);
+    if (where.length) add("warning", "guided-orientation", `Guided stop${where.length > 1 ? "s" : ""} ${where.join(", ")} ${where.length > 1 ? "have" : "has"} no “Where you are” copy.`);
+    if (why.length) add("warning", "guided-why", `Guided stop${why.length > 1 ? "s" : ""} ${why.join(", ")} ${why.length > 1 ? "have" : "has"} no “Why it matters” copy.`);
+    if (next.length) add("info", "guided-next", `Guided stop${next.length > 1 ? "s" : ""} ${next.join(", ")} ${next.length > 1 ? "do" : "does"} not yet explain why the next stop follows.`);
+  }
   if (g.kind === "text" && !g.rels.some((r) => r.type === "WROTE" && r.dir === "in")) add("warning", "text-author", "No author is linked (a thinker “wrote” this text).");
   if (g.kind === "thinker" && !g.rels.some((r) => r.type === "MEMBER_OF")) add("info", "thinker-tendency", "Not yet placed in a tendency.");
 
@@ -240,6 +251,16 @@ export async function completeness(row: s.EntityRow, fieldsIn?: FieldValues): Pr
         item("Prerequisites", has(fields.prerequisites)),
         item("Stops", g.steps.filter((x) => x.track === "main").length >= 3, "At least three stops"),
         item("Branches", g.steps.some((x) => x.track !== "main"), "Optional detours or alternatives"),
+        ...(fields.guided
+          ? [
+              item("Journey overview", has(fields.overview, 40)),
+              item(
+                "Guided copy",
+                g.steps.filter((x) => x.track === "main").every((x) => x.orientation.trim() && x.whyItMatters.trim()),
+                "“Where you are” and “Why it matters” for every stop",
+              ),
+            ]
+          : []),
       ];
   }
 }
@@ -255,7 +276,7 @@ const MARKUP_COLUMNS: [string, string[]][] = [
   ["tendency_details", ["context", "criticisms", "legacy"]],
   ["debate_details", ["context"]],
   ["event_details", ["significance"]],
-  ["path_details", ["prerequisites"]],
+  ["path_details", ["prerequisites", "overview"]],
 ];
 
 /** What would be affected by unpublishing, archiving or deleting this entry. */

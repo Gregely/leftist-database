@@ -73,7 +73,8 @@ export async function listPaths() {
     .select({ e: entities, d: pathDetails })
     .from(entities)
     .innerJoin(pathDetails, eq(pathDetails.entityId, entities.id))
-    .where(and(eq(entities.kind, "path"), isPublic()))
+    // Guided journeys have their own home at /guided.
+    .where(and(eq(entities.kind, "path"), isPublic(), eq(pathDetails.guided, false)))
     .orderBy(asc(entities.sortOrder));
   const ids = rows.map((r) => r.e.id);
   const steps = ids.length

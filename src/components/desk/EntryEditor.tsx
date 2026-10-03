@@ -361,6 +361,7 @@ function Field({
             <input type="checkbox" id={id} disabled={disabled} checked={!!value} onChange={(e) => onChange(e.target.checked)} className="h-4 w-4 accent-[#B51F2A]" />
             <span className="label">{f.label}</span>
           </label>
+          {f.help && <p className="mt-1 text-xs text-faint">{f.help}</p>}
         </div>
       );
     case "select":

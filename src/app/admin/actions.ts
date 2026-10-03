@@ -238,8 +238,8 @@ export async function deleteArgumentAction(debateId: string, id: string): Promis
 export async function addStepAction(pathId: string, f: { entityId: string; framing: string; track?: string; parentStepId?: string }): Promise<ActionResult> {
   return run((a) => structure.addStep(a, pathId, f), { publicChange: true });
 }
-export async function updateStepAction(pathId: string, id: string, framing: string): Promise<ActionResult> {
-  return run((a) => structure.updateStep(a, pathId, id, framing), { publicChange: true });
+export async function updateStepAction(pathId: string, id: string, patch: string | structure.StepPatch): Promise<ActionResult> {
+  return run((a) => structure.updateStep(a, pathId, id, patch), { publicChange: true });
 }
 export async function moveStepAction(pathId: string, id: string, delta: -1 | 1): Promise<ActionResult> {
   return run((a) => structure.moveStep(a, pathId, id, delta), { publicChange: true });

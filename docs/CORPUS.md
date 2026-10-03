@@ -51,6 +51,11 @@ finished corpus defines (so early batches can link ahead), and ordered **batches
 - **Flags** (`missing-source`, `disputed`, `unverified-quotation`, `uncertain-relationship`, `incomplete-metadata`,
   `possible-duplicate`, `specialist-review`, `sample-overlap`) become internal editorial notes on the entry, visible
   in its Review tab and never public.
+- **Paths** list `steps` by entity key with a `framing` line, optional `track: "branch"` side routes, and — for a
+  path whose fields set `guided: true` — the Guided copy `orientation`, `whyItMatters` and `nextReason`, plus
+  `excerpt`: the opening words of an existing excerpt on the stop's entity to feature (the import fails if none
+  matches). `corpus/guided-understanding-marx` is the example: one journey built only from Initial Marx Corpus
+  entries.
 - **Media** files sit in `corpus/<name>/media/` with title, alt text, caption, creator, credit, source and licence.
   Identical files are stored once; the import never rewrites metadata on a library image it did not upload.
 

@@ -15,6 +15,7 @@ export const SITE = {
 export const siteTitle = SITE.name.join(" / ");
 
 export const NAV = [
+  { label: "Guided", href: "/guided" },
   { label: "Explore", href: "/explore" },
   { label: "Thinkers", href: "/thinkers" },
   { label: "Concepts", href: "/concepts" },

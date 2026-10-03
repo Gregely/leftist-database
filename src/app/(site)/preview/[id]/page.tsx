@@ -5,17 +5,18 @@ import { notFound } from "next/navigation";
 import { ConceptView } from "@/components/views/ConceptView";
 import { DebateView } from "@/components/views/DebateView";
 import { EventView } from "@/components/views/EventView";
+import { GuidedView } from "@/components/views/GuidedView";
 import { PathView } from "@/components/views/PathView";
 import { TendencyView } from "@/components/views/TendencyView";
 import { TextView } from "@/components/views/TextView";
 import { ThinkerView } from "@/components/views/ThinkerView";
 import { requireUser } from "@/lib/auth/session";
-import { getConcept, getDebate, getEvent, getPath, getTendency, getText, getThinker } from "@/lib/data";
+import { getConcept, getDebate, getEvent, getGuidedJourney, getPath, getTendency, getText, getThinker } from "@/lib/data";
 import type { PreviewSpec } from "@/lib/data/types";
 import { STATUS_LABELS, type WorkflowStatus } from "@/lib/content/model";
 import { hasPendingChanges, loadEntity, previewOverlay } from "@/lib/editorial/content";
 import { assertCan } from "@/lib/editorial/permissions";
-import { idsInCollection, parseTags } from "@/lib/editorial/collections";
+import { idsInCollection, parseTags, stepCollections } from "@/lib/editorial/collections";
 import { enterPreviewScope } from "@/lib/data/scope";
 
 export const metadata: Metadata = { title: "Preview", robots: { index: false, follow: false } };
@@ -37,7 +38,9 @@ export default async function PreviewPage({ params, searchParams }: Props) {
   const row = await loadEntity(id);
   if (!row) notFound();
   assertCan(user, "entity.view");
-  const tags = parseTags(row.editorialTags);
+  // Collections this preview can widen to: the entry's own, and for a path (or Guided journey) those of its stops.
+  const own = parseTags(row.editorialTags);
+  const tags = [...new Set([...own, ...(row.kind === "path" ? await stepCollections(id) : [])])];
   const collection = sp.with && tags.includes(sp.with) ? sp.with : null;
   enterPreviewScope(
     collection ? [id, ...(await idsInCollection(collection))] : [id],
@@ -80,6 +83,12 @@ export default async function PreviewPage({ params, searchParams }: Props) {
       break;
     }
     case "path": {
+      const journey = await getGuidedJourney(slug, preview);
+      if (journey) {
+        const q = collection ? `with=${encodeURIComponent(collection)}` : "";
+        view = <GuidedView journey={journey} step={sp.step} depth={sp.depth} links={{ overview: `/preview/${id}${q ? `?${q}` : ""}`, stepPrefix: `/preview/${id}?${q ? `${q}&` : ""}step=` }} />;
+        break;
+      }
       const p = await getPath(slug, preview);
       if (p) view = <PathView path={p} step={sp.step} />;
       break;
@@ -96,14 +105,18 @@ export default async function PreviewPage({ params, searchParams }: Props) {
             {row.live ? (hasPendingChanges(row) ? " · live version differs" : " · matches the live page") : " · not public"}
             {collection && ` · with the rest of “${collection}”`}
           </p>
-          {sp.embed !== "1" && tags.length > 0 && (
-            <Link
-              href={collection ? `/preview/${id}` : `/preview/${id}?with=${encodeURIComponent(tags[0])}`}
-              className="label underline underline-offset-4"
-            >
-              {collection ? "Show this entry alone" : `Include unpublished “${tags[0]}” entries`}
-            </Link>
-          )}
+          {sp.embed !== "1" &&
+            (collection ? (
+              <Link href={`/preview/${id}`} className="label underline underline-offset-4">
+                Show this entry alone
+              </Link>
+            ) : (
+              tags.map((t) => (
+                <Link key={t} href={`/preview/${id}?with=${encodeURIComponent(t)}`} className="label underline underline-offset-4">
+                  Include unpublished “{t}” entries
+                </Link>
+              ))
+            ))}
           {sp.embed !== "1" && (
             <>
               <ViewSwitch id={id} active="preview" tone="red" className="lg:hidden" />

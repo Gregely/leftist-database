@@ -22,6 +22,7 @@ export { getTendency, getTendencyColors, getTendencyMemberIds, type TendencyAggr
 export { getDebate, getDebatePositionLabels } from "./debates";
 export { getEvent, getTimeline, getPreview, type EventAggregate } from "./events";
 export { getPath, getStepDetours, listPaths } from "./paths";
+export { getGuidedJourney, getGuidedStepContent, isGuidedPath, listGuidedJourneys } from "./guided";
 export { search, lookupEntities } from "./search";
 export { listSources, getSource } from "./sources";
 export { getGraph, getNeighborhood } from "./graph";
@@ -30,6 +31,7 @@ export type * from "./types";
 export type { TimelineItem, TimelineLane, Preview } from "./events";
 export type { DebatePosition, DebateArgument, DebateAggregate } from "./debates";
 export type { PathStep, PathAggregate, PathListing } from "./paths";
+export type { GuidedJourney, GuidedListing, GuidedStep, GuidedStepContent, GuidedLevel } from "./guided";
 export type { SearchResults, SearchHit } from "./search";
 export type { ThinkerAggregate } from "./thinkers";
 export type { ConceptAggregate } from "./concepts";

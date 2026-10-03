@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 import { login } from "./helpers";
 
-const PAGES = ["/", "/explore", "/thinkers", "/thinkers/marx", "/concepts/alienation", "/debates/what-is-the-state", "/timeline", "/texts", "/paths/foundations?step=3", "/search?q=state"];
+const PAGES = ["/", "/explore", "/thinkers", "/thinkers/marx", "/concepts/alienation", "/debates/what-is-the-state", "/timeline", "/texts", "/paths/foundations?step=3", "/guided", "/search?q=state"];
 
 for (const path of PAGES) {
   test(`no horizontal overflow: ${path}`, async ({ page }) => {
