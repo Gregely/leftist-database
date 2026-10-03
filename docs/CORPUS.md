@@ -14,16 +14,27 @@ The first corpus is **Initial Marx Corpus** (`corpus/initial-marx/`); its review
 ## Commands
 
 ```bash
+npm run corpus -- setup                            # bring this database up to date with every committed corpus
 npm run corpus -- verify initial-marx              # fetch archive pages / catalogues; record results in verification.json
 npm run corpus -- import initial-marx [--batch b3] [--submit]
 npm run corpus -- check  initial-marx [--batch b3] [--http http://localhost:3000 --as editor@atlas.test]
 npm run corpus -- report initial-marx [--http …]   # writes docs/corpus/initial-marx-review.md
 ```
 
+- **setup** is how a new checkout (or any database without the corpora) gets them, because `data/*.db` is not in
+  Git. It applies migrations, then goes through `corpus/index.ts` in dependency order (`requires`; the Guided
+  journey needs the Initial Marx Corpus) and imports with `--submit` each corpus none of whose entries carry its
+  collection label yet. A corpus that is fully present is left untouched, even if editors have changed it since; a
+  partly present one stops the run with the missing keys, to be completed deliberately with `import`. It ends with
+  the database checks and the desk and preview URLs of each path (ids differ between databases). It never seeds,
+  resets or publishes; an empty database needs `npm run db:ensure` (or `npm run dev`) first.
 - **verify** is the only step that needs the network. It checks that each excerpt's wording appears verbatim
   (after normalising quotes, dashes and spacing) on its archive page, that each online source mentions an expected
   phrase, and that each book can be found in Open Library. Results are committed, so imports are reproducible offline.
-- **import** is idempotent: re-running it changes nothing that has not changed in the data. It runs as the inactive
+- **import** is idempotent: re-running it changes nothing that has not changed in the data. But where an editor has
+  changed an imported entry since, re-importing writes the corpus text back as a new working version (history is
+  kept), so on a reviewed database prefer `setup`, which skips corpora already present. `import` refuses a corpus
+  whose `requires` are not imported yet. It runs as the inactive
   editor account `research-import@atlas.invalid`, so the audit log and history show what the import did.
 - **check** validates the data (keys, relationship types, sources, chronology, locators, debate stances, path order),
   then the database (possible duplicates, structural checks, graph isolation, timeline placement, that nothing in the

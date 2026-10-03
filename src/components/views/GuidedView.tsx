@@ -158,11 +158,11 @@ export async function GuidedView({ journey, step: stepParam, depth, links }: { j
 
             <section aria-labelledby="g-idea" className="mt-10">
               <p className="label text-faint">The idea · {KINDS[step.entity.kind].label}</p>
-              <h2 id="g-idea" className="display mt-3 text-[2.6rem] sm:text-[4rem]">
+              <h1 id="g-idea" className="display mt-3 text-[2.6rem] sm:text-[4rem]">
                 <Link href={step.entity.href} className="hover:text-red">
                   {step.entity.title}
                 </Link>
-              </h2>
+              </h1>
               {step.framing && <p className="mt-4 max-w-2xl text-lg leading-snug text-muted">{step.framing}</p>}
               <div className="mt-8">
                 <DepthReader

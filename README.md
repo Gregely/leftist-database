@@ -12,7 +12,13 @@ machine for holding the theory, not yet as the theory itself.
 ```bash
 npm install
 npm run dev          # migrates + seeds data/atlas.db on first run, then starts http://localhost:3000
+npm run corpus -- setup   # optional: load the committed research corpora (Initial Marx Corpus, Guided journeys)
 ```
+
+`data/*.db` is not in Git, so a new checkout starts with the sample records only. `npm run corpus -- setup` imports
+the corpora committed under `corpus/` into your database, for review in the desk: it applies migrations, imports
+each corpus that is not there yet (prerequisites first), submits it for review and publishes nothing. It leaves a
+corpus that is already present untouched, so it is safe to run again. See [`docs/CORPUS.md`](docs/CORPUS.md).
 
 - Public site: <http://localhost:3000>
 - Editorial desk: <http://localhost:3000/admin>. In development `npm run dev` creates four demo accounts, one per role —
@@ -26,6 +32,7 @@ npm run dev          # migrates + seeds data/atlas.db on first run, then starts 
 | `npm run test:e2e` | Playwright suite (public site, editorial workflow, desk, mobile) against a throwaway `data/test.db` |
 | `npm run db:reset` | Delete the local database, migrate and re-seed the samples |
 | `npm run db:migrate` / `db:seed` / `db:reindex` | Individual database tasks |
+| `npm run corpus -- setup` | Import the committed research corpora that this database does not have yet (unpublished, submitted for review) |
 | `npm run db:generate` | Generate a migration after editing `src/lib/db/schema.ts` |
 | `npm run user:create -- --email … --name … --role admin` | Create a desk account (prints a generated password once unless `--password` is given) |
 | `npm run user:list` | List desk accounts |

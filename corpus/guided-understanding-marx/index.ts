@@ -15,6 +15,8 @@ const step = (s: CorpusPath["steps"][number]) => s;
 export const guidedUnderstandingMarx: Corpus = {
   collection: "Guided journeys",
   dir: "corpus/guided-understanding-marx",
+  // Every stop is an Initial Marx Corpus entry, and the sources are reused from it.
+  requires: ["initial-marx"],
   batches: [
     {
       id: "g1",

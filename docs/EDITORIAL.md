@@ -157,6 +157,9 @@ are built from entries that already exist; a journey adds only a few lines of co
 
 The first journey, **Understanding Marx**, was imported from `corpus/guided-understanding-marx` (18 stops, Marx to
 Lenin, built only from the Initial Marx Corpus) and submitted for review; like the corpus, it is not published.
+A database that does not have it yet (for example a new checkout) gets both with `npm run corpus -- setup`. Until it
+is published, find it in the desk under Content (type *Path*, or collection *Guided journeys*) and the Review queue;
+the public `/guided` page lists published journeys only.
 
 ## Research corpora
 

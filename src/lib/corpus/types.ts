@@ -176,6 +176,8 @@ export interface Corpus {
   dir: string;
   /** Every entry the finished corpus will define, so earlier batches can link ahead. */
   planned?: EntityKey[];
+  /** Corpora (by name in corpus/index.ts) that must be imported first, because this one links to their entries. */
+  requires?: string[];
   batches: CorpusBatch[];
 }
 

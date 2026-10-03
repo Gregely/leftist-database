@@ -469,6 +469,20 @@ async function loadVerification(corpus: Corpus): Promise<VerificationRecord | nu
   }
 }
 
+/**
+ * How much of a corpus is already in the database: the entries it defines
+ * that exist and carry its collection label. Read-only.
+ */
+export async function importState(corpus: Corpus) {
+  const keys = [...new Set(corpus.batches.flatMap((b) => (b.entities ?? []).map((e) => e.key)))];
+  const present: EntityKey[] = [];
+  for (const key of keys) {
+    const row = await resolveKey(key);
+    if (row && parseTags(row.editorialTags).includes(corpus.collection)) present.push(key);
+  }
+  return { defined: keys.length, present, missing: keys.filter((k) => !present.includes(k)) };
+}
+
 /** All entries carrying the corpus collection label. */
 export async function corpusRows(collection: string) {
   const db = await ready();
