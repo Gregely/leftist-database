@@ -4,10 +4,11 @@ import { getConceptBriefs, getRelatedConcepts } from "./concepts";
 import { getDebatePositionLabels } from "./debates";
 import { getTimeline } from "./events";
 import { getGraph } from "./graph";
+import { listGuidedJourneys } from "./guided";
 import { listPaths } from "./paths";
 
 export async function getHomeData() {
-  const [stats, counts, concepts, debates, thinkers, tendencies, texts, markers, graph, paths] = await Promise.all([
+  const [stats, counts, concepts, debates, thinkers, tendencies, texts, markers, graph, paths, guided] = await Promise.all([
     getArchiveStats(),
     countByKind(),
     listEntities({ kind: "concept", featured: true, limit: 7 }),
@@ -18,6 +19,8 @@ export async function getHomeData() {
     getTimeline({ lanes: ["event"], featuredOnly: true }),
     getGraph({ kinds: ["thinker"], featuredOnly: true }),
     listPaths(),
+    // Published Guided journeys only, exactly as listed on /guided.
+    listGuidedJourneys(),
   ]);
   const conceptIds = concepts.items.map((c) => c.id);
   const [briefs, positions, leadRelated] = await Promise.all([
@@ -37,5 +40,6 @@ export async function getHomeData() {
     markers,
     graph,
     paths,
+    guided,
   };
 }

@@ -16,12 +16,12 @@ export const siteTitle = SITE.name.join(" / ");
 
 export const NAV = [
   { label: "Guided", href: "/guided" },
-  { label: "Explore", href: "/explore" },
   { label: "Thinkers", href: "/thinkers" },
   { label: "Concepts", href: "/concepts" },
+  { label: "Texts", href: "/texts" },
   { label: "Debates", href: "/debates" },
   { label: "Timeline", href: "/timeline" },
-  { label: "Texts", href: "/texts" },
+  { label: "Explore", href: "/explore" },
 ] as const;
 
 /** Periods used to browse by time. Kept as configuration so editors can tune the boundaries. */

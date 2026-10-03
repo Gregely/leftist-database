@@ -34,7 +34,13 @@ export function MobileMenu() {
     };
   }, [open]);
 
-  const links = [...NAV, { label: "Learning paths", href: "/paths" }, { label: "Sources", href: "/sources" }];
+  const links = [
+    ...NAV,
+    { label: "Tendencies", href: "/tendencies" },
+    { label: "Learning paths", href: "/paths" },
+    { label: "Sources", href: "/sources" },
+    { label: "About", href: "/about" },
+  ];
 
   return (
     <>

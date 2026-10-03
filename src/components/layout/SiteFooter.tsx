@@ -16,6 +16,7 @@ const COLUMNS = [
   {
     title: "Ways in",
     links: [
+      { label: "Guided", href: "/guided" },
       { label: "Debates", href: "/debates" },
       { label: "Timeline", href: "/timeline" },
       { label: "Learning paths", href: "/paths" },

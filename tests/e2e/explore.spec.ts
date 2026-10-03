@@ -1,11 +1,23 @@
 import { expect, test } from "@playwright/test";
 
 test.describe("home & theory map", () => {
-  test("renders the masthead and entry points", async ({ page }) => {
+  test("renders the masthead, Guided and the collection before the map", async ({ page }) => {
     await page.goto("/");
     await expect(page.getByRole("heading", { level: 1 })).toContainText("A map of socialist thought");
-    const explore = page.getByRole("navigation", { name: "Explore by" });
-    for (const k of ["Thinker", "Concept", "Tendency", "Debate", "Period", "Text"]) await expect(explore).toContainText(k);
+    await expect(page.getByRole("search")).toContainText("Search thinkers, concepts, texts and debates");
+    // Guided sits in the opening; with no journey published it offers the learning paths.
+    const guided = page.getByRole("region", { name: "Guided" });
+    await expect(guided.getByRole("link", { name: "Guided journeys" })).toHaveAttribute("href", "/guided");
+    await expect(guided.getByRole("link", { name: /First steps into Marxism/ })).toBeVisible();
+    const collection = page.getByRole("region", { name: "Explore the collection" });
+    for (const [name, href] of [["Thinkers", "/thinkers"], ["Concepts", "/concepts"], ["Tendencies", "/tendencies"], ["Texts", "/texts"], ["Debates", "/debates"], ["Timeline", "/timeline"], ["Explore", "/explore"]])
+      await expect(collection.getByRole("link", { name: new RegExp(`^\\d+ ${name}`) })).toHaveAttribute("href", href);
+    await collection.getByRole("button", { name: /Search/ }).click();
+    await expect(page.getByRole("dialog", { name: "Search the archive" })).toBeVisible();
+    // The order of the page: orientation first, the Theory Map further down.
+    const top = async (name: string) => (await page.getByRole("region", { name }).boundingBox())!.y;
+    expect(await top("Guided")).toBeLessThan(await top("Explore the collection"));
+    expect(await top("Explore the collection")).toBeLessThan((await page.locator("section[aria-labelledby=map-heading]").boundingBox())!.y);
   });
 
   test("hover, select and open a thinker from the map", async ({ page }) => {

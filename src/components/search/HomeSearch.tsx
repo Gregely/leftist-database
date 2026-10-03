@@ -1,9 +1,18 @@
 /** A plain GET form into the archive: works without JavaScript. */
-export function HomeSearch({ className = "" }: { className?: string }) {
+export function HomeSearch({
+  className = "",
+  label = "Search the archive",
+  hint,
+}: {
+  className?: string;
+  label?: string;
+  /** A short note under the field, e.g. the keyboard shortcut. */
+  hint?: string;
+}) {
   return (
     <form action="/search" role="search" className={`group mt-10 max-w-xl ${className}`}>
       <label htmlFor="home-search" className="label text-muted">
-        Search the archive
+        {label}
       </label>
       <div className="mt-2 flex items-end gap-3 border-b border-ink pb-1 transition-colors focus-within:border-red">
         <input
@@ -18,6 +27,7 @@ export function HomeSearch({ className = "" }: { className?: string }) {
           Search →
         </button>
       </div>
+      {hint && <p className="mt-2 hidden text-[0.8rem] text-faint sm:block">{hint}</p>}
     </form>
   );
 }

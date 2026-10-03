@@ -91,8 +91,13 @@ test("editors build a Guided journey from existing entries, and readers only see
   expect((await page.request.get(`/guided/${slug}`)).status()).toBe(404);
   await fire(page, "Publish");
 
-  // A reader: the landing page lists it with Start; nothing has been read yet.
+  // A reader: the homepage features the published journey, and the landing page lists it with Start.
   const reader = await (await browser.newContext({ viewport: { width: 1440, height: 1000 } })).newPage();
+  await reader.goto("/");
+  const featured = reader.locator(`[data-home-guided] [data-home-journey="${slug}"]`);
+  await expect(featured).toContainText(title);
+  await expect(featured).toContainText("3 steps");
+  await expect(featured.locator("[data-journey-start]")).toHaveAttribute("href", `/guided/${slug}?step=1`);
   await reader.goto("/guided");
   const card = reader.locator(`[data-guided-card="${slug}"]`);
   await expect(card).toContainText("3 steps");

@@ -50,7 +50,7 @@ Copy `.env.example` to `.env.local` to configure the database URL and the media 
 
 | Area | Route | Notes |
 | --- | --- | --- |
-| Home | `/` | Masthead, *Explore by* index, the chronological **Theory Map**, featured concepts, debates, mini timeline, learning paths |
+| Home | `/` | What the site is and search; the **Guided** panel (published journeys, else learning paths); *Explore the collection*, an index of every section; featured concepts, debates, texts and thinkers; the chronological **Theory Map**; mini timeline; method |
 | Library | `/explore` | Thinkers, concepts, tendencies, debates, texts and periods, each with its own visual treatment |
 | Thinkers | `/thinkers`, `/thinkers/[slug]` | Lifespan index with tendency filters; entry with ideas, network graph, works, influences, disagreements, legacy, timeline |
 | Concepts | `/concepts`, `/concepts/[slug]` | A–Z glossary; entry with a **descending depth reader** (30 seconds → 5 minutes → deep dive), primary texts, debates, related-concept constellation |
