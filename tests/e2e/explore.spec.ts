@@ -1,13 +1,15 @@
 import { expect, test } from "@playwright/test";
 
 test.describe("home & theory map", () => {
-  test("the hero offers search, Guided and the library, and every section is one step away", async ({ page }) => {
+  test("the hero offers search, Guided and other ways in, and every section is one step away", async ({ page }) => {
     await page.goto("/");
     await expect(page.getByRole("heading", { level: 1 })).toContainText("A map of socialist thought");
-    await expect(page.getByRole("search")).toContainText("Search thinkers, concepts, texts and debates");
-    // Guided and Explore sit side by side in the opening, as two ways of reading, not one.
+    await expect(page.getByRole("main").getByRole("search")).toContainText("Search the collection");
+    // Guided sits beside the search, with other ways in beneath it: one way of reading among several.
     await expect(page.getByRole("region", { name: "Guided" }).getByRole("link", { name: /Explore Guided/ })).toHaveAttribute("href", "/guided");
-    await expect(page.getByRole("region", { name: "Explore", exact: true }).getByRole("link", { name: "Open the library" })).toHaveAttribute("href", "/explore");
+    const waysIn = page.getByRole("navigation", { name: "Other ways in" });
+    await expect(waysIn.getByRole("link", { name: /The Theory Map/ })).toHaveAttribute("href", "/map");
+    await expect(waysIn.getByRole("link", { name: /in thirty seconds/ })).toHaveAttribute("href", /\/concepts\/.+\?depth=brief$/);
     const collection = page.getByRole("region", { name: "Explore the collection" });
     const sections = [
       ["Thinkers", "/thinkers"],
@@ -16,7 +18,7 @@ test.describe("home & theory map", () => {
       ["Debates", "/debates"],
       ["Tendencies", "/tendencies"],
       ["Timeline", "/timeline"],
-      ["Theory Map", "/explore#map"],
+      ["Theory Map", "/map"],
       ["Explore", "/explore"],
     ];
     for (const [name, href] of sections) await expect(collection.getByRole("link", { name: new RegExp(`^\\d+ ${name}`) })).toHaveAttribute("href", href);
@@ -26,8 +28,24 @@ test.describe("home & theory map", () => {
     expect((await box("Explore the collection")).y).toBeLessThan((await page.locator("section[aria-labelledby=map-heading]").boundingBox())!.y);
     // Routes, including the learning paths, are further down the page.
     await expect(page.getByRole("region", { name: "Routes through the collection" }).getByRole("link", { name: /First steps into Marxism/ })).toBeVisible();
-    await collection.getByRole("button", { name: /Search/ }).click();
+    // Search is always in the masthead.
+    await page.getByRole("banner").getByRole("button", { name: /Search/ }).click();
     await expect(page.getByRole("dialog", { name: "Search the archive" })).toBeVisible();
+  });
+
+  test("the Theory Map has its own page, with two layouts and a choice of what to include", async ({ page }) => {
+    await page.goto("/");
+    await page.getByRole("navigation", { name: "Primary" }).getByRole("link", { name: "Map" }).click();
+    await expect(page).toHaveURL(/\/map$/);
+    await expect(page.getByRole("heading", { level: 1 })).toContainText("The Theory Map");
+    const map = page.locator("section[aria-labelledby=map-heading]");
+    await expect(map.locator('svg:visible g[role=button][aria-label^="Karl Marx"]')).toBeVisible();
+    await page.getByRole("group", { name: "Layout" }).getByRole("link", { name: "By affinity" }).click();
+    await expect(page).toHaveURL(/view=affinity/);
+    await page.getByRole("group", { name: "Include" }).getByRole("link", { name: "Thinkers & concepts" }).click();
+    await expect(page).toHaveURL(/scope=ideas/);
+    await expect(map.locator('svg:visible g[role=button][aria-label^="Alienation"]')).toBeVisible();
+    await expect(page.getByRole("complementary").filter({ hasText: "Most connected" })).toContainText("Karl Marx");
   });
 
   test("hover, select and open a thinker from the map", async ({ page }) => {

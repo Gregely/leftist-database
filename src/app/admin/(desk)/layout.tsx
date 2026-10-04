@@ -6,7 +6,7 @@ import { requireUser } from "@/lib/auth/session";
 import { ROLE_LABELS } from "@/lib/content/model";
 import { can } from "@/lib/editorial/permissions";
 import { dashboard } from "@/lib/editorial/queries";
-import { SITE } from "@/lib/site";
+import { Wordmark } from "@/components/layout/Wordmark";
 
 export const metadata: Metadata = {
   title: { default: "Editorial desk", template: "%s — Editorial desk" },
@@ -36,9 +36,7 @@ export default async function DeskLayout({ children }: { children: React.ReactNo
       <header className="sticky top-0 z-40 border-b border-ink bg-ink text-paper">
         <div className="mx-auto flex max-w-[1480px] flex-wrap items-center gap-x-8 gap-y-0 px-4 sm:px-8">
           <Link href="/admin" className="flex items-baseline gap-3 py-3">
-            <span className="font-sans text-[0.78rem] font-semibold uppercase tracking-[0.2em]">
-              {SITE.name[0]} <span className="text-red">/</span> {SITE.name[1]}
-            </span>
+            <Wordmark asLink={false} className="text-[1.1rem]" />
             <span className="serif-italic text-[0.95rem] text-ink-muted">Editorial desk</span>
           </Link>
           <div className="order-3 w-full lg:order-2 lg:w-auto">

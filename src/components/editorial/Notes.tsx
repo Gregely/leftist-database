@@ -7,13 +7,13 @@ export function Notes({ notes, className = "" }: { notes: Note[]; className?: st
   if (!notes.length) return null;
   return (
     <section aria-labelledby="notes-heading" className={className}>
-      <h2 id="notes-heading" className="label mb-4 border-t border-ink pt-3 font-sans">
-        <span className="label-mono mr-3 text-red">§</span>Notes &amp; sources
+      <h2 id="notes-heading" className="label mb-4 flex items-baseline gap-3 border-t-[3px] border-ink pt-3 font-sans">
+        <span className="numeral text-[1.3rem] leading-none text-red">§</span>Notes &amp; sources
       </h2>
-      <ol className="space-y-3">
+      <ol className="space-y-3 font-serif">
         {notes.map((n) => (
-          <li key={n.n} id={`note-${n.n}`} className="grid grid-cols-[2rem_1fr] gap-2 text-[0.88rem] leading-snug target:bg-beige/40">
-            <span className="label-mono pt-[2px] text-red">{n.n}.</span>
+          <li key={n.n} id={`note-${n.n}`} className="grid scroll-mt-32 grid-cols-[2rem_1fr] gap-2 text-[0.98rem] leading-snug target:bg-paper-deep">
+            <span className="label-mono pt-[3px] text-red">{n.n}.</span>
             {n.source ? (
             <span>
               <span className="text-ink-warm">{n.source.author}</span>,{" "}
@@ -23,8 +23,8 @@ export function Notes({ notes, className = "" }: { notes: Note[]; className?: st
               {n.source.publisher && <span className="text-muted">, {n.source.publisher}</span>}
               {n.source.publicationDate && <span className="text-muted"> ({n.source.publicationDate})</span>}
               {n.locator && <span>, {n.locator}</span>}.
-              <span className="label ml-2 text-faint">{SOURCE_TYPE_LABELS[n.source.sourceType]}</span>
-              {!n.inline && <span className="label ml-2 text-faint">· general</span>}
+              <span className="label ml-2 font-sans text-faint">{SOURCE_TYPE_LABELS[n.source.sourceType]}</span>
+              {!n.inline && <span className="label ml-2 font-sans text-faint">· general</span>}
               {n.note && <span className="mt-0.5 block text-muted">{n.note}</span>}
             </span>
             ) : (

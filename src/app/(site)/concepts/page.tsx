@@ -4,6 +4,7 @@ import { IndexHeader } from "@/components/editorial/IndexHeader";
 import { Pager, pageParam } from "@/components/editorial/Pager";
 import { Container } from "@/components/editorial/primitives";
 import { getConceptBriefs, lettersFor, listEntities } from "@/lib/data";
+import { KIND_TONE } from "@/lib/site";
 import { KINDS } from "@/lib/content/model";
 
 export const metadata: Metadata = { title: "Concepts", description: KINDS.concept.blurb };
@@ -30,6 +31,7 @@ export default async function ConceptsIndex({ searchParams }: Props) {
   return (
     <>
       <IndexHeader
+        tone={KIND_TONE.concept}
         crumb="Concepts"
         tally={`${list.total} concepts`}
         title={
@@ -37,10 +39,10 @@ export default async function ConceptsIndex({ searchParams }: Props) {
             A glossary of the left<span className="text-red">.</span>
           </>
         }
-        lede="Every concept opens in three depths — thirty seconds, five minutes, and a deep dive into how it has been argued over."
+        lede="Every concept opens at three depths: thirty seconds, five minutes, and a deep dive into how it has been argued over."
       />
       <Container>
-        <nav aria-label="Alphabetical index" className="sticky top-14 z-20 -mx-4 overflow-x-auto border-y border-ink bg-paper/95 px-4 sm:mx-0 sm:px-0">
+        <nav aria-label="Alphabetical index" className="scrollbar-none sticky top-14 z-20 -mx-4 overflow-x-auto border-y border-ink bg-paper/95 px-4 backdrop-blur-[3px] sm:mx-0 sm:px-0 lg:top-[60px]">
           <ol className="flex min-w-max items-center gap-0.5 py-2">
             <li>
               <Link href="/concepts" className={`label px-2 py-1 ${!letter ? "text-red" : "hover:text-red"}`}>
@@ -55,12 +57,12 @@ export default async function ConceptsIndex({ searchParams }: Props) {
                     <Link
                       href={`/concepts?letter=${l}`}
                       aria-current={letter === l ? "true" : undefined}
-                      className={`label-mono block w-7 py-1 text-center text-sm ${letter === l ? "bg-ink text-paper" : "hover:text-red"}`}
+                      className={`block w-7 py-1 text-center font-serif text-[1.15rem] leading-none ${letter === l ? "bg-red text-paper-warm" : "hover:text-red"}`}
                     >
                       {l}
                     </Link>
                   ) : (
-                    <span className="label-mono block w-7 py-1 text-center text-sm text-rule">{l}</span>
+                    <span className="block w-7 py-1 text-center font-serif text-[1.15rem] leading-none text-rule">{l}</span>
                   )}
                 </li>
               );
@@ -69,16 +71,16 @@ export default async function ConceptsIndex({ searchParams }: Props) {
         </nav>
         <div className="mt-6">
           {[...groups.entries()].map(([l, items]) => (
-            <section key={l} aria-labelledby={`letter-${l}`} className="grid gap-4 border-b border-rule py-8 md:grid-cols-[8rem_1fr]">
-              <h2 id={`letter-${l}`} className="display text-[4.5rem] leading-none text-red">
+            <section key={l} aria-labelledby={`letter-${l}`} className="grid gap-4 border-b border-ink py-8 md:grid-cols-[8rem_1fr]">
+              <h2 id={`letter-${l}`} className="display text-[4.5rem] leading-none text-red md:sticky md:top-32 md:self-start">
                 {l}
               </h2>
               <ul className="grid gap-x-10 gap-y-6 sm:grid-cols-2 xl:grid-cols-3">
                 {items.map((c) => (
                   <li key={c.id}>
                     <Link href={c.href} className="group block">
-                      <span className="font-serif text-2xl leading-tight group-hover:text-red">{c.title}</span>
-                      <span className="mt-1.5 block text-[0.9rem] leading-snug text-muted">{briefs[c.id] || c.summary}</span>
+                      <span className="font-serif text-[1.5rem] leading-tight group-hover:text-red">{c.title}</span>
+                      <span className="mt-1.5 line-clamp-4 block font-serif text-[1rem] leading-snug text-muted">{briefs[c.id] || c.summary}</span>
                     </Link>
                   </li>
                 ))}

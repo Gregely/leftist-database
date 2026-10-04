@@ -14,6 +14,8 @@ export function MapFigure({
   caption,
   size = "large",
   showLegend = true,
+  plate,
+  heading,
 }: {
   graph: Graph;
   mode: "chronological" | "radial";
@@ -22,6 +24,9 @@ export function MapFigure({
   caption?: string;
   size?: "large" | "medium";
   showLegend?: boolean;
+  /** Frame the map as a numbered atlas plate. */
+  plate?: string;
+  heading?: string;
 }) {
   if (!graph.nodes.length) return null;
   const landscape = layoutGraph(graph, {
@@ -38,5 +43,5 @@ export function MapFigure({
     width: 420,
     height: mode === "chronological" ? 820 : 560,
   });
-  return <TheoryMap landscape={landscape} portrait={portrait} title={title} caption={caption} showLegend={showLegend} />;
+  return <TheoryMap landscape={landscape} portrait={portrait} title={title} caption={caption} showLegend={showLegend} plate={plate} heading={heading} />;
 }

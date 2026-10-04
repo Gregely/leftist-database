@@ -4,6 +4,7 @@ import { IndexHeader } from "@/components/editorial/IndexHeader";
 import { Pager, pageParam } from "@/components/editorial/Pager";
 import { Container, lifespan } from "@/components/editorial/primitives";
 import { getTendencyMemberIds, listEntities, withTendencies } from "@/lib/data";
+import { KIND_TONE } from "@/lib/site";
 import { KINDS } from "@/lib/content/model";
 
 export const metadata: Metadata = { title: "Thinkers", description: KINDS.thinker.blurb };
@@ -35,6 +36,7 @@ export default async function ThinkersIndex({ searchParams }: Props) {
   return (
     <>
       <IndexHeader
+        tone={KIND_TONE.thinker}
         crumb="Thinkers"
         tally={`${list.total} ${list.total === 1 ? "thinker" : "thinkers"}`}
         title={
@@ -92,9 +94,9 @@ export default async function ThinkersIndex({ searchParams }: Props) {
               <li key={t.id} className="border-b border-rule">
                 <Link href={t.href} className="group grid items-center gap-x-6 gap-y-1 py-4 md:grid-cols-[38%_1fr]">
                   <span>
-                    <span className="font-serif text-[1.75rem] leading-tight transition-colors group-hover:text-red">{t.title}</span>
+                    <span className="font-serif text-[1.6rem] leading-tight transition-colors group-hover:text-red">{t.title}</span>
                     <span className="label-mono ml-3 text-faint">{lifespan(t.yearStart, t.yearEnd, "thinker")}</span>
-                    <span className="mt-1 block text-[0.85rem] text-muted">{t.tendencies.map((x) => x.title).join(" · ")}</span>
+                    <span className="mt-0.5 block font-serif text-[0.98rem] italic text-faint">{t.tendencies.map((x) => x.title).join(" · ")}</span>
                   </span>
                   <span className="relative block h-8">
                     <span aria-hidden="true" className="absolute inset-x-0 top-1/2 h-px bg-rule-soft" />
@@ -104,7 +106,7 @@ export default async function ThinkersIndex({ searchParams }: Props) {
                     {t.yearStart != null && (
                       <span
                         aria-hidden="true"
-                        className="absolute top-1/2 h-[6px] -translate-y-1/2 border-l-2 border-ink bg-beige transition-colors group-hover:border-red group-hover:bg-red"
+                        className="absolute top-1/2 h-[7px] -translate-y-1/2 border-l-2 border-ink bg-beige transition-colors group-hover:border-red group-hover:bg-red"
                         style={{ left: `${pct(t.yearStart)}%`, width: `${pct(end) - pct(t.yearStart)}%` }}
                       />
                     )}

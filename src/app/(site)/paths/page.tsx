@@ -3,6 +3,7 @@ import Link from "next/link";
 import { IndexHeader } from "@/components/editorial/IndexHeader";
 import { Container } from "@/components/editorial/primitives";
 import { listPaths } from "@/lib/data";
+import { KIND_TONE } from "@/lib/site";
 import { KINDS } from "@/lib/content/model";
 
 export const metadata: Metadata = { title: "Learning paths", description: KINDS.path.blurb };
@@ -12,6 +13,7 @@ export default async function PathsIndex() {
   return (
     <>
       <IndexHeader
+        tone={KIND_TONE.path}
         crumb="Learning paths"
         tally={`${paths.length} routes`}
         title={
@@ -19,10 +21,10 @@ export default async function PathsIndex() {
             Routes through the material<span className="text-red">.</span>
           </>
         }
-        lede="A path suggests an order — never a requirement. Every stop opens onto the rest of the Atlas, and you can leave the route whenever something catches your eye."
+        lede="A path suggests an order, never a requirement. Every stop opens onto the rest of the Atlas, and you can leave the route whenever something catches your eye."
       />
       <Container>
-        <ol className="border-t border-ink">
+        <ol className="border-t-[3px] border-ink">
           {paths.map((p, i) => (
             <li key={p.id} className="border-b border-rule">
               <Link href={p.href} className="group grid gap-x-10 gap-y-4 py-8 lg:grid-cols-[3rem_1fr_1fr]">

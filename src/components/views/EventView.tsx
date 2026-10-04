@@ -5,6 +5,7 @@ import { Figure } from "@/components/editorial/Figure";
 import { Prose } from "@/components/editorial/Prose";
 import { EntryHeader } from "@/components/entity/EntryHeader";
 import { RelationList } from "@/components/entity/RelationList";
+import { PeriodStrip } from "@/components/timeline/PeriodStrip";
 import { type EventAggregate } from "@/lib/data";
 
 
@@ -14,8 +15,20 @@ export function EventView({ e }: { e: EventAggregate }) {
     <article>
       <EntryHeader
         entity={entity}
-        titleClassName="text-[2.8rem] sm:text-[4.6rem]"
-        meta={<p className="numeral text-4xl text-red">{details?.dateLabel ?? entity.yearStart}</p>}
+        titleClassName="text-[2.8rem] sm:text-[4.6rem] xl:text-[5.4rem]"
+        meta={<p className="numeral text-[2rem] leading-none text-umber sm:text-[2.6rem]">{details?.dateLabel ?? entity.yearStart}</p>}
+        band={
+          entity.yearStart != null && (
+            <div className="pb-10">
+              <PeriodStrip
+                from={entity.yearStart}
+                to={entity.yearEnd}
+                label="Event"
+                marks={[e.prev, e.next].filter((x): x is NonNullable<typeof x> => !!x && x.yearStart != null).map((x) => ({ year: x.yearStart!, title: x.title, href: x.href, kind: "event" }))}
+              />
+            </div>
+          )
+        }
         standfirst={entity.summary}
         aside={
           <MetaList
@@ -57,8 +70,8 @@ export function EventView({ e }: { e: EventAggregate }) {
               .map((x) => (
                 <Link key={x!.ev.id} href={x!.ev.href} className="group block border-t border-rule py-4">
                   <span className="label text-faint">{x!.dir}</span>
-                  <span className="numeral ml-3 text-red">{x!.ev.yearStart}</span>
-                  <span className="mt-1 block font-serif text-xl group-hover:text-red">{x!.ev.title}</span>
+                  <span className="numeral ml-3 text-umber">{x!.ev.yearStart}</span>
+                  <span className="mt-1 block font-serif text-[1.3rem] group-hover:text-red">{x!.ev.title}</span>
                 </Link>
               ))}
           </nav>

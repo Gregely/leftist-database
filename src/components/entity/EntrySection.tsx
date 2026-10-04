@@ -1,6 +1,10 @@
 import type { ReactNode } from "react";
 
-/** A numbered section of an entry page, with the label in the margin on wide screens. */
+/**
+ * A section of an entry page. The margin column carries the section number
+ * and name (sticky on wide screens, as a reference book's margin heads);
+ * the text column carries the content.
+ */
 export function EntrySection({
   id,
   number,
@@ -8,6 +12,7 @@ export function EntrySection({
   title,
   children,
   aside,
+  tone,
 }: {
   id: string;
   number: string;
@@ -15,19 +20,29 @@ export function EntrySection({
   title?: ReactNode;
   children: ReactNode;
   aside?: ReactNode;
+  /** A recessed band for sections that sit apart from the main reading. */
+  tone?: "deep";
 }) {
   return (
-    <section id={id} aria-labelledby={`${id}-h`} className="scroll-mt-28 border-t border-ink py-12 sm:py-16">
-      <div className="grid gap-6 lg:grid-cols-12 lg:gap-8">
+    <section
+      id={id}
+      aria-labelledby={`${id}-h`}
+      className={`scroll-mt-32 border-t border-ink py-12 sm:py-16 ${tone === "deep" ? "-mx-4 bg-paper-deep px-4 sm:-mx-8 sm:px-8 lg:-mx-10 lg:px-10" : ""}`}
+    >
+      <div className="grid gap-6 lg:grid-cols-12 lg:gap-10">
         <div className="lg:col-span-3">
-          <h2 id={`${id}-h`} className="label font-sans lg:sticky lg:top-32">
-            <span className="label-mono mr-3 text-red">{number}</span>
-            {label}
-          </h2>
-          {aside && <div className="mt-6 hidden lg:block">{aside}</div>}
+          <div className="lg:sticky lg:top-36">
+            <h2 id={`${id}-h`} className="flex items-baseline gap-3 lg:block">
+              <span aria-hidden="true" className="numeral text-[1.6rem] leading-none text-red lg:block lg:text-[2.6rem]">
+                {number}
+              </span>
+              <span className="label font-sans text-ink lg:mt-2 lg:block">{label}</span>
+            </h2>
+            {aside && <div className="mt-6 hidden lg:block">{aside}</div>}
+          </div>
         </div>
         <div className="lg:col-span-9">
-          {title && <p className="display mb-8 max-w-3xl text-balance text-[2rem] sm:text-[2.6rem]">{title}</p>}
+          {title && <p className="display mb-8 max-w-3xl text-balance text-[1.85rem] sm:text-[2.4rem]">{title}</p>}
           {children}
         </div>
       </div>

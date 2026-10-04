@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
-import { Container, Label } from "@/components/editorial/primitives";
+import { IndexHeader } from "@/components/editorial/IndexHeader";
 import { Timeline } from "@/components/timeline/Timeline";
 import { getTimeline } from "@/lib/data";
-import { PERIODS } from "@/lib/site";
+import { KIND_TONE, PERIODS } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Timeline",
@@ -19,25 +19,17 @@ export default async function TimelinePage({ searchParams }: Props) {
   const counts = items.reduce<Record<string, number>>((a, i) => ({ ...a, [i.lane]: (a[i.lane] ?? 0) + 1 }), {});
   return (
     <>
-      <Container className="pt-6 sm:pt-8">
-        <div className="flex justify-between border-b border-rule pb-2">
-          <Label className="text-muted">
-            Atlas <span className="text-red">/</span> Timeline
-          </Label>
-          <Label className="text-faint">
-            {counts.event ?? 0} events · {counts.text ?? 0} texts · {counts.thinker ?? 0} lives · {counts.tendency ?? 0} tendencies
-          </Label>
-        </div>
-        <div className="grid gap-6 pb-10 pt-10 lg:grid-cols-12">
-          <h1 className="display text-[3.4rem] sm:text-[5.4rem] lg:col-span-7">
+      <IndexHeader
+        crumb="Timeline"
+        tone={KIND_TONE.event}
+        tally={`${counts.event ?? 0} events · ${counts.text ?? 0} texts · ${counts.thinker ?? 0} lives · ${counts.tendency ?? 0} tendencies`}
+        title={
+          <>
             Move through history<span className="text-red">.</span>
-          </h1>
-          <p className="lede text-ink-warm lg:col-span-5 lg:pt-6">
-            Revolutions and congresses, books and pamphlets, lives and traditions — on one track. Zoom from centuries to
-            decades, filter the lanes, and select anything to see what it connects to.
-          </p>
-        </div>
-      </Container>
+          </>
+        }
+        lede="Revolutions and congresses, books and pamphlets, lives and traditions, on one track. Zoom from centuries to decades, filter the lanes, and select anything to see what it connects to."
+      />
       <Timeline
         items={items}
         periods={PERIODS}

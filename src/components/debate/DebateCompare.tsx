@@ -10,15 +10,15 @@ function StanceGlyph({ stance, size = 14 }: { stance: Stance; size?: number }) {
   const c = size / 2;
   return (
     <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} aria-hidden="true" className="inline-block align-middle">
-      {stance === "affirms" && <circle cx={c} cy={c} r={r} fill="#171717" />}
+      {stance === "affirms" && <circle cx={c} cy={c} r={r} fill="#16161A" />}
       {stance === "qualified" && (
         <>
-          <circle cx={c} cy={c} r={r} fill="none" stroke="#171717" strokeWidth="1.3" />
-          <path d={`M${c},${c - r} A${r},${r} 0 0 1 ${c},${c + r} Z`} fill="#171717" />
+          <circle cx={c} cy={c} r={r} fill="none" stroke="#16161A" strokeWidth="1.3" />
+          <path d={`M${c},${c - r} A${r},${r} 0 0 1 ${c},${c + r} Z`} fill="#16161A" />
         </>
       )}
-      {stance === "rejects" && <circle cx={c} cy={c} r={r} fill="none" stroke="#B51F2A" strokeWidth="1.6" />}
-      {stance === "silent" && <line x1={c - r} x2={c + r} y1={c} y2={c} stroke="#6F695F" strokeWidth="1.3" />}
+      {stance === "rejects" && <circle cx={c} cy={c} r={r} fill="none" stroke="#BC2B1C" strokeWidth="1.6" />}
+      {stance === "silent" && <line x1={c - r} x2={c + r} y1={c} y2={c} stroke="#69635A" strokeWidth="1.3" />}
     </svg>
   );
 }
@@ -68,107 +68,114 @@ export function DebateCompare({
   return (
     <div>
       {/* Positions */}
-      <div className="flex items-baseline justify-between gap-4">
-        <p className="text-sm text-muted">
-          {positions.length} positions. Select two or more to compare them.
-        </p>
-        <p className="label hidden text-faint sm:block">Scroll →</p>
-      </div>
-      <ol className="scrollbar-thin relative -mx-4 mt-4 flex snap-x snap-mandatory gap-0 overflow-x-auto px-4 pb-4 sm:mx-0 sm:px-0">
+      <p className="font-serif text-[1.05rem] italic text-muted">
+        {positions.length} positions. Mark two or more with <span className="not-italic">Compare</span> to set them against each other below.
+      </p>
+      <ol className="mt-6 border-t-[3px] border-ink">
         {positions.map((p, i) => {
           const on = selected.includes(p.id);
           return (
             <li
               key={p.id}
               id={`position-${p.id}`}
-              className={`w-[85vw] max-w-[21rem] shrink-0 snap-start scroll-mt-32 border-y border-r border-ink first:border-l transition-colors sm:w-[21rem] ${on ? "bg-paper-warm" : ""}`}
+              className={`relative scroll-mt-36 border-b border-ink py-7 transition-colors sm:py-9 ${on ? "bg-paper-warm" : ""}`}
             >
-              <div className={`flex items-start justify-between gap-3 border-b px-5 pb-3 pt-4 ${on ? "border-red" : "border-rule"}`}>
-                <div>
-                  <span className="label-mono text-faint">{String.fromCharCode(65 + i)}</span>
-                  <h3 className="mt-1 font-serif text-[1.9rem] leading-none">
-                    {p.holder ? (
-                      <Link href={p.holder.href} className="hover:text-red">
-                        {p.label}
-                      </Link>
-                    ) : (
-                      p.label
-                    )}
-                  </h3>
-                  {p.holder?.subtitle && <p className="label-mono mt-1 text-faint">{p.holder.subtitle}</p>}
-                </div>
-                <button
-                  type="button"
-                  onClick={() => toggle(p.id)}
-                  aria-pressed={on}
-                  className={`label mt-1 inline-flex shrink-0 items-center gap-1.5 border px-2 py-1 transition-colors ${on ? "border-red bg-red text-paper-warm" : "border-ink hover:bg-ink hover:text-paper"}`}
-                >
-                  <span aria-hidden="true">{on ? "✓" : "+"}</span> Compare
-                  <span className="sr-only"> {p.label}</span>
-                </button>
-              </div>
-              <div className="space-y-5 px-5 py-5">
-                <div>
-                  <p className="label text-red">Central claim</p>
-                  <p className="mt-2 font-serif text-[1.2rem] leading-snug">{p.centralClaim}</p>
-                </div>
-                <p className="text-[0.92rem] leading-relaxed text-ink-warm">{p.summary}</p>
-                {p.assumptions.length > 0 && (
-                  <div>
-                    <p className="label text-faint">Underlying assumptions</p>
-                    <ul className="mt-2 space-y-1.5 text-[0.88rem] leading-snug">
-                      {p.assumptions.map((a) => (
-                        <li key={a} className="grid grid-cols-[1rem_1fr]">
-                          <span className="text-red">—</span>
-                          {a}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-                {p.texts.length > 0 && (
-                  <div>
-                    <p className="label text-faint">Key texts</p>
-                    <ul className="mt-1.5 space-y-1 text-[0.9rem]">
-                      {p.texts.map((t) => (
-                        <li key={t.id}>
-                          <Link href={t.href} className="link-inline italic">
-                            {t.title}
-                          </Link>{" "}
-                          <span className="label-mono text-faint">{t.yearStart}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-                {p.concepts.length > 0 && (
-                  <div>
-                    <p className="label text-faint">Related concepts</p>
-                    <p className="mt-1.5 text-[0.9rem]">
-                      {p.concepts.map((c, n) => (
-                        <span key={c.id}>
-                          <Link href={c.href} className="link-inline">
-                            {c.title}
+              {on && <span aria-hidden="true" className="absolute inset-y-0 -left-4 w-[3px] bg-red sm:-left-5" />}
+              <div className="grid gap-x-8 gap-y-4 md:grid-cols-[4rem_1fr]">
+                <span aria-hidden="true" className="numeral text-[2.6rem] leading-none text-red md:text-[3.4rem]">
+                  {String.fromCharCode(65 + i)}
+                </span>
+                <div className="min-w-0">
+                  <div className="flex flex-wrap items-start justify-between gap-4">
+                    <div>
+                      <h3 className="font-serif text-[1.9rem] leading-none sm:text-[2.3rem]">
+                        {p.holder ? (
+                          <Link href={p.holder.href} className="hover:text-red">
+                            {p.label}
                           </Link>
-                          {n < p.concepts.length - 1 && <span className="text-faint"> · </span>}
-                        </span>
-                      ))}
-                    </p>
+                        ) : (
+                          p.label
+                        )}
+                      </h3>
+                      {p.holder?.subtitle && <p className="label-mono mt-1.5 text-faint">{p.holder.subtitle}</p>}
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => toggle(p.id)}
+                      aria-pressed={on}
+                      className={`label inline-flex shrink-0 items-center gap-1.5 border px-2.5 py-1.5 transition-colors ${on ? "border-red bg-red text-paper-warm" : "border-ink hover:bg-ink hover:text-paper"}`}
+                    >
+                      <span aria-hidden="true">{on ? "✓" : "+"}</span> Compare
+                      <span className="sr-only"> {p.label}</span>
+                    </button>
                   </div>
-                )}
-                {p.criticisms.length > 0 && (
-                  <div className="border-t border-dashed border-rule pt-4">
-                    <p className="label text-faint">Criticisms</p>
-                    <ul className="mt-2 space-y-1.5 text-[0.86rem] leading-snug text-muted">
-                      {p.criticisms.map((c) => (
-                        <li key={c} className="grid grid-cols-[1rem_1fr]">
-                          <span className="text-red">⟂</span>
-                          {c}
-                        </li>
-                      ))}
-                    </ul>
+
+                  <div className="mt-5 grid gap-x-10 gap-y-6 lg:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)]">
+                    <div>
+                      <p className="label text-red">Central claim</p>
+                      <p className="mt-2 font-serif text-[1.45rem] leading-[1.3] sm:text-[1.6rem]">{p.centralClaim}</p>
+                      <p className="mt-4 max-w-[40rem] font-serif text-[1.05rem] leading-relaxed text-ink-warm">{p.summary}</p>
+                    </div>
+                    <div className="space-y-5 border-t border-rule pt-4 lg:border-l lg:border-t-0 lg:pl-8 lg:pt-0">
+                      {p.assumptions.length > 0 && (
+                        <div>
+                          <p className="label text-faint">Assumes</p>
+                          <ul className="mt-1.5 space-y-1.5 text-[0.92rem] leading-snug">
+                            {p.assumptions.map((a) => (
+                              <li key={a} className="grid grid-cols-[1rem_1fr]">
+                                <span aria-hidden="true" className="text-faint">–</span>
+                                {a}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                      {p.texts.length > 0 && (
+                        <div>
+                          <p className="label text-faint">Key texts</p>
+                          <ul className="mt-1.5 space-y-1 font-serif text-[1rem]">
+                            {p.texts.map((t) => (
+                              <li key={t.id}>
+                                <Link href={t.href} className="link-inline italic">
+                                  {t.title}
+                                </Link>{" "}
+                                <span className="label-mono text-faint">{t.yearStart}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                      {p.concepts.length > 0 && (
+                        <div>
+                          <p className="label text-faint">Concepts</p>
+                          <p className="mt-1.5 font-serif text-[1rem]">
+                            {p.concepts.map((c, n) => (
+                              <span key={c.id}>
+                                <Link href={c.href} className="link-inline">
+                                  {c.title}
+                                </Link>
+                                {n < p.concepts.length - 1 && <span className="text-faint"> · </span>}
+                              </span>
+                            ))}
+                          </p>
+                        </div>
+                      )}
+                      {p.criticisms.length > 0 && (
+                        <div>
+                          <p className="label text-red">Criticisms</p>
+                          <ul className="mt-1.5 space-y-1.5 text-[0.9rem] leading-snug text-muted">
+                            {p.criticisms.map((c) => (
+                              <li key={c} className="grid grid-cols-[1rem_1fr]">
+                                <span aria-hidden="true" className="text-red">⟂</span>
+                                {c}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                    </div>
                   </div>
-                )}
+                </div>
               </div>
             </li>
           );
@@ -177,11 +184,11 @@ export function DebateCompare({
 
       {/* Comparison matrix */}
       {propositions.length > 0 && (
-        <div id="compare" className="mt-14 scroll-mt-32">
-          <div className="flex flex-wrap items-end justify-between gap-4 border-t border-ink pt-4">
+        <div id="compare" className="mt-14 scroll-mt-36">
+          <div className="flex flex-wrap items-end justify-between gap-4 border-t-[3px] border-ink pt-4">
             <div>
               <p className="label">
-                <span className="label-mono mr-3 text-red">⇄</span>
+                <span aria-hidden="true" className="mr-3 text-red">⇄</span>
                 {comparing ? `Comparing ${columns.map((c) => c.label).join(" · ")}` : "All positions compared"}
               </p>
               <p className="mt-2 text-sm text-muted" aria-live="polite">
@@ -195,7 +202,7 @@ export function DebateCompare({
                   type="checkbox"
                   checked={onlyDiverge}
                   onChange={(e) => setOnlyDiverge(e.target.checked)}
-                  className="h-3.5 w-3.5 accent-[#B51F2A]"
+                  className="h-3.5 w-3.5 accent-[#BC2B1C]"
                 />
                 Only disagreements
               </label>
@@ -218,7 +225,7 @@ export function DebateCompare({
                     Proposition
                   </th>
                   {columns.map((c) => (
-                    <th key={c.id} scope="col" className="px-2 py-3 text-center font-serif text-lg font-normal leading-tight">
+                    <th key={c.id} scope="col" className="px-2 py-3 text-center font-serif text-[1.15rem] font-normal leading-tight">
                       {c.label}
                     </th>
                   ))}
@@ -233,10 +240,10 @@ export function DebateCompare({
                   .map(({ prop, kind }) => (
                     <tr
                       key={prop.id}
-                      className={`border-b border-rule transition-colors ${kind === "diverge" ? "bg-red/[0.035]" : ""}`}
+                      className={`border-b border-rule transition-colors ${kind === "diverge" ? "bg-red/[0.045]" : ""}`}
                     >
-                      <th scope="row" className="relative py-4 pr-4 align-top font-serif text-[1.08rem] font-normal leading-snug">
-                        {kind === "diverge" && <span aria-hidden="true" className="absolute -left-3 top-4 bottom-4 w-[2px] bg-red" />}
+                      <th scope="row" className="relative py-4 pr-4 pl-3 align-top font-serif text-[1.12rem] font-normal leading-snug">
+                        {kind === "diverge" && <span aria-hidden="true" className="absolute left-0 top-4 bottom-4 w-[3px] bg-red" />}
                         {prop.statement}
                       </th>
                       {columns.map((c) => {

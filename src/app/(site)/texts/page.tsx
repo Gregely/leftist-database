@@ -4,6 +4,7 @@ import { IndexHeader } from "@/components/editorial/IndexHeader";
 import { Pager, pageParam } from "@/components/editorial/Pager";
 import { Container } from "@/components/editorial/primitives";
 import { listTexts } from "@/lib/data";
+import { KIND_TONE } from "@/lib/site";
 import { KINDS } from "@/lib/content/model";
 
 export const metadata: Metadata = { title: "Texts", description: KINDS.text.blurb };
@@ -28,6 +29,7 @@ export default async function TextsIndex({ searchParams }: Props) {
   return (
     <>
       <IndexHeader
+        tone={KIND_TONE.text}
         crumb="Texts"
         tally={`${total} texts`}
         title={
@@ -35,7 +37,7 @@ export default async function TextsIndex({ searchParams }: Props) {
             The catalogue<span className="text-red">.</span>
           </>
         }
-        lede="Books, pamphlets, notebooks and essays, in order of first publication — with authors, forms and how hard they are to read."
+        lede="Books, pamphlets, notebooks and essays, in order of first publication, with their authors, their form and how hard they are to read."
       />
       <Container>
         <div className="flex flex-wrap items-center gap-x-5 gap-y-2 border-y border-ink py-3">
@@ -61,7 +63,7 @@ export default async function TextsIndex({ searchParams }: Props) {
         <table className="mt-2 w-full border-collapse text-left">
           <caption className="sr-only">Catalogue of texts</caption>
           <thead className="hidden md:table-header-group">
-            <tr className="border-b border-ink">
+            <tr className="border-b-[3px] border-ink">
               {["Year", "Title", "Author", "Form", "Reading"].map((h) => (
                 <th key={h} scope="col" className="label py-3 pr-4 font-medium text-faint">
                   {h}
@@ -72,14 +74,14 @@ export default async function TextsIndex({ searchParams }: Props) {
           <tbody>
             {items.map((t) => (
               <tr key={t.id} className="group grid grid-cols-[4rem_1fr] border-b border-rule md:table-row">
-                <td className="numeral row-span-3 py-4 pr-4 align-top text-2xl text-red">{t.yearStart}</td>
+                <td className="numeral row-span-3 py-4 pr-4 align-top text-[1.6rem] leading-tight text-blue">{t.yearStart}</td>
                 <td className="pt-4 pr-6 align-top md:py-4">
                   <Link href={t.href} className="font-serif text-[1.35rem] italic leading-tight group-hover:text-red">
                     {t.title}
                   </Link>
                   <span className="mt-1 hidden max-w-xl text-sm leading-snug text-muted md:block">{t.summary}</span>
                 </td>
-                <td className="pr-4 align-top text-[0.95rem] md:py-4">{t.authors.join(", ")}</td>
+                <td className="pr-4 align-top font-serif text-[1.05rem] md:py-4">{t.authors.join(", ")}</td>
                 <td className="label hidden py-4 pr-4 align-top text-muted md:table-cell">{t.form}</td>
                 <td className="label pb-4 align-top text-faint md:py-4">
                   <span aria-label={`Difficulty ${t.difficulty} of 3`} className="mr-2 tracking-[0.2em] text-red">

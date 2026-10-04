@@ -7,12 +7,15 @@ import { KINDS, RELATIONSHIP_TYPES, TENDENCY_COLOR_VALUES, type RelationshipFami
 import type { Layout, LayoutNode } from "@/lib/graph/layout";
 import type { GraphEdge } from "@/lib/data/types";
 
+/** Plate colours (the tokens of globals.css, as literal values for SVG attributes). */
+const C = { ink: "#16161A", red: "#BC2B1C", sheet: "#FAF8F2", rule: "#C9C1B2", faint: "#69635A", moss: "#4A6146", stone: "#A79F8E" };
+
 const FAMILY_STYLE: Record<RelationshipFamily, { stroke: string; dash?: string; label: string }> = {
-  influence: { stroke: "#202020", label: "Influenced / developed" },
-  critique: { stroke: "#B51F2A", dash: "5 4", label: "Critiqued / rejected" },
-  response: { stroke: "#5C574F", dash: "1.5 3.5", label: "Responded to" },
-  affinity: { stroke: "#53624B", label: "Associated / related" },
-  structure: { stroke: "#A79F8E", dash: "2 2", label: "Belongs to" },
+  influence: { stroke: C.ink, label: "Influenced / developed" },
+  critique: { stroke: C.red, dash: "5 4", label: "Critiqued / rejected" },
+  response: { stroke: C.faint, dash: "1.5 3.5", label: "Responded to" },
+  affinity: { stroke: C.moss, label: "Associated / related" },
+  structure: { stroke: C.stone, dash: "2 2", label: "Belongs to" },
 };
 
 function lifespan(n: LayoutNode) {
@@ -38,10 +41,10 @@ function arc(a: LayoutNode, b: LayoutNode, seed: string) {
 }
 
 function NodeMark({ n, focus, active }: { n: LayoutNode; focus: boolean; active: boolean }) {
-  const fillDot = n.color ? TENDENCY_COLOR_VALUES[n.color as TendencyColor] ?? "#202020" : null;
+  const fillDot = n.color ? TENDENCY_COLOR_VALUES[n.color as TendencyColor] ?? C.ink : null;
   const r = n.r;
-  const base = focus ? "#B51F2A" : active ? "#B51F2A" : "#FAF9F5";
-  const stroke = focus || active ? "#B51F2A" : "#171717";
+  const base = focus || active ? C.red : C.sheet;
+  const stroke = focus || active ? C.red : C.ink;
   if (n.kind === "concept") {
     return (
       <rect
@@ -50,8 +53,8 @@ function NodeMark({ n, focus, active }: { n: LayoutNode; focus: boolean; active:
         width={r * 2}
         height={r * 2}
         transform="rotate(45)"
-        fill={focus || active ? "#B51F2A" : "#FAF9F5"}
-        stroke={focus || active ? "#B51F2A" : "#53624B"}
+        fill={focus || active ? C.red : C.sheet}
+        stroke={focus || active ? C.red : C.moss}
         strokeWidth={1.3}
       />
     );
@@ -101,10 +104,6 @@ function MapSvg({
 
   const horizontal = layout.orientation === "landscape";
   const fontSize = horizontal ? 15 : 12.5;
-  const order = useMemo(
-    () => [...layout.nodes].sort((a, b) => (a.yearStart ?? 0) - (b.yearStart ?? 0)).map((n) => n.id),
-    [layout.nodes],
-  );
   const families = [...new Set(layout.edges.map((e) => e.family))];
 
   return (
@@ -136,15 +135,15 @@ function MapSvg({
       {layout.axis.map((t) =>
         horizontal ? (
           <g key={t.year} aria-hidden="true">
-            <line x1={t.at} x2={t.at} y1={18} y2={layout.height - 30} stroke="#C8C0B0" strokeDasharray="1 5" />
-            <text x={t.at} y={layout.height - 12} textAnchor="middle" className="fill-faint font-mono" fontSize="11">
+            <line x1={t.at} x2={t.at} y1={18} y2={layout.height - 30} stroke={C.rule} strokeDasharray="1 5" />
+            <text x={t.at} y={layout.height - 12} textAnchor="middle" className="fill-faint font-sans" fontSize="11.5" letterSpacing="0.04em">
               {t.year}
             </text>
           </g>
         ) : (
           <g key={t.year} aria-hidden="true">
-            <line x1={34} x2={layout.width - 8} y1={t.at} y2={t.at} stroke="#C8C0B0" strokeDasharray="1 5" />
-            <text x={4} y={t.at + 3.5} className="fill-faint font-mono" fontSize="10">
+            <line x1={34} x2={layout.width - 8} y1={t.at} y2={t.at} stroke={C.rule} strokeDasharray="1 5" />
+            <text x={4} y={t.at + 3.5} className="fill-faint font-sans" fontSize="10.5">
               {t.year}
             </text>
           </g>
@@ -152,7 +151,7 @@ function MapSvg({
       )}
 
       {/* Edges */}
-      <g fill="none" style={{ animation: "fade 1.2s .35s both" }}>
+      <g fill="none">
         {layout.edges.map((e) => {
           const a = byId.get(e.source);
           const b = byId.get(e.target);
@@ -190,7 +189,7 @@ function MapSvg({
         const anchor = label === "below" ? "middle" : label === "right" ? "start" : "end";
         const years = lifespan(n);
         return (
-          <g key={n.id} style={{ animation: `fade .6s ${0.05 + order.indexOf(n.id) * 0.045}s both` }}>
+          <g key={n.id}>
           <g
             transform={`translate(${n.x},${n.y})`}
             role="button"
@@ -210,7 +209,7 @@ function MapSvg({
             className="cursor-pointer outline-none focus-visible:[&_.ring]:opacity-100"
             style={{ opacity: dim ? 0.22 : 1, transition: "opacity .35s" }}
           >
-            <circle className="ring" r={n.r + 6} fill="none" stroke="#B51F2A" strokeWidth="1" opacity="0" />
+            <circle className="ring" r={n.r + 6} fill="none" stroke={C.red} strokeWidth="1" opacity="0" />
             <circle r={Math.max(n.r + 10, 18)} fill="transparent" />
             <g
               style={{
@@ -228,8 +227,8 @@ function MapSvg({
               textAnchor={anchor}
               fontSize={isFocus ? fontSize * 1.15 : fontSize}
               className="font-serif"
-              fill={active || isFocus ? "#B51F2A" : "#171717"}
-              stroke="#F3F0E8"
+              fill={active || isFocus ? C.red : C.ink}
+              stroke={C.sheet}
               strokeWidth="4"
               strokeLinejoin="round"
               paintOrder="stroke"
@@ -253,9 +252,19 @@ export interface TheoryMapProps {
   caption?: string;
   height?: "tall" | "medium";
   showLegend?: boolean;
+  /** Plate number for the cartouche, e.g. "Plate I". Without it the map is drawn unframed. */
+  plate?: string;
+  /** A short heading for the cartouche. */
+  heading?: string;
 }
 
-export function TheoryMap({ landscape, portrait, title, caption, showLegend = true }: TheoryMapProps) {
+/**
+ * An interactive map of relations, drawn as an atlas plate: a neatline frame,
+ * a fine graticule, a cartouche naming the plate, and a key. Hover traces a
+ * name's connections; selecting it opens a summary; selecting it again opens
+ * the entry. Every node is a focusable button and the map reads as a list.
+ */
+export function TheoryMap({ landscape, portrait, title, caption, showLegend = true, plate, heading }: TheoryMapProps) {
   const router = useRouter();
   const titleId = useId().replace(/:/g, "");
   const [hover, setHover] = useState<string | null>(null);
@@ -288,110 +297,140 @@ export function TheoryMap({ landscape, portrait, title, caption, showLegend = tr
       .sort((a, b) => b.e.weight - a.e.weight);
 
   const families = [...new Set(landscape.edges.map((e) => e.family))];
+  const kinds = [...new Set(nodes.map((n) => n.kind))];
+  const framed = !!plate;
 
   return (
-    <figure className="relative" onKeyDown={(e) => e.key === "Escape" && setSelected(null)}>
+    <figure className={framed ? "border border-ink p-[5px]" : "relative"} onKeyDown={(e) => e.key === "Escape" && setSelected(null)}>
       <figcaption id={titleId} className="sr-only">
         {title}. {caption}
       </figcaption>
-
-      <div className="relative">
-        <MapSvg
-          layout={landscape}
-          hover={hover}
-          selected={selected}
-          setHover={setHover}
-          select={select}
-          className="hidden h-auto w-full select-none md:block"
-          titleId={`${titleId}l`}
-        />
-        <MapSvg
-          layout={portrait}
-          hover={hover}
-          selected={selected}
-          setHover={setHover}
-          select={select}
-          className="block h-auto w-full select-none md:hidden"
-          titleId={`${titleId}p`}
-        />
-
-        {/* Hover card (desktop) */}
-        {hover && hover !== selected && byId.get(hover) && (
-          <HoverCard node={byId.get(hover)!} layout={landscape} />
-        )}
-      </div>
-
-      {/* Preview panel */}
-      <div aria-live="polite" className="mt-4 md:absolute md:right-0 md:top-0 md:mt-0 md:w-[19rem]">
-        {selected && current && current.id === selected ? (
-          <div className="border border-ink bg-paper-warm p-5 shadow-[6px_6px_0_0_rgba(23,23,23,0.08)] animate-enter">
-            <div className="flex items-start justify-between gap-3">
-              <p className="label text-red">{KINDS[current.kind].label}{current.group ? ` · ${current.group}` : ""}</p>
-              <button
-                type="button"
-                onClick={() => setSelected(null)}
-                className="label -mr-1 -mt-1 px-1 text-faint hover:text-ink"
-                aria-label="Close preview"
-              >
-                ✕
-              </button>
-            </div>
-            <h3 className="mt-2 font-serif text-[1.7rem] leading-none">{current.title}</h3>
-            {lifespan(current) && <p className="label-mono mt-1.5 text-muted">{lifespan(current)}</p>}
-            <p className="mt-3 text-[0.9rem] leading-snug text-ink-warm">{current.summary}</p>
-            <ul className="mt-4 max-h-44 space-y-1 overflow-y-auto border-t border-rule pt-3 scrollbar-thin">
-              {connections(current.id).map(({ e, other, label }) => (
-                <li key={e.id} className="text-[0.85rem] leading-snug">
-                  <span className="text-faint">{label} </span>
-                  <button type="button" onClick={() => setSelected(other.id)} className="link-inline">
-                    {other.title}
-                  </button>
-                </li>
-              ))}
-            </ul>
-            <Link href={current.href} className="btn btn-red mt-4 w-full justify-between">
-              Open {KINDS[current.kind].label.toLowerCase()} <span aria-hidden="true">→</span>
-            </Link>
-          </div>
-        ) : (
-          caption && (
-            <p className="hidden max-w-[16rem] text-[0.82rem] leading-snug text-muted md:block md:ml-auto md:text-right">
-              {caption}
+      <div className={framed ? "relative border border-ink/50 bg-paper-warm grid-paper px-2 pb-3 pt-3 sm:px-5 sm:pt-5" : "relative"}>
+        {framed && (
+          <div className="relative z-[1] mb-2 inline-block border border-ink bg-paper-warm px-3 py-2 sm:absolute sm:left-5 sm:top-5 sm:mb-0">
+            <p className="label text-red">{plate}</p>
+            <p className="font-serif text-[1.15rem] leading-tight">{heading ?? "The Theory Map"}</p>
+            <p className="label-mono mt-0.5 text-faint">
+              {nodes.length} entries · {landscape.edges.length} relations
             </p>
-          )
+          </div>
+        )}
+
+        <div className="relative">
+          <MapSvg
+            layout={landscape}
+            hover={hover}
+            selected={selected}
+            setHover={setHover}
+            select={select}
+            className="hidden h-auto w-full select-none md:block"
+            titleId={`${titleId}l`}
+          />
+          <MapSvg
+            layout={portrait}
+            hover={hover}
+            selected={selected}
+            setHover={setHover}
+            select={select}
+            className="block h-auto w-full select-none md:hidden"
+            titleId={`${titleId}p`}
+          />
+
+          {/* Hover card (desktop) */}
+          {hover && hover !== selected && byId.get(hover) && <HoverCard node={byId.get(hover)!} layout={landscape} />}
+        </div>
+
+        {/* Preview panel */}
+        <div aria-live="polite" className={`mt-4 md:absolute md:mt-0 md:w-[19rem] ${framed ? "md:right-5 md:top-5" : "md:right-0 md:top-0"}`}>
+          {selected && current && current.id === selected ? (
+            <div className="border border-ink bg-paper-warm p-5 shadow-[5px_5px_0_0_rgba(22,22,26,0.1)] animate-enter">
+              <div className="flex items-start justify-between gap-3">
+                <p className="label text-red">
+                  {KINDS[current.kind].label}
+                  {current.group ? ` · ${current.group}` : ""}
+                </p>
+                <button type="button" onClick={() => setSelected(null)} className="label -mr-1 -mt-1 px-1 text-faint hover:text-ink" aria-label="Close preview">
+                  ✕
+                </button>
+              </div>
+              <h3 className="mt-2 font-serif text-[1.75rem] leading-none">{current.title}</h3>
+              {lifespan(current) && <p className="label-mono mt-1.5 text-muted">{lifespan(current)}</p>}
+              <p className="mt-3 font-serif text-[0.98rem] leading-snug text-ink-warm">{current.summary}</p>
+              <ul className="scrollbar-thin mt-4 max-h-44 space-y-1 overflow-y-auto border-t border-rule pt-3">
+                {connections(current.id).map(({ e, other, label }) => (
+                  <li key={e.id} className="text-[0.9rem] leading-snug">
+                    <span className="rel">{label} </span>
+                    <button type="button" onClick={() => setSelected(other.id)} className="link-inline font-serif">
+                      {other.title}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+              <Link href={current.href} className="btn btn-red mt-4 w-full justify-between">
+                Open {KINDS[current.kind].label.toLowerCase()} <span aria-hidden="true">→</span>
+              </Link>
+            </div>
+          ) : (
+            caption && (
+              <p className="hidden max-w-[16rem] font-serif text-[0.92rem] italic leading-snug text-muted md:ml-auto md:block md:text-right">{caption}</p>
+            )
+          )}
+        </div>
+
+        {showLegend && (
+          <div className="mt-4 flex flex-wrap items-center gap-x-6 gap-y-2 border-t border-ink pt-3">
+            <span className="label text-ink">Key</span>
+            {families.map((f) => (
+              <span key={f} className="label inline-flex items-center gap-2 text-muted">
+                <svg width="26" height="8" aria-hidden="true">
+                  <line x1="0" y1="4" x2="26" y2="4" stroke={FAMILY_STYLE[f].stroke} strokeDasharray={FAMILY_STYLE[f].dash} strokeWidth="1.5" />
+                </svg>
+                {FAMILY_STYLE[f].label}
+              </span>
+            ))}
+            {kinds.length > 1 &&
+              kinds.map((k) => (
+                <span key={k} className="label inline-flex items-center gap-2 text-muted">
+                  <KindGlyph kind={k} />
+                  {KINDS[k].plural}
+                </span>
+              ))}
+            <details className="w-full sm:ml-auto sm:w-auto">
+              <summary className="label cursor-pointer text-muted hover:text-ink">Read as a list</summary>
+              <ul className="mt-3 columns-1 gap-8 font-serif text-[0.95rem] sm:columns-2">
+                {landscape.edges.map((e) => {
+                  const a = byId.get(e.source);
+                  const b = byId.get(e.target);
+                  if (!a || !b) return null;
+                  return (
+                    <li key={e.id} className="break-inside-avoid py-0.5">
+                      <Link href={a.href} className="link-inline">
+                        {a.title}
+                      </Link>{" "}
+                      <span className="rel">{e.label}</span>{" "}
+                      <Link href={b.href} className="link-inline">
+                        {b.title}
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
+            </details>
+          </div>
         )}
       </div>
-
-      {showLegend && (
-        <div className="mt-4 flex flex-wrap items-center gap-x-6 gap-y-2 border-t border-rule pt-3">
-          {families.map((f) => (
-            <span key={f} className="label inline-flex items-center gap-2 text-muted">
-              <svg width="26" height="8" aria-hidden="true">
-                <line x1="0" y1="4" x2="26" y2="4" stroke={FAMILY_STYLE[f].stroke} strokeDasharray={FAMILY_STYLE[f].dash} strokeWidth="1.4" />
-              </svg>
-              {FAMILY_STYLE[f].label}
-            </span>
-          ))}
-          <details className="ml-auto">
-            <summary className="label cursor-pointer text-muted hover:text-ink">Read as a list</summary>
-            <ul className="mt-3 columns-1 gap-8 text-sm sm:columns-2">
-              {landscape.edges.map((e) => {
-                const a = byId.get(e.source);
-                const b = byId.get(e.target);
-                if (!a || !b) return null;
-                return (
-                  <li key={e.id} className="break-inside-avoid py-0.5">
-                    <Link href={a.href} className="link-inline">{a.title}</Link>{" "}
-                    <span className="text-faint">{e.label}</span>{" "}
-                    <Link href={b.href} className="link-inline">{b.title}</Link>
-                  </li>
-                );
-              })}
-            </ul>
-          </details>
-        </div>
-      )}
     </figure>
+  );
+}
+
+function KindGlyph({ kind }: { kind: LayoutNode["kind"] }) {
+  return (
+    <svg width="12" height="12" viewBox="-6 -6 12 12" aria-hidden="true">
+      {kind === "thinker" && <circle r="4.5" fill={C.sheet} stroke={C.ink} strokeWidth="1.2" />}
+      {kind === "concept" && <rect x="-3.4" y="-3.4" width="6.8" height="6.8" transform="rotate(45)" fill={C.sheet} stroke={C.moss} strokeWidth="1.2" />}
+      {kind === "tendency" && <rect x="-4.5" y="-4.5" width="9" height="9" fill={C.sheet} stroke={C.ink} strokeWidth="1.2" />}
+      {kind !== "thinker" && kind !== "concept" && kind !== "tendency" && <rect x="-3.5" y="-5" width="7" height="10" fill={C.sheet} stroke={C.ink} strokeWidth="1.2" />}
+    </svg>
   );
 }
 
@@ -402,7 +441,7 @@ function HoverCard({ node, layout }: { node: LayoutNode; layout: Layout }) {
   return (
     <div
       aria-hidden="true"
-      className="pointer-events-none absolute z-10 hidden w-56 border border-ink bg-paper-warm px-3 py-2.5 text-left md:block animate-fade"
+      className="pointer-events-none absolute z-10 hidden w-60 border border-ink bg-paper-warm px-3 py-2.5 text-left md:block animate-fade"
       style={{
         left: `${left}%`,
         top: `${top}%`,
@@ -414,7 +453,7 @@ function HoverCard({ node, layout }: { node: LayoutNode; layout: Layout }) {
         {lifespan(node)}
         {node.group ? ` · ${node.group}` : ""}
       </p>
-      <p className="mt-1.5 line-clamp-3 text-xs leading-snug text-ink-warm">{node.summary}</p>
+      <p className="mt-1.5 line-clamp-3 font-serif text-[0.85rem] leading-snug text-ink-warm">{node.summary}</p>
       <p className="label mt-2 text-red">{node.degree} connections · click to preview</p>
     </div>
   );

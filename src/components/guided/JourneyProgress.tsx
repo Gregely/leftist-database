@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useSyncExternalStore } from "react";
+import { setActiveRoute, type ActiveRoute } from "@/lib/client/route";
 
 /**
  * Reading progress for a Guided journey, kept in this browser only. Visited
@@ -46,14 +47,20 @@ export function useJourneyProgress(slug: string, total: number) {
   return { visited: [...new Set(visited)], last: Number.isInteger(last) && last >= 1 && last <= total ? last : null };
 }
 
-/** Remember the step being read (the route component records it as visited). */
-export function RecordStep({ slug, position }: { slug: string; position: number }) {
+/**
+ * Remember the step being read (the route component records it as visited).
+ * With `route`, also mark this journey as the one the reader is following, so
+ * the rest of the site can offer the way back to it.
+ */
+export function RecordStep({ slug, position, route }: { slug: string; position: number; route?: Omit<ActiveRoute, "slug" | "step"> }) {
+  const routeKey = route ? JSON.stringify(route) : "";
   useEffect(() => {
     try {
       window.localStorage.setItem(lastKey(slug), String(position));
     } catch {}
     window.dispatchEvent(new Event(EVENT));
-  }, [slug, position]);
+    if (routeKey) setActiveRoute({ slug, step: position, ...(JSON.parse(routeKey) as Omit<ActiveRoute, "slug" | "step">) });
+  }, [slug, position, routeKey]);
   return null;
 }
 
@@ -72,22 +79,23 @@ export function JourneyActions({
 }) {
   const total = titles.length;
   const { visited, last } = useJourneyProgress(slug, total);
-  const pct = total ? Math.round((visited.length / total) * 100) : 0;
   if (!total) return null;
   return (
-    <div className={compact ? "" : "border border-ink bg-paper-warm p-4 sm:p-5"} data-journey-progress={slug}>
+    <div className={compact ? "" : "border-t-[3px] border-ink pt-3"} data-journey-progress={slug}>
       <div className="flex items-baseline justify-between gap-3">
         <p className="label text-faint">Your progress</p>
         <p className="label-mono text-faint" aria-live="polite">
           {visited.length} of {total} steps read
         </p>
       </div>
-      <div className="mt-2 h-[3px] w-full bg-rule" aria-hidden="true">
-        <div className="h-full bg-red transition-all duration-500" style={{ width: `${pct}%` }} />
+      <div className="mt-2 flex gap-[3px]" aria-hidden="true">
+        {titles.map((t, i) => (
+          <span key={i} title={t} className={`h-[5px] flex-1 transition-colors duration-500 ${visited.includes(i + 1) ? "bg-red" : "bg-paper-deep"}`} />
+        ))}
       </div>
       {last ? (
         <p className="mt-3 text-sm text-muted">
-          You were last at step {last}: <span className="font-serif text-base text-ink">{titles[last - 1]}</span>
+          You were last at step {last}: <span className="font-serif text-[1.05rem] italic text-ink">{titles[last - 1]}</span>
         </p>
       ) : (
         <p className="mt-3 text-sm text-muted">You have not started this journey yet. Begin at step 1, or open any step.</p>

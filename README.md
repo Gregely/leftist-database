@@ -50,14 +50,15 @@ Copy `.env.example` to `.env.local` to configure the database URL and the media 
 
 | Area | Route | Notes |
 | --- | --- | --- |
-| Home | `/` | What the site is, search, and two ways in: **Guided** routes or the library; *Explore the collection*, an equal index of every section; featured concepts, debates, texts and thinkers; Guided journeys and learning paths; the chronological **Theory Map**; mini timeline; method |
+| Home | `/` | What the site is, a prominent search, Guided beside it with other ways in; the collection as a table of contents (every section at equal weight); concepts at three depths; open debates; texts and lives; Guided journeys and learning paths; the Theory Map as a plate; historical moments; method |
 | Library | `/explore` | Thinkers, concepts, tendencies, debates, texts and periods, each with its own visual treatment |
+| Theory Map | `/map` | The relationship map as an atlas plate: by time or by affinity, thinkers alone or with concepts or tendencies; a key and the most-connected entries |
 | Thinkers | `/thinkers`, `/thinkers/[slug]` | Lifespan index with tendency filters; entry with ideas, network graph, works, influences, disagreements, legacy, timeline |
 | Concepts | `/concepts`, `/concepts/[slug]` | A–Z glossary; entry with a **descending depth reader** (30 seconds → 5 minutes → deep dive), primary texts, debates, related-concept constellation |
 | Debates | `/debates`, `/debates/[slug]` | Positions side by side; **compare** two or more to see shared and divergent stances; arguments and counterarguments |
 | Timeline | `/timeline`, `/timeline/[slug]` | Zoomable (century / half-century / decade) multi-lane timeline with contextual panel; vertical list on phones |
 | Texts, tendencies | `/texts…`, `/tendencies…` | Catalogue and traditions |
-| Guided | `/guided`, `/guided/[slug]?step=n` | *Where should I start?* Curated journeys through existing entries, one step at a time: where you are, the idea (with its depth reader), why it matters, a source excerpt, and where it leads; progress and *Continue* kept in the browser |
+| Guided | `/guided`, `/guided/[slug]?step=n` | *Where should I start?* Curated journeys through existing entries, one step at a time: where you are, the idea (with its depth reader), why it matters, a source excerpt, and where it leads; progress and *Continue* kept in the browser, and a line under the masthead leads back to the route from anywhere else on the site |
 | Learning paths | `/paths`, `/paths/[slug]?step=n` | A route through ideas with next / back / explore and detours; progress kept in the browser |
 | Search | overlay (`/` or ⌘K) and `/search` | SQLite FTS5 full-text search grouped by entity type, with related entries |
 | Sources | `/sources`, `/sources/[id]` | Bibliography; every citation and excerpt points here |
@@ -71,7 +72,7 @@ Copy `.env.example` to `.env.local` to configure the database URL and the media 
 - **SQLite via libSQL** + **Drizzle ORM**. Locally a file; in production `DATABASE_URL` can point at a libSQL/Turso server with no code change. The schema is relational and portable to Postgres (see `docs/DATA_MODEL.md`).
 - **SQLite FTS5** for search, maintained on every write
 - **d3-force**, run **on the server**, for graph layout — the client receives coordinates and renders SVG, so no physics library ships to the browser
-- Fonts: **Fraunces** (display, quotations) and **IBM Plex Sans / Mono** (interface, metadata)
+- Fonts: **Newsreader** (display, reading text, quotations) and **Archivo** with its width axis (condensed capitals for labels and navigation; tabular figures for metadata)
 
 ## Documentation
 

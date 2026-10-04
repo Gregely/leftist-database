@@ -1,26 +1,22 @@
 import type { Metadata, Viewport } from "next";
-import { Fraunces, IBM_Plex_Mono, IBM_Plex_Sans } from "next/font/google";
+import { Archivo, Newsreader } from "next/font/google";
 import { SITE, siteTitle } from "@/lib/site";
 import "./globals.css";
 
-const fraunces = Fraunces({
+/** Reading and display: an optical-size serif, sharp at headline sizes and calm at text sizes. */
+const newsreader = Newsreader({
   subsets: ["latin", "latin-ext"],
-  axes: ["opsz", "SOFT"],
+  axes: ["opsz"],
   style: ["normal", "italic"],
-  variable: "--font-fraunces",
+  variable: "--font-newsreader",
   display: "swap",
 });
-const plex = IBM_Plex_Sans({
+/** Interface: a grotesque with a width axis — condensed capitals for labels and navigation. */
+const archivo = Archivo({
   subsets: ["latin", "latin-ext"],
-  weight: ["400", "500", "600"],
+  axes: ["wdth"],
   style: ["normal", "italic"],
-  variable: "--font-plex",
-  display: "swap",
-});
-const plexMono = IBM_Plex_Mono({
-  subsets: ["latin"],
-  weight: ["400", "500"],
-  variable: "--font-plex-mono",
+  variable: "--font-archivo",
   display: "swap",
 });
 
@@ -30,12 +26,12 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#f3f0e8",
+  themeColor: "#f2eee5",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${fraunces.variable} ${plex.variable} ${plexMono.variable}`}>
+    <html lang="en" className={`${newsreader.variable} ${archivo.variable}`}>
       <body className="min-h-screen">{children}</body>
     </html>
   );

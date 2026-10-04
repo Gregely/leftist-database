@@ -1,9 +1,13 @@
 @import "tailwindcss";
 
 /*
- * THEORY / ATLAS — visual tokens.
- * A warm paper ground, ink type, and a deliberate socialist red used for
- * emphasis, selection and relationship — never as wallpaper.
+ * THEORY ATLAS — visual tokens.
+ *
+ * A reference work set like a serious journal: newsprint paper, blue-black
+ * ink and a cinnabar red kept for emphasis, selection and argument. A few
+ * bookcloth tones (blue, moss, umber) mark the areas of the collection the
+ * way a publisher's series colours its spines — as small marks, never as
+ * grounds. Hierarchy comes from type and rules, not boxes.
  */
 @theme inline {
   --color-*: initial;
@@ -11,38 +15,52 @@
   --color-current: currentColor;
   --color-white: #ffffff;
 
-  --color-red: #b51f2a;
-  --color-red-deep: #7e1720;
-  --color-ink: #171717;
-  --color-ink-warm: #202020;
-  --color-paper: #f3f0e8;
-  --color-paper-warm: #faf9f5;
-  --color-beige: #ddd7ca;
-  --color-olive: #53624b;
-  --color-ochre: #b18a47;
-  /* Derived neutrals (AA on paper). */
-  --color-muted: #5c574f;
-  --color-faint: #6f695f;
-  --color-rule: #c8c0b0;
-  --color-rule-soft: #e2dccf;
-  --color-ink-muted: #b9b2a5; /* secondary text on ink grounds */
+  /* Core */
+  --color-red: #bc2b1c; /* cinnabar: 5.2:1 on paper */
+  --color-red-deep: #8c2014;
+  --color-red-bright: #ec6b54; /* red for type on ink grounds: 5.8:1 */
+  --color-ink: #16161a;
+  --color-ink-warm: #26252a; /* reading text */
+  --color-ink-soft: #2a2a30; /* raised surfaces on ink grounds */
+  --color-paper: #f2eee5; /* newsprint */
+  --color-paper-warm: #faf8f2; /* raised sheet: plates, panels, the reading column */
+  --color-paper-deep: #e8e2d5; /* a recessed band; deeper strata of an explanation */
+  --color-beige: #ddd5c4;
 
-  --font-serif: var(--font-fraunces), "Iowan Old Style", "Palatino Linotype", Georgia, serif;
-  --font-sans: var(--font-plex), "Helvetica Neue", Arial, sans-serif;
-  --font-mono: var(--font-plex-mono), ui-monospace, "SFMono-Regular", Menlo, monospace;
+  /* Bookcloth — series colours for the collection's areas (marks, rules, glyphs). */
+  --color-blue: #2c4a6e; /* texts */
+  --color-olive: #4a6146; /* tendencies (moss) */
+  --color-umber: #8a5a1e; /* timeline & events */
+  --color-ochre: #a87a2e; /* decorative only — fails text contrast on paper */
+
+  /* Neutrals (all ≥ 4.5:1 on paper) */
+  --color-muted: #56514a;
+  --color-faint: #69635a;
+  --color-rule: #c9c1b2;
+  --color-rule-soft: #e0d9cb;
+  --color-ink-muted: #ada698; /* secondary text on ink grounds */
+
+  --font-serif: var(--font-newsreader), "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+  --font-sans: var(--font-archivo), "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, "SFMono-Regular", Menlo, monospace;
 
   --ease-atlas: cubic-bezier(0.22, 0.61, 0.36, 1);
-  --animate-enter: enter 0.5s var(--ease-atlas) backwards;
-  --animate-fade: fade 0.35s var(--ease-atlas) backwards;
+  --animate-enter: enter 0.45s var(--ease-atlas) backwards;
+  --animate-fade: fade 0.3s var(--ease-atlas) backwards;
+  --animate-rise: rise 0.35s var(--ease-atlas) backwards;
 }
 
 @keyframes enter {
-  from { opacity: 0; transform: translateY(6px); }
+  from { opacity: 0; transform: translateY(5px); }
   to { opacity: 1; transform: none; }
 }
 @keyframes fade {
   from { opacity: 0; }
   to { opacity: 1; }
+}
+@keyframes rise {
+  from { transform: translateY(100%); }
+  to { transform: none; }
 }
 @keyframes dash-flow {
   to { stroke-dashoffset: -24; }
@@ -60,16 +78,14 @@
   html {
     -webkit-text-size-adjust: 100%;
     text-rendering: optimizeLegibility;
-    scroll-padding-top: 5.5rem;
+    scroll-padding-top: 7rem;
   }
   body {
     background-color: var(--color-paper);
-    /* A barely-there paper grain. */
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.09 0 0 0 0 0.08 0 0 0 0 0.06 0 0 0 0.05 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
     color: var(--color-ink);
     font-family: var(--font-sans);
     font-size: 1rem;
-    line-height: 1.6;
+    line-height: 1.55;
     -webkit-font-smoothing: antialiased;
     font-feature-settings: "kern", "liga";
   }
@@ -80,9 +96,8 @@
   h1, h2, h3, h4 {
     font-family: var(--font-serif);
     font-weight: 400;
-    letter-spacing: -0.01em;
+    letter-spacing: -0.012em;
     line-height: 1.08;
-    font-variation-settings: "SOFT" 30;
   }
   a {
     color: inherit;
@@ -91,7 +106,6 @@
   :focus-visible {
     outline: 2px solid var(--color-red);
     outline-offset: 3px;
-    border-radius: 1px;
   }
   /* Grid children may shrink below their content width (prevents horizontal overflow on phones). */
   .grid > * {
@@ -110,56 +124,84 @@
 }
 
 /* -------------------------------------------------------------------------- */
-/* Editorial primitives                                                        */
+/* Type                                                                        */
 /* -------------------------------------------------------------------------- */
 
 @layer components {
-  /* Tiny uppercase metadata label. */
+  /*
+   * Labels: condensed capitals. Section names, navigation, metadata keys.
+   * The voice of the index rather than of the text.
+   */
   .label {
     font-family: var(--font-sans);
-    font-size: 0.6875rem;
-    font-weight: 500;
-    letter-spacing: 0.14em;
+    font-size: 0.75rem;
+    font-weight: 600;
+    font-variation-settings: "wdth" 74;
+    letter-spacing: 0.075em;
     text-transform: uppercase;
-    line-height: 1.4;
+    line-height: 1.35;
   }
+  /* Figures: catalogue numbers, years, counts. Tabular, slightly condensed. */
   .label-mono {
-    font-family: var(--font-mono);
-    font-size: 0.6875rem;
-    letter-spacing: 0.04em;
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    font-weight: 500;
+    font-variation-settings: "wdth" 86;
+    font-variant-numeric: tabular-nums lining-nums;
+    letter-spacing: 0;
   }
+  /* Large display serif: titles, questions, names. */
   .display {
     font-family: var(--font-serif);
-    font-weight: 380;
-    letter-spacing: -0.025em;
-    line-height: 0.98;
-    font-variation-settings: "SOFT" 40;
+    font-weight: 420;
+    letter-spacing: -0.028em;
+    line-height: 0.96;
     font-optical-sizing: auto;
   }
+  /* Standfirst: what an entry is, in a sentence or two. */
   .lede {
     font-family: var(--font-serif);
     font-size: 1.3125rem;
-    line-height: 1.45;
-    font-weight: 350;
+    line-height: 1.42;
+    font-weight: 380;
+    letter-spacing: -0.004em;
   }
   .serif-italic {
     font-family: var(--font-serif);
     font-style: italic;
-    font-variation-settings: "SOFT" 60;
   }
+  /* Relationship phrases read as language: "drew on", "argued against". */
+  .rel {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 0.95em;
+    color: var(--color-faint);
+  }
+  /* Dates and large numerals. */
   .numeral {
     font-family: var(--font-serif);
     font-variant-numeric: lining-nums tabular-nums;
     font-optical-sizing: auto;
+    letter-spacing: -0.01em;
+  }
+  /* A short uppercase kicker above a title, in the area's colour. */
+  .kicker {
+    font-family: var(--font-sans);
+    font-size: 0.8125rem;
+    font-weight: 700;
+    font-variation-settings: "wdth" 68;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    line-height: 1.2;
   }
 
-  /* Links with an animated underline that grows from the left. */
+  /* Links with an underline that grows from the left. */
   .link-sweep {
     background-image: linear-gradient(currentColor, currentColor);
     background-size: 0% 1px;
     background-position: 0 100%;
     background-repeat: no-repeat;
-    transition: background-size 0.35s var(--ease-atlas), color 0.2s;
+    transition: background-size 0.3s var(--ease-atlas), color 0.2s;
     padding-bottom: 1px;
   }
   .link-sweep:hover,
@@ -170,33 +212,46 @@
   /* Always-underlined inline link (prose). */
   .link-inline {
     text-decoration: underline;
-    text-decoration-color: color-mix(in srgb, var(--color-red) 55%, transparent);
+    text-decoration-color: color-mix(in srgb, var(--color-red) 45%, transparent);
     text-decoration-thickness: 1px;
-    text-underline-offset: 0.18em;
+    text-underline-offset: 0.2em;
     transition: text-decoration-color 0.2s, color 0.2s;
   }
   .link-inline:hover {
     color: var(--color-red);
     text-decoration-color: var(--color-red);
-    text-decoration-thickness: 2px;
   }
 
-  /* The slash motif. */
+  /* Kept for older markup: a red slash before a label. */
   .slash::before {
     content: "/";
     color: var(--color-red);
     margin-right: 0.45em;
-    font-weight: 400;
   }
 
-  /* Long-form text. */
+  /* Dot leaders between an index term and its count, as in a book's contents. */
+  .leaders {
+    flex: 1 1 auto;
+    min-width: 1.5rem;
+    align-self: flex-end;
+    margin: 0 0.5rem 0.42em;
+    border-bottom: 1.5px dotted var(--color-rule);
+  }
+
+  /* -------------------------------------------------------------------------- */
+  /* Long-form text                                                              */
+  /* -------------------------------------------------------------------------- */
+
   .prose-atlas {
-    font-size: 1.0625rem;
-    line-height: 1.7;
+    font-family: var(--font-serif);
+    font-size: 1.1875rem;
+    line-height: 1.62;
     color: var(--color-ink-warm);
+    font-optical-sizing: auto;
+    hanging-punctuation: first;
   }
   .prose-atlas > * + * {
-    margin-top: 1.05em;
+    margin-top: 0.95em;
   }
   .prose-atlas strong {
     font-weight: 600;
@@ -206,11 +261,22 @@
     font-style: italic;
   }
   .prose-atlas blockquote {
-    border-left: 2px solid var(--color-red);
-    padding-left: 1.1em;
-    font-family: var(--font-serif);
-    font-size: 1.15em;
-    line-height: 1.5;
+    position: relative;
+    padding-left: 1.4em;
+    font-style: italic;
+    font-size: 1.1em;
+    line-height: 1.45;
+    color: var(--color-ink);
+  }
+  .prose-atlas blockquote::before {
+    content: "“";
+    position: absolute;
+    left: 0;
+    top: -0.12em;
+    font-size: 1.9em;
+    line-height: 1;
+    color: var(--color-red);
+    font-style: normal;
   }
   .prose-atlas ul {
     list-style: none;
@@ -221,57 +287,82 @@
     padding-left: 1.2em;
   }
   .prose-atlas ul li::before {
-    content: "—";
+    content: "–";
     position: absolute;
-    left: 0;
+    left: 0.1em;
     color: var(--color-red);
   }
   .prose-atlas sup a {
-    font-family: var(--font-mono);
-    font-size: 0.7em;
+    font-family: var(--font-sans);
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+    font-size: 0.66em;
     color: var(--color-red);
     padding: 0 0.15em;
+  }
+  .prose-atlas a[data-kind] {
+    text-decoration-style: solid;
   }
   .dropcap > p:first-child::first-letter {
     float: left;
     font-family: var(--font-serif);
-    font-size: 4.1em;
-    line-height: 0.8;
-    padding: 0.08em 0.1em 0 0;
+    font-size: 4.6em;
+    line-height: 0.82;
+    padding: 0.06em 0.1em 0 0;
+    font-weight: 400;
     color: var(--color-red);
-    font-variation-settings: "SOFT" 50;
   }
 
-  /* A rule with a short red lead-in. */
+  /* -------------------------------------------------------------------------- */
+  /* Rules                                                                       */
+  /* -------------------------------------------------------------------------- */
+
+  /* The Oxford rule: thick over thin. Opens a major section. */
+  .rule-double {
+    border-top: 3px solid var(--color-ink);
+    position: relative;
+  }
+  .rule-double::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 2px;
+    border-top: 1px solid var(--color-ink);
+  }
+  /* A hairline with a short red lead-in. */
   .rule-lead {
     position: relative;
-    border-top: 1px solid var(--color-rule);
+    border-top: 1px solid var(--color-ink);
   }
   .rule-lead::before {
     content: "";
     position: absolute;
     left: 0;
-    top: -1px;
-    width: 2.5rem;
-    height: 1px;
+    top: -2px;
+    width: 2.25rem;
+    height: 3px;
     background: var(--color-red);
   }
 
-  /* Faint layout grid shown behind maps. */
+  /* Fine graticule shown behind maps and plates. */
   .grid-paper {
     background-image:
-      linear-gradient(to right, color-mix(in srgb, var(--color-rule) 35%, transparent) 1px, transparent 1px),
-      linear-gradient(to bottom, color-mix(in srgb, var(--color-rule) 35%, transparent) 1px, transparent 1px);
-    background-size: 48px 48px;
+      linear-gradient(to right, color-mix(in srgb, var(--color-rule) 30%, transparent) 1px, transparent 1px),
+      linear-gradient(to bottom, color-mix(in srgb, var(--color-rule) 30%, transparent) 1px, transparent 1px);
+    background-size: 40px 40px;
   }
 
-  /* Form controls used in search and admin. */
+  /* -------------------------------------------------------------------------- */
+  /* Controls                                                                    */
+  /* -------------------------------------------------------------------------- */
+
   .field {
     width: 100%;
     background: var(--color-paper-warm);
     border: 1px solid var(--color-rule);
     padding: 0.55rem 0.7rem;
-    border-radius: 1px;
+    border-radius: 0;
     transition: border-color 0.15s;
   }
   .field:focus {
@@ -285,13 +376,15 @@
   .btn {
     display: inline-flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.6rem;
     border: 1px solid var(--color-ink);
-    padding: 0.5rem 0.9rem;
-    font-size: 0.75rem;
-    letter-spacing: 0.12em;
+    padding: 0.55rem 0.95rem;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    font-variation-settings: "wdth" 74;
+    letter-spacing: 0.07em;
     text-transform: uppercase;
-    font-weight: 500;
+    line-height: 1.2;
     transition: background 0.15s, color 0.15s, border-color 0.15s;
   }
   .btn:hover {
@@ -314,6 +407,12 @@
   .scrollbar-thin {
     scrollbar-width: thin;
     scrollbar-color: var(--color-rule) transparent;
+  }
+  .scrollbar-none {
+    scrollbar-width: none;
+  }
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
   }
 }
 
@@ -341,7 +440,7 @@
   .rt-content h3 {
     font-family: var(--font-sans);
     font-size: 0.75rem;
-    letter-spacing: 0.14em;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
     margin-top: 1.4em;
   }
@@ -360,7 +459,7 @@
     text-underline-offset: 0.18em;
   }
   .rt-chip {
-    font-family: var(--font-mono);
+    font-family: var(--font-sans);
     font-size: 0.68em;
     color: var(--color-red);
     background: var(--color-paper);
@@ -400,6 +499,8 @@
   .text-balance { text-wrap: balance; }
   .text-pretty { text-wrap: pretty; }
   .tabular { font-variant-numeric: tabular-nums; }
+  .wdth-cond { font-variation-settings: "wdth" 70; }
+  .wdth-normal { font-variation-settings: "wdth" 100; }
 }
 
 /* Respect reduced motion everywhere. */

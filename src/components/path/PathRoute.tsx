@@ -97,13 +97,13 @@ export function PathRoute({
       <div className="mt-3 hidden md:block">
         <div className="relative">
         <svg viewBox={`0 0 ${W} ${H}`} className="w-full" aria-hidden="true">
-          <path d={d} fill="none" stroke="#C8C0B0" strokeWidth="1.5" />
+          <path d={d} fill="none" stroke="#C9C1B2" strokeWidth="1.5" />
           {current > 0 && (
             <path
               d={stops.slice(0, current).map((_, i) => `${i ? "L" : "M"}${xAt(i)},${yAt(i)}`).join(" ")}
               fill="none"
-              stroke="#B51F2A"
-              strokeWidth="2"
+              stroke="#BC2B1C"
+              strokeWidth="2.5"
             />
           )}
         </svg>
@@ -120,12 +120,12 @@ export function PathRoute({
                   className="group absolute flex -translate-x-1/2 -translate-y-1/2 flex-col items-center"
                 >
                   <span
-                    className={`label-mono flex h-7 w-7 items-center justify-center rounded-full border text-[0.68rem] transition-all ${on ? "scale-125 border-red bg-red text-paper-warm" : seen ? "border-ink bg-ink text-paper" : "border-ink bg-paper group-hover:bg-ink group-hover:text-paper"}`}
+                    className={`label-mono flex h-7 w-7 items-center justify-center rounded-full border text-[0.72rem] transition-all ${on ? "scale-125 border-red bg-red text-paper-warm" : seen ? "border-ink bg-ink text-paper" : "border-ink bg-paper group-hover:bg-ink group-hover:text-paper"}`}
                   >
                     {String(s.position).padStart(2, "0")}
                   </span>
                   <span
-                    className={`absolute top-9 w-28 text-center text-[0.75rem] leading-tight ${on ? "text-red" : "text-muted group-hover:text-ink"} ${i % 2 ? "" : ""}`}
+                    className={`absolute top-9 w-28 text-center font-serif text-[0.88rem] leading-tight ${on ? "text-red" : "text-muted group-hover:text-ink"}`}
                   >
                     {s.title}
                   </span>
@@ -138,12 +138,13 @@ export function PathRoute({
         <div className="h-12" />
       </div>
       {/* Mobile route */}
-      <ol className="mt-3 flex gap-1 overflow-x-auto pb-2 md:hidden">
+      <ol className="scrollbar-none mt-3 flex items-center overflow-x-auto pb-2 md:hidden">
         {stops.map((s) => {
           const on = s.position === current;
           const seen = visited.includes(s.position);
           return (
-            <li key={s.position}>
+            <li key={s.position} className="flex items-center">
+              {s.position > 1 && <span aria-hidden="true" className={`h-px w-3 ${seen || on ? "bg-red" : "bg-ink"}`} />}
               <Link
                 href={`${hrefPrefix}${s.position}`}
                 scroll={false}

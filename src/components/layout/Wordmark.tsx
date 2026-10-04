@@ -2,8 +2,9 @@ import Link from "next/link";
 import { SITE } from "@/lib/site";
 
 /**
- * Text wordmark. "inline" renders THEORY / ATLAS on one line; "stacked"
- * renders THEORY over / ATLAS — the slash is the recurring motif.
+ * Text wordmark: "Theory" in the serif italic, "ATLAS" in condensed capitals,
+ * joined by a short red rule — the two voices of the site (the text and the index).
+ * "stacked" sets the two words on separate lines, for the footer and desk.
  */
 export function Wordmark({
   variant = "inline",
@@ -15,23 +16,18 @@ export function Wordmark({
   asLink?: boolean;
 }) {
   const [a, b] = SITE.name;
-  const inner =
-    variant === "stacked" ? (
-      <span className="flex flex-col leading-[0.92]">
-        <span>{a}</span>
-        <span>
-          <span className="text-red">/</span>&thinsp;{b}
-        </span>
+  const inner = (
+    <span className={`inline-flex ${variant === "stacked" ? "flex-col items-start leading-[0.86]" : "items-baseline gap-[0.28em] whitespace-nowrap leading-none"}`}>
+      <span className="font-serif text-[1.18em] font-normal italic tracking-[-0.01em]">{a}</span>
+      <span className="inline-flex items-baseline gap-[0.28em]">
+        {variant === "inline" && <span aria-hidden="true" className="inline-block h-[0.14em] w-[0.7em] -translate-y-[0.28em] bg-red" />}
+        <span className="font-sans font-extrabold uppercase tracking-[0.04em] [font-variation-settings:'wdth'_68]">{b}</span>
       </span>
-    ) : (
-      <span className="whitespace-nowrap">
-        {a} <span className="text-red">/</span> {b}
-      </span>
-    );
-  const cls = `font-sans font-semibold uppercase tracking-[0.2em] ${className}`;
-  if (!asLink) return <span className={cls}>{inner}</span>;
+    </span>
+  );
+  if (!asLink) return <span className={className}>{inner}</span>;
   return (
-    <Link href="/" className={cls} aria-label={`${a} / ${b} — home`}>
+    <Link href="/" className={className} aria-label={`${a} ${b} — home`}>
       {inner}
     </Link>
   );

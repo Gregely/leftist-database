@@ -14,15 +14,15 @@ export default async function SearchPage({ searchParams }: Props) {
   const k = kind && isEntityKind(kind) ? (kind as EntityKind) : undefined;
   const res = q.trim() ? await search(q, { kinds: k ? [k] : undefined, limit: 80 }) : null;
   return (
-    <Container className="pt-6 sm:pt-8">
-      <div className="border-b border-rule pb-2">
+    <Container className="pt-5 sm:pt-6">
+      <div className="border-b border-ink pb-2">
         <Label className="text-muted">
-          Atlas <span className="text-red">/</span> Search
+          Atlas <span className="text-rule">/</span> <span className="text-ink">Search</span>
         </Label>
       </div>
-      <form action="/search" role="search" className="border-b border-ink py-10">
-        <label htmlFor="q" className="label slash text-red">
-          Consult the archive
+      <form action="/search" role="search" className="border-b-[3px] border-ink py-10">
+        <label htmlFor="q" className="kicker text-red">
+          Search the collection
         </label>
         <div className="mt-4 flex items-end gap-4">
           <input
@@ -32,7 +32,7 @@ export default async function SearchPage({ searchParams }: Props) {
             defaultValue={q}
             autoFocus={!q}
             placeholder="A thinker, a concept, a year…"
-            className="display w-full bg-transparent text-[2.4rem] text-ink placeholder:text-faint/60 focus:outline-none sm:text-[4.2rem]"
+            className="display w-full min-w-0 bg-transparent text-[2.2rem] text-ink placeholder:italic placeholder:text-faint/70 focus:outline-none sm:text-[4.2rem]"
           />
           {k && <input type="hidden" name="kind" value={k} />}
           <button type="submit" className="btn btn-red mb-3 shrink-0">

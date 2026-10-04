@@ -10,12 +10,15 @@ export interface DepthLevel {
   available: boolean;
 }
 
-const TONES = ["bg-paper-warm", "bg-paper", "bg-beige/45"];
+const NUMERALS = ["I", "II", "III"];
+/** Each level sits a little deeper: the ground darkens one step per level. */
+const STRATA = ["bg-paper-warm", "bg-paper-deep/45", "bg-paper-deep"];
 
 /**
  * Progressive depth: the reader descends from a 30-second explanation to a
- * deep dive. Deeper levels are revealed below the shallower ones, so the
- * page reads as a descent rather than a set of interchangeable tabs.
+ * deep dive. Deeper levels open beneath the shallower ones, so the page reads
+ * as one descent rather than as interchangeable tabs; the gauge above shows
+ * how far down the reader is and lets them go straight to any level.
  */
 export function DepthReader({ levels, initial = "brief" }: { levels: DepthLevel[]; initial?: DepthLevel["key"] }) {
   const initialIndex = Math.max(0, levels.findIndex((l) => l.key === initial));
@@ -43,23 +46,33 @@ export function DepthReader({ levels, initial = "brief" }: { levels: DepthLevel[
 
   return (
     <div>
-      <div role="group" aria-label="Choose a depth" className="grid grid-cols-3 border border-ink">
-        {levels.map((l, i) => (
-          <button
-            key={l.key}
-            type="button"
-            onClick={() => goTo(i)}
-            aria-pressed={i <= depth}
-            className={`group relative px-3 py-3 text-left transition-colors sm:px-5 sm:py-4 ${i ? "border-l border-ink" : ""} ${i <= depth ? "bg-ink text-paper" : "hover:bg-paper-warm"}`}
-          >
-            <span className={`label-mono block ${i <= depth ? "text-ink-muted" : "text-faint"}`}>Level {String(i + 1).padStart(2, "0")}</span>
-            <span className="label mt-1 block sm:text-[0.8rem]">{l.label}</span>
-            <span aria-hidden="true" className={`absolute bottom-0 left-0 h-[3px] bg-red transition-all duration-500 ${i <= depth ? "w-full" : "w-0"}`} />
-          </button>
-        ))}
+      {/* The gauge */}
+      <div role="group" aria-label="Choose a depth" className="grid grid-cols-3 border-t-[3px] border-ink">
+        {levels.map((l, i) => {
+          const reached = i <= depth;
+          return (
+            <button
+              key={l.key}
+              type="button"
+              onClick={() => goTo(i)}
+              aria-pressed={reached}
+              className={`group relative border-b border-ink px-2 pb-3 pt-3 text-left transition-colors sm:px-4 ${i ? "border-l border-l-rule" : ""} ${reached ? "" : "hover:bg-paper-warm"}`}
+            >
+              <span className="flex items-baseline gap-2">
+                <span className={`numeral text-[1.5rem] leading-none sm:text-[1.9rem] ${reached ? "text-red" : "text-faint group-hover:text-ink"}`}>{NUMERALS[i]}</span>
+                <span className={`label sm:text-[0.82rem] ${reached ? "text-ink" : "text-muted"}`}>{l.label}</span>
+              </span>
+              <span className="mt-1 hidden font-serif text-[0.95rem] italic text-faint sm:block">{l.duration}</span>
+              {/* Depth bar: fills as the reader descends. */}
+              <span aria-hidden="true" className="absolute inset-x-0 bottom-0 h-[5px] bg-paper-deep">
+                <span className={`block h-full bg-red transition-[width] duration-500 ${reached ? "w-full" : "w-0"}`} />
+              </span>
+            </button>
+          );
+        })}
       </div>
 
-      <div className="mt-0 border-x border-b border-ink">
+      <div>
         {levels.map((l, i) =>
           i <= depth ? (
             <section
@@ -69,35 +82,41 @@ export function DepthReader({ levels, initial = "brief" }: { levels: DepthLevel[
               }}
               tabIndex={-1}
               aria-label={`${l.label} explanation`}
-              className={`scroll-mt-32 px-5 py-8 outline-none sm:px-10 sm:py-12 ${TONES[i]} ${i ? "border-t border-ink animate-enter" : ""}`}
+              className={`scroll-mt-36 border-b border-ink px-4 py-8 outline-none sm:px-8 sm:py-11 ${STRATA[i]} ${i ? "animate-enter" : ""}`}
             >
-              <div className="grid gap-6 md:grid-cols-[9rem_1fr]">
-                <div>
-                  <p className="label text-red">{l.label}</p>
-                  <p className="label-mono mt-1 text-faint">{l.duration}</p>
-                  <svg width="40" height={28 + i * 18} className="mt-3 hidden md:block" aria-hidden="true">
-                    <line x1="6" y1="0" x2="6" y2={28 + i * 18} stroke="#171717" />
-                    {Array.from({ length: i + 1 }).map((_, k) => (
-                      <circle key={k} cx="6" cy={6 + k * 18} r="3.5" fill={k === i ? "#B51F2A" : "#F3F0E8"} stroke={k === i ? "#B51F2A" : "#171717"} />
-                    ))}
-                  </svg>
+              <div className="grid gap-5 md:grid-cols-[8.5rem_1fr] md:gap-8">
+                <div className="flex items-baseline gap-3 md:block">
+                  <p className="numeral text-[2.2rem] leading-none text-red md:text-[3.2rem]" aria-hidden="true">
+                    {NUMERALS[i]}
+                  </p>
+                  <p className="label md:mt-2">{l.label}</p>
+                  <p className="font-serif text-[0.95rem] italic text-faint md:mt-0.5">{l.duration}</p>
                 </div>
                 <div className="max-w-[42rem]">
                   {l.available ? (
                     l.content
                   ) : (
-                    <p className="text-muted italic">
-                      This level has not been written yet. The Atlas is built to hold it — editors can add it from the
+                    <p className="font-serif italic text-muted">
+                      This level has not been written yet. The Atlas is built to hold it, and editors can add it from the
                       editorial desk.
                     </p>
                   )}
                 </div>
               </div>
               {i === depth && i < levels.length - 1 && (
-                <div className="mt-8 md:pl-[9rem]">
-                  <button type="button" onClick={() => goTo(i + 1)} className="btn group">
-                    Go deeper: {levels[i + 1].label}
-                    <span aria-hidden="true" className="transition-transform group-hover:translate-y-0.5">↓</span>
+                <div className="mt-9 md:pl-[10.5rem]">
+                  <button
+                    type="button"
+                    onClick={() => goTo(i + 1)}
+                    className="group flex w-full max-w-[42rem] items-center justify-between gap-4 border-y border-ink py-3 text-left transition-colors hover:bg-ink hover:px-4 hover:text-paper"
+                  >
+                    <span>
+                      <span className="label block">Go deeper: {levels[i + 1].label}</span>
+                      <span className="mt-0.5 block font-serif text-[1rem] italic text-muted group-hover:text-ink-muted">{levels[i + 1].duration}</span>
+                    </span>
+                    <span aria-hidden="true" className="text-[1.4rem] text-red transition-transform group-hover:translate-y-1 group-hover:text-red-bright">
+                      ↓
+                    </span>
                   </button>
                 </div>
               )}

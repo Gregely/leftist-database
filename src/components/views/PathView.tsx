@@ -18,13 +18,13 @@ export async function PathView({ path, step: stepParam }: { path: PathAggregate;
 
   return (
     <article>
-      <Container className="pt-6 sm:pt-8">
-        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-rule pb-2">
+      <Container className="pt-5 sm:pt-6">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-ink pb-2">
           <Label className="text-muted">
             <Link href="/paths" className="hover:text-red">
               Learning paths
             </Link>{" "}
-            <span className="text-red">/</span> {path.level}
+            <span className="text-rule">/</span> <span className="text-ink">{path.level}</span>
           </Label>
           <div className="flex items-center gap-4">
             <SampleMark sample={path.entity.sample} />
@@ -33,19 +33,20 @@ export async function PathView({ path, step: stepParam }: { path: PathAggregate;
         </div>
         <header className="grid gap-6 pb-8 pt-10 lg:grid-cols-12">
           <div className="lg:col-span-8">
-            <p className="serif-italic text-2xl text-red">“{path.entryLine}”</p>
-            <h1 className="display mt-3 text-[2.8rem] sm:text-[4.4rem]">
+            <p className="kicker text-ochre">Learning path</p>
+            <h1 className="display mt-3 text-[2.8rem] sm:text-[4.6rem]">
               <Link href={path.entity.href} className="hover:text-red">
                 {path.entity.title}
               </Link>
             </h1>
+            <p className="mt-4 font-serif text-[1.5rem] italic text-red">“{path.entryLine}”</p>
           </div>
-          <p className="text-muted lg:col-span-4 lg:pt-6">
+          <p className="font-serif text-[1.1rem] text-muted lg:col-span-4 lg:pt-10">
             {path.entity.summary}
             {path.estimatedTime && <span className="label mt-3 block text-faint">{path.estimatedTime}</span>}
           </p>
         </header>
-        <div className="border-y border-ink py-5">
+        <div className="border-y-[3px] border-ink py-5">
           <PathRoute slug={slug} stops={stops} current={current} />
         </div>
       </Container>
@@ -61,7 +62,7 @@ export async function PathView({ path, step: stepParam }: { path: PathAggregate;
                 <span className="text-faint">{KINDS[step.entity.kind].label}</span>
               </p>
               <h2 className="display mt-4 text-[3rem] sm:text-[4.6rem]">{step.entity.title}</h2>
-              <p className="mt-6 max-w-2xl border-l-2 border-red pl-4 text-lg leading-snug">
+              <p className="mt-6 max-w-2xl border-l-[3px] border-red pl-4 font-serif text-[1.2rem] leading-snug">
                 <span className="label mb-1 block text-faint">Why this stop</span>
                 {step.framing}
               </p>
@@ -136,11 +137,11 @@ export async function PathView({ path, step: stepParam }: { path: PathAggregate;
               {path.steps.map((s) => (
                 <li key={s.id} className="border-t border-rule">
                   <Link href={`?step=${s.position}`} scroll={false} className="group grid grid-cols-[3rem_1fr] gap-4 py-5">
-                    <span className="numeral text-3xl text-red">{String(s.position).padStart(2, "0")}</span>
+                    <span className="numeral text-[1.8rem] leading-tight text-red">{String(s.position).padStart(2, "0")}</span>
                     <span>
                       <span className="label block text-faint">{KINDS[s.entity.kind].label}</span>
                       <span className="font-serif text-2xl group-hover:text-red">{s.entity.title}</span>
-                      <span className="mt-1 block text-muted">{s.framing}</span>
+                      <span className="mt-1 block font-serif italic text-muted">{s.framing}</span>
                       {s.branches.length > 0 && (
                         <span className="label mt-2 block text-faint">
                           ↳ {s.branches.length} branch{s.branches.length > 1 ? "es" : ""}: {s.branches.map((b) => b.entity.title).join(" · ")}

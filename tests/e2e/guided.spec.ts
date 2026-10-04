@@ -128,10 +128,17 @@ test("editors build a Guided journey from existing entries, and readers only see
   await card.locator("[data-journey-continue]").click();
   await expect(reader).toHaveURL(new RegExp(`/guided/${slug}\\?step=2$`));
 
-  // Out to the normal entry page and back in.
+  // Out to the normal entry page and back in, by the browser or by the way-back line under the masthead.
   await reader.locator("[data-guided-entry]").click();
   await expect(reader).toHaveURL(/\/concepts\/capitalism$/);
   await expect(reader.getByRole("heading", { level: 1 })).toContainText("Capitalism");
+  const ribbon = reader.locator(`[data-route-ribbon="${slug}"]`);
+  await expect(ribbon).toContainText(`This entry is step 2 of ${title}`);
+  await reader.goto("/thinkers/marx");
+  await expect(ribbon).toContainText("You left");
+  await ribbon.getByRole("link", { name: /Return to the route/ }).click();
+  await expect(reader).toHaveURL(new RegExp(`/guided/${slug}\\?step=2$`));
+  await reader.goto("/concepts/capitalism");
   await reader.goBack();
   await expect(reader.locator("[data-guided-step]")).toHaveAttribute("data-guided-step", "2");
   await reader.getByRole("link", { name: "All steps" }).click();
