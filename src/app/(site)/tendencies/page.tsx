@@ -3,6 +3,7 @@ import Link from "next/link";
 import { IndexHeader } from "@/components/editorial/IndexHeader";
 import { Container } from "@/components/editorial/primitives";
 import { getTendencyColors, listEntities } from "@/lib/data";
+import { KIND_TONE } from "@/lib/site";
 import { KINDS, TENDENCY_COLOR_VALUES, type TendencyColor } from "@/lib/content/model";
 
 export const metadata: Metadata = { title: "Tendencies", description: KINDS.tendency.blurb };
@@ -17,6 +18,7 @@ export default async function TendenciesIndex() {
   return (
     <>
       <IndexHeader
+        tone={KIND_TONE.tendency}
         crumb="Tendencies"
         tally={`${list.total} tendencies`}
         title={

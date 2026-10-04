@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { LoginForm } from "@/components/desk/LoginForm";
 import { getCurrentUser } from "@/lib/auth/session";
-import { SITE } from "@/lib/site";
+import { Wordmark } from "@/components/layout/Wordmark";
 
 export const metadata: Metadata = { title: "Sign in — Editorial desk", robots: { index: false } };
 
@@ -15,8 +15,8 @@ export default async function LoginPage({ searchParams }: Props) {
   return (
     <main className="grid min-h-screen lg:grid-cols-2">
       <div className="flex flex-col justify-between bg-ink p-8 text-paper sm:p-12">
-        <p className="font-sans text-[0.8rem] font-semibold uppercase tracking-[0.2em]">
-          {SITE.name[0]} <span className="text-red">/</span> {SITE.name[1]}
+        <p>
+          <Wordmark asLink={false} className="text-[1.3rem]" />
         </p>
         <div className="py-16">
           <p className="label text-ink-muted">The publishing room</p>

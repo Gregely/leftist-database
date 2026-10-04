@@ -3,6 +3,7 @@ import Link from "next/link";
 import { IndexHeader } from "@/components/editorial/IndexHeader";
 import { Container } from "@/components/editorial/primitives";
 import { getDebatePositionLabels, listEntities } from "@/lib/data";
+import { KIND_TONE } from "@/lib/site";
 import { KINDS } from "@/lib/content/model";
 
 export const metadata: Metadata = { title: "Debates", description: KINDS.debate.blurb };
@@ -13,6 +14,7 @@ export default async function DebatesIndex() {
   return (
     <>
       <IndexHeader
+        tone={KIND_TONE.debate}
         crumb="Debates"
         tally={`${list.total} open questions`}
         title={
@@ -20,10 +22,10 @@ export default async function DebatesIndex() {
             Questions the left keeps asking<span className="text-red">.</span>
           </>
         }
-        lede="Each debate sets positions side by side — claims, assumptions, texts and criticisms — and lets you compare them. None is presented as the answer."
+        lede="Each debate sets out the positions taken on one question, with their claims, assumptions, texts and criticisms, and lets you compare them. None is presented as the answer."
       />
       <Container>
-        <ol className="border-t border-ink">
+        <ol className="border-t-[3px] border-ink">
           {list.items.map((d, i) => (
             <li key={d.id} className="border-b border-rule">
               <Link href={d.href} className="group grid gap-x-10 gap-y-3 py-8 lg:grid-cols-[4rem_1fr_22rem]">
@@ -37,9 +39,9 @@ export default async function DebatesIndex() {
                 </span>
                 <span className="lg:pt-4">
                   <span className="label block text-faint">{(positions[d.id] ?? []).length} positions</span>
-                  <span className="mt-2 flex flex-wrap gap-1.5">
+                  <span className="mt-2 flex flex-wrap gap-x-4 gap-y-1.5 font-serif text-[1.05rem] italic">
                     {(positions[d.id] ?? []).map((p) => (
-                      <span key={p} className="border border-rule px-2 py-0.5 text-sm">
+                      <span key={p} className="border-l-2 border-red pl-2 leading-tight">
                         {p}
                       </span>
                     ))}

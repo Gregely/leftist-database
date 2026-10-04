@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useId, useMemo, useRef, useState } from "react";
-import { KINDS, type EntityKind } from "@/lib/content/model";
+import { KINDS } from "@/lib/content/model";
+import { SECTIONS } from "@/lib/site";
 import type { SearchResults } from "@/lib/data/search";
 import { Highlight } from "./Highlight";
 
@@ -112,11 +113,11 @@ export function SearchOverlay({ initialQuery, onClose }: { initialQuery: string;
       aria-modal="true"
       aria-label="Search the archive"
       onKeyDown={onKeyDown}
-      className="fixed inset-0 z-50 flex flex-col bg-paper-warm/[0.985] animate-fade"
+      className="fixed inset-0 z-[60] flex flex-col bg-paper-warm/[0.985] animate-fade"
     >
       <div className="mx-auto flex w-full max-w-[1320px] flex-1 flex-col overflow-hidden px-4 sm:px-8">
-        <div className="flex items-center justify-between border-b border-ink py-4">
-          <p className="label slash">Search the archive</p>
+        <div className="flex items-center justify-between border-b-[3px] border-ink py-4">
+          <p className="label">Search the Atlas</p>
           <button type="button" onClick={onClose} className="label inline-flex items-center gap-2 hover:text-red">
             Close <kbd className="label-mono border border-rule px-1 text-faint">Esc</kbd>
           </button>
@@ -139,7 +140,7 @@ export function SearchOverlay({ initialQuery, onClose }: { initialQuery: string;
             autoComplete="off"
             spellCheck={false}
             placeholder="A thinker, a concept, a year…"
-            className="display w-full bg-transparent text-[2.4rem] leading-tight text-ink placeholder:text-faint/60 focus:outline-none sm:text-[4rem]"
+            className="display w-full bg-transparent text-[2.3rem] leading-tight text-ink placeholder:italic placeholder:text-faint/70 focus:outline-none sm:text-[4rem]"
           />
           <span
             aria-hidden="true"
@@ -163,13 +164,14 @@ export function SearchOverlay({ initialQuery, onClose }: { initialQuery: string;
                 </ul>
               </div>
               <div className="md:col-span-4 md:col-start-9">
-                <p className="label mb-4 text-muted">Or browse the index</p>
-                <ul className="divide-y divide-rule-soft border-y border-rule-soft">
-                  {(["thinker", "concept", "text", "debate", "tendency"] as EntityKind[]).map((k) => (
-                    <li key={k}>
-                      <Link href={KINDS[k].base} onClick={onClose} className="group flex items-center justify-between py-2.5">
-                        <span className="label">{KINDS[k].plural}</span>
-                        <span aria-hidden="true" className="text-red transition-transform group-hover:translate-x-1">→</span>
+                <p className="label mb-4 text-muted">Or browse the collection</p>
+                <ul className="divide-y divide-rule border-y border-ink">
+                  {SECTIONS.map((sec) => (
+                    <li key={sec.href}>
+                      <Link href={sec.href} onClick={onClose} className="group flex items-center gap-3 py-2.5">
+                        <span aria-hidden="true" className="h-2 w-2 shrink-0" style={{ background: sec.tone }} />
+                        <span className="font-serif text-[1.2rem] leading-none group-hover:text-red">{sec.label}</span>
+                        <span aria-hidden="true" className="ml-auto text-red transition-transform group-hover:translate-x-1">→</span>
                       </Link>
                     </li>
                   ))}

@@ -74,22 +74,40 @@ tests/e2e/                Playwright
 
 ## Design system
 
-Tokens are defined once in `src/app/globals.css` (`@theme`), replacing Tailwind's default palette entirely:
+The public site is set as a reference work crossed with a political journal: hierarchy comes from type and rules
+(thick-over-thin "Oxford" rules open major sections, hairlines divide entries), not from boxes or cards.
+
+**Tokens** are defined once in `src/app/globals.css` (`@theme`), replacing Tailwind's default palette entirely:
 
 | Token | Value | Use |
 | --- | --- | --- |
-| `red` | `#B51F2A` | Active navigation, key labels, selected nodes, timeline markers, links' accents |
-| `red-deep` | `#7E1720` | Hover on red, deep tendency colour |
-| `ink` / `ink-warm` | `#171717` / `#202020` | Type, rules, ink sections |
-| `paper` / `paper-warm` | `#F3F0E8` / `#FAF9F5` | Grounds (with a faint grain) |
-| `beige` | `#DDD7CA` | Quiet bands |
-| `olive`, `ochre` | `#53624B`, `#B18A47` | Secondary accents (ochre is decorative only — it fails text contrast) |
-| `muted`, `faint` | `#5C574F`, `#6F695F` | Secondary text (both ≥ 4.5:1 on paper) |
+| `paper` / `paper-warm` / `paper-deep` | `#F2EEE5` / `#FAF8F2` / `#E8E2D5` | Newsprint ground; raised sheets (plates, panels); recessed bands and deeper explanation levels |
+| `ink` / `ink-warm` | `#16161A` / `#26252A` | Type, rules, ink sections (Guided entry, debates on the homepage, footer) |
+| `red` / `red-deep` | `#BC2B1C` / `#8C2014` | Cinnabar: active navigation, kickers, critique, selection, the current step |
+| `red-bright` | `#EC6B54` | Red for type on ink grounds (5.8:1) |
+| `blue`, `olive`, `umber` | `#2C4A6E`, `#4A6146`, `#8A5A1E` | Bookcloth series colours: texts, tendencies, timeline/events (marks, years, lanes) |
+| `ochre` | `#A87A2E` | Learning paths; decorative only (fails text contrast) |
+| `muted`, `faint` | `#56514A`, `#69635A` | Secondary text (both ≥ 4.5:1 on paper) |
 
-Editorial primitives (`components/editorial`): `SectionHead` (issue-style numbered sections), `Label`, `ArrowLink`,
-`SampleMark` (marks sample entries), `MetaList`, `Prose` (Atlas markup), `Notes` (footnotes), `IndexHeader`, `Pager`.
-Entry primitives (`components/entity`): `EntryHeader`, `SectionNav` (sticky scroll-spy index), `EntrySection`,
-`RelationList`, `EntryGrid`, `Excerpts`.
+Each area of the collection has a bookcloth colour (`KIND_TONE` and `SECTIONS` in `src/lib/site.ts`), shown only as
+a small swatch beside its name, as a publisher's series colours its spines.
+
+**Type.** Newsreader (optical sizes) for titles, reading text, quotations and relationship phrases; Archivo condensed
+capitals (`.label`, `.kicker`) for the index voice — section names, navigation, metadata keys — and Archivo tabular
+figures (`.label-mono`) for years and counts. Relationships read as italic phrases (`.rel`: *drew on*, *critiqued*).
+Book and text titles are italic; debate titles end in a red question mark (`Question`).
+
+**Navigation.** Desktop: a masthead with Guided set apart, the collection in reading order (`SECTIONS`) and a search
+field (`/` or ⌘K from anywhere). Phones and tablets: a running head naming the section, and a dock at the foot of the
+screen (Index · Guided · Search · Saved); Index opens the whole collection as a sheet. Entry pages carry a sticky
+running head (`SectionNav`) with the entry title, its sections and a reading-progress hairline. While a reader follows
+a Guided journey, `RouteRibbon` shows the way back under the masthead (`lib/client/route.ts`, browser only).
+
+Primitives (`components/editorial`): `SectionHead`, `Label`, `ArrowLink`, `Swatch`, `KindTag`, `SampleMark`,
+`MetaList` (catalogue record), `EntityLinks` / `entityLinks`, `Question`, `Prose`, `Notes`, `IndexHeader`, `Pager`.
+Entry components (`components/entity`): `EntryHeader` (title block + `band`), `SectionNav`, `EntrySection` (margin
+heads), `RelationList`, `EntryGrid`, `Excerpts`. `PeriodStrip` (`components/timeline`) sets a life, text, tendency or
+event against the Atlas's periods. `MapFigure` with `plate` frames the Theory Map as an atlas plate.
 
 The working name lives only in `src/lib/site.ts` (`SITE.name`), which drives the wordmark, titles and metadata.
 
@@ -97,7 +115,7 @@ The working name lives only in `src/lib/site.ts` (`SITE.name`), which drives the
 
 Semantic landmarks and headings; skip link; visible red focus rings; all map nodes and timeline items are focusable
 buttons with descriptive labels; the map has a "read as a list" alternative; the search overlay is a modal dialog with a
-combobox/listbox pattern and focus trapping; comparison data is a real `<table>`; motion is disabled under
+combobox/listbox pattern and focus trapping; comparison data is a real `<table>`; animation is limited to state changes (depth levels, panels, hover traces) and is disabled under
 `prefers-reduced-motion`; colour is never the only carrier of meaning (stances have glyphs and labels).
 
 ## Guided journeys

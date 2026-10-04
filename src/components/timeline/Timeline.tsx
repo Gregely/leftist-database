@@ -19,6 +19,14 @@ const LANES: { key: TimelineLane; label: string }[] = [
   { key: "tendency", label: "Tendencies" },
 ];
 
+/** Lane colours: the bookcloth of each area. */
+const LANE_TONE: Record<TimelineLane, string> = {
+  event: "var(--color-umber)",
+  text: "var(--color-blue)",
+  thinker: "var(--color-ink)",
+  tendency: "var(--color-olive)",
+};
+
 const FROM = 1770;
 const TO = 2030;
 const ROW = 30;
@@ -148,8 +156,8 @@ export function Timeline({ items, periods, initial }: TimelineProps) {
   return (
     <div onKeyDown={onKeyDown}>
       {/* Controls */}
-      <div className="sticky top-14 z-30 border-y border-ink bg-paper/95 backdrop-blur-[2px]">
-        <div className="mx-auto flex max-w-[1440px] flex-wrap items-center gap-x-8 gap-y-2 px-4 py-2.5 sm:px-8">
+      <div className="sticky top-14 z-30 border-y border-ink bg-paper/95 backdrop-blur-[3px] lg:top-[60px]">
+        <div className="mx-auto flex max-w-[1440px] flex-wrap items-center gap-x-8 gap-y-2 px-4 py-2.5 sm:px-8 lg:px-10">
           <div role="group" aria-label="Zoom" className="hidden items-center gap-1 md:flex">
             <span className="label mr-2 text-faint">Zoom</span>
             {ZOOMS.map((zz) => (
@@ -174,9 +182,9 @@ export function Timeline({ items, periods, initial }: TimelineProps) {
                   type="button"
                   aria-pressed={on}
                   onClick={() => setLanes((ls) => (on ? ls.filter((k) => k !== l.key) : [...ls, l.key]))}
-                  className={`label inline-flex items-center gap-1.5 border px-2 py-1 transition-colors ${on ? "border-red text-red" : "border-rule text-faint hover:border-ink"}`}
+                  className={`label inline-flex items-center gap-1.5 border px-2 py-1 transition-colors ${on ? "border-ink text-ink" : "border-rule text-faint hover:border-ink"}`}
                 >
-                  <span aria-hidden="true">{on ? "●" : "○"}</span>
+                  <span aria-hidden="true" className="inline-block h-2 w-2" style={{ background: on ? LANE_TONE[l.key] : "transparent", outline: `1px solid ${LANE_TONE[l.key]}` }} />
                   {l.label}
                 </button>
               );
@@ -235,9 +243,10 @@ export function Timeline({ items, periods, initial }: TimelineProps) {
             {laneLayouts.map(({ lane, items: laneItems, rows, placed }) => (
               <section key={lane.key} aria-label={lane.label} className="relative border-b border-rule" style={{ height: rows * ROW + 26 }}>
                 <h3
-                  className="label sticky left-0 z-10 inline-block bg-paper px-4 py-1.5 font-sans text-faint sm:px-8"
+                  className="label sticky left-0 z-10 inline-flex items-center gap-1.5 bg-paper px-4 py-1.5 font-sans text-faint sm:px-8 lg:px-10"
                   style={{ width: LABEL_W }}
                 >
+                  <span aria-hidden="true" className="inline-block h-2 w-2" style={{ background: LANE_TONE[lane.key] }} />
                   {lane.label}
                 </h3>
                 {laneItems.map((it) => {
@@ -263,17 +272,17 @@ export function Timeline({ items, periods, initial }: TimelineProps) {
                             width: Math.max(4, spanW),
                             background:
                               it.lane === "tendency"
-                                ? `${TENDENCY_COLOR_VALUES[(it.tag as TendencyColor) ?? "ink"] ?? "#202020"}${on ? "" : "33"}`
+                                ? `${TENDENCY_COLOR_VALUES[(it.tag as TendencyColor) ?? "ink"] ?? "#16161A"}${on ? "" : "33"}`
                                 : on
-                                  ? "#B51F2A"
-                                  : "#DDD7CA",
-                            borderLeft: `2px solid ${on ? "#B51F2A" : "#171717"}`,
+                                  ? "#BC2B1C"
+                                  : "#DDD5C4",
+                            borderLeft: `2px solid ${on ? "#BC2B1C" : "#16161A"}`,
                           }}
                         />
                       ) : (
                         <span
                           aria-hidden="true"
-                          className={`absolute left-0 top-1/2 block -translate-x-1/2 -translate-y-1/2 transition-colors ${it.lane === "event" ? "h-2.5 w-2.5 rotate-45" : "h-3 w-2"} border ${on ? "border-red bg-red" : it.featured ? "border-ink bg-ink" : "border-ink bg-paper group-hover:bg-ink"}`}
+                          className={`absolute left-0 top-1/2 block -translate-x-1/2 -translate-y-1/2 transition-colors ${it.lane === "event" ? "h-2.5 w-2.5 rotate-45 border-umber" : "h-3 w-2 border-blue"} border ${on ? "!border-red bg-red" : it.featured ? (it.lane === "event" ? "bg-umber" : "bg-blue") : "bg-paper group-hover:bg-ink"}`}
                         />
                       )}
                       <span
@@ -288,7 +297,7 @@ export function Timeline({ items, periods, initial }: TimelineProps) {
             ))}
           </div>
         </div>
-        <p className="label mt-2 px-4 text-faint sm:px-8">
+        <p className="label mt-2 px-4 text-faint sm:px-8 lg:px-10">
           Scroll the track sideways · select any entry for its context · Esc closes the panel
         </p>
       </div>
@@ -310,7 +319,10 @@ export function Timeline({ items, periods, initial }: TimelineProps) {
                 >
                   <span className="label-mono pt-1 text-muted">{it.year}</span>
                   <span>
-                    <span className="label block text-faint">{KINDS[it.kind].label}</span>
+                    <span className="label flex items-center gap-1.5 text-faint">
+                      <span aria-hidden="true" className="inline-block h-1.5 w-1.5" style={{ background: LANE_TONE[it.lane] }} />
+                      {KINDS[it.kind].label}
+                    </span>
                     <span className={`text-lg leading-snug ${it.lane === "text" ? "font-serif italic" : "font-serif"} ${selected?.id === it.id ? "text-red" : ""}`}>
                       {it.title}
                     </span>
@@ -325,7 +337,7 @@ export function Timeline({ items, periods, initial }: TimelineProps) {
       {selected && (
         <aside
           aria-label={`Context: ${selected.title}`}
-          className="fixed inset-x-0 bottom-0 z-40 max-h-[70vh] overflow-y-auto border-t border-ink bg-paper-warm p-5 shadow-[0_-8px_0_0_rgba(23,23,23,0.05)] animate-enter md:inset-x-auto md:bottom-6 md:right-6 md:top-auto md:max-h-[calc(100vh-10rem)] md:w-[24rem] md:border"
+          className="fixed inset-x-0 bottom-14 z-40 max-h-[65vh] overflow-y-auto border-t-[3px] border-ink bg-paper-warm p-5 shadow-[0_-8px_0_0_rgba(22,22,26,0.06)] animate-enter md:inset-x-auto md:bottom-20 md:right-6 md:top-auto md:max-h-[calc(100vh-12rem)] md:w-[24rem] md:border md:border-t-[3px] lg:bottom-6"
         >
           <div className="flex items-start justify-between gap-3">
             <p className="label text-red">
@@ -336,13 +348,13 @@ export function Timeline({ items, periods, initial }: TimelineProps) {
               ✕
             </button>
           </div>
-          <p className="numeral mt-2 text-4xl text-red">
+          <p className="numeral mt-2 text-[2.6rem] leading-none text-red">
             {selected.year}
             {selected.yearEnd && selected.yearEnd !== selected.year ? `–${selected.yearEnd}` : ""}
           </p>
           <h2 className="mt-1 font-serif text-[1.8rem] leading-tight">{selected.title}</h2>
           {preview?.detail && <p className="label mt-2 text-faint">{preview.detail}</p>}
-          <p className="mt-3 text-[0.95rem] leading-snug text-ink-warm">{selected.summary}</p>
+          <p className="mt-3 font-serif text-[1.02rem] leading-snug text-ink-warm">{selected.summary}</p>
           {preview && Object.keys(preview.groups).length > 0 && (
             <div className="mt-4 space-y-3 border-t border-rule pt-3">
               {Object.entries(preview.groups).map(([kind, rels]) => (
@@ -351,7 +363,7 @@ export function Timeline({ items, periods, initial }: TimelineProps) {
                   <ul className="mt-1 space-y-0.5">
                     {rels.map((r) => (
                       <li key={r.relationshipId} className="text-sm">
-                        <span className="text-faint">{r.label} </span>
+                        <span className="rel">{r.label} </span>
                         <Link href={r.href} className="link-inline">
                           {r.title}
                         </Link>

@@ -21,7 +21,8 @@ export const metadata: Metadata = {
   description: "Thinkers, concepts, tendencies, debates, texts and periods — the whole Atlas in one place.",
 };
 
-const SPINE_TONES = ["bg-ink text-paper", "bg-red-deep text-paper", "bg-olive text-paper", "bg-beige text-ink", "bg-paper-warm text-ink", "bg-red text-paper"];
+/** Book spines in the bookcloth colours. */
+const SPINE_TONES = ["bg-ink text-paper", "bg-red-deep text-paper", "bg-blue text-paper", "bg-beige text-ink", "bg-olive text-paper", "bg-paper-warm text-ink", "bg-umber text-paper", "bg-red text-paper"];
 
 export default async function ExplorePage() {
   const [stats, thinkersList, concepts, tendencies, debates, texts, graph, events, paths] = await Promise.all([
@@ -46,14 +47,15 @@ export default async function ExplorePage() {
       <IndexHeader
         crumb="Explore"
         tally={`${stats.entities} entries · ${stats.relationships} relationships`}
+        tone="var(--color-faint)"
         title={
           <>
             The library<span className="text-red">.</span>
           </>
         }
-        lede="Six ways into the same body of thought. Every entry is a node; every line between them is a claim you can follow."
+        lede="The whole collection on one page, each kind of entry in its own form. Every entry is a node, and every line between two of them is a claim you can follow."
       >
-        <nav aria-label="Library sections" className="flex flex-wrap gap-x-6 gap-y-2 border-y border-ink py-3">
+        <nav aria-label="Library sections" className="flex flex-wrap gap-x-6 gap-y-2 border-y-[3px] border-y-ink py-3">
           {[
             ["map", "Map"],
             ["thinkers", "Thinkers"],
@@ -72,18 +74,25 @@ export default async function ExplorePage() {
         </nav>
       </IndexHeader>
 
-      <section id="map" aria-labelledby="map-h" className="scroll-mt-20 border-b border-ink bg-paper-warm">
+      <section id="map" aria-labelledby="map-h" className="scroll-mt-28">
         <Container className="py-12">
-          <SectionHead number="00" id="map-h" label="The whole map" />
+          <SectionHead number="00" id="map-h" label="The whole map" aside={<ArrowLink href="/map">Open the Theory Map</ArrowLink>} />
           <div className="mt-6">
-            <MapFigure graph={graph} mode="chronological" title="Every thinker in the Atlas, by year of birth" caption="All thinkers in the Atlas. Select a name for its connections." />
+            <MapFigure
+              graph={graph}
+              mode="chronological"
+              plate="Plate I"
+              heading="Every thinker, by year of birth"
+              title="Every thinker in the Atlas, by year of birth"
+              caption="All thinkers in the Atlas. Select a name for its connections."
+            />
           </div>
         </Container>
       </section>
 
       <Container>
         {/* Thinkers — catalogue cards */}
-        <section id="thinkers" aria-labelledby="thinkers-h" className="scroll-mt-20 py-16">
+        <section id="thinkers" aria-labelledby="thinkers-h" className="scroll-mt-28 py-16">
           <SectionHead number="01" id="thinkers-h" label="Thinkers" title="Lives, in order of birth." aside={<ArrowLink href="/thinkers">All {thinkersList.total}</ArrowLink>} />
           <ul className="mt-10 grid grid-cols-2 border-l border-t border-ink sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
             {thinkers.map((t) => {
@@ -92,7 +101,7 @@ export default async function ExplorePage() {
                 <li key={t.id} className="border-b border-r border-ink">
                   <Link href={t.href} className="group flex h-full flex-col justify-between gap-6 p-4 transition-colors hover:bg-ink hover:text-paper">
                     <span className="flex items-start justify-between">
-                      <span className="display text-[3.4rem] leading-none text-red">{surname[0]}</span>
+                      <span className="display text-[3.4rem] leading-none text-red group-hover:text-red-bright">{surname[0]}</span>
                       <span className="label-mono text-faint group-hover:text-ink-muted">{lifespan(t.yearStart, t.yearEnd, "thinker")}</span>
                     </span>
                     <span>
@@ -107,7 +116,7 @@ export default async function ExplorePage() {
         </section>
 
         {/* Concepts — set in type */}
-        <section id="concepts" aria-labelledby="concepts-h" className="scroll-mt-20 border-t border-ink py-16">
+        <section id="concepts" aria-labelledby="concepts-h" className="scroll-mt-28 border-t border-ink py-16">
           <SectionHead number="02" id="concepts-h" label="Concepts" title="A vocabulary, set in type." aside={<ArrowLink href="/concepts">Glossary</ArrowLink>} />
           <p className="mt-10 max-w-6xl font-serif leading-[1.35]">
             {concepts.items.map((c, i) => (
@@ -118,14 +127,14 @@ export default async function ExplorePage() {
                 >
                   {c.title}
                 </Link>
-                {i < concepts.items.length - 1 && <span className="mx-2 text-red/70 sm:mx-3">/</span>}{" "}
+                {i < concepts.items.length - 1 && <span aria-hidden="true" className="mx-2 text-rule sm:mx-3">·</span>}{" "}
               </span>
             ))}
           </p>
         </section>
 
         {/* Tendencies — stripes */}
-        <section id="tendencies" aria-labelledby="tendencies-h" className="scroll-mt-20 border-t border-ink py-16">
+        <section id="tendencies" aria-labelledby="tendencies-h" className="scroll-mt-28 border-t border-ink py-16">
           <SectionHead number="03" id="tendencies-h" label="Tendencies" title="Traditions and their splits." aside={<ArrowLink href="/tendencies">All tendencies</ArrowLink>} />
           <ul className="mt-10 grid gap-px bg-rule sm:grid-cols-2 lg:grid-cols-3">
             {tendencies.items.map((t) => (
@@ -145,7 +154,7 @@ export default async function ExplorePage() {
       </Container>
 
       {/* Debates — on ink */}
-      <section id="debates" aria-labelledby="debates-h" className="scroll-mt-20 bg-ink text-paper">
+      <section id="debates" aria-labelledby="debates-h" className="scroll-mt-28 bg-ink text-paper">
         <Container className="py-16">
           <SectionHead tone="ink" number="04" id="debates-h" label="Debates" aside={<ArrowLink href="/debates" tone="paper">All debates</ArrowLink>} />
           <ul className="mt-8 grid gap-x-12 md:grid-cols-2">
@@ -166,7 +175,7 @@ export default async function ExplorePage() {
 
       <Container>
         {/* Texts — a shelf of spines */}
-        <section id="texts" aria-labelledby="texts-h" className="scroll-mt-20 py-16">
+        <section id="texts" aria-labelledby="texts-h" className="scroll-mt-28 py-16">
           <SectionHead number="05" id="texts-h" label="Texts" title="The shelf, in order of publication." aside={<ArrowLink href="/texts">Catalogue</ArrowLink>} />
           <ul className="scrollbar-thin -mx-4 mt-10 flex items-end gap-1 overflow-x-auto border-b-4 border-ink px-4 pb-0 sm:mx-0 sm:px-0">
             {texts.items.map((t, i) => (
@@ -188,7 +197,7 @@ export default async function ExplorePage() {
         </section>
 
         {/* Periods */}
-        <section id="periods" aria-labelledby="periods-h" className="scroll-mt-20 border-t border-ink py-16">
+        <section id="periods" aria-labelledby="periods-h" className="scroll-mt-28 border-t border-ink py-16">
           <SectionHead number="06" id="periods-h" label="Historical periods" title="Browse by time." aside={<ArrowLink href="/timeline">Timeline</ArrowLink>} />
           <ol className="mt-10 grid gap-px bg-ink sm:grid-cols-2 lg:grid-cols-3">
             {PERIODS.map((p, i) => {
@@ -216,7 +225,7 @@ export default async function ExplorePage() {
         </section>
 
         {/* Paths */}
-        <section id="paths" aria-labelledby="paths-h" className="scroll-mt-20 border-t border-ink py-16">
+        <section id="paths" aria-labelledby="paths-h" className="scroll-mt-28 border-t border-ink py-16">
           <SectionHead number="07" id="paths-h" label="Learning paths" aside={<ArrowLink href="/paths">All paths</ArrowLink>} />
           <ul className="mt-8 grid gap-x-10 md:grid-cols-3">
             {paths.map((p) => (

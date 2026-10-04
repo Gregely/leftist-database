@@ -1,9 +1,11 @@
+import type { EntityKind } from "./content/model";
+
 /**
  * Site identity. The working name lives here and only here: change
  * `name` and every wordmark, title and meta tag follows.
  */
 export const SITE = {
-  /** Rendered as THEORY / ATLAS — each part is one line of the stacked wordmark. */
+  /** Rendered as "Theory" (serif italic) + "ATLAS" (condensed capitals). */
   name: ["Theory", "Atlas"] as const,
   tagline: "A map of socialist thought",
   description:
@@ -12,16 +14,43 @@ export const SITE = {
   year: 2026,
 };
 
-export const siteTitle = SITE.name.join(" / ");
+export const siteTitle = SITE.name.join(" ");
 
-export const NAV = [
-  { label: "Guided", href: "/guided" },
-  { label: "Thinkers", href: "/thinkers" },
-  { label: "Concepts", href: "/concepts" },
-  { label: "Texts", href: "/texts" },
-  { label: "Debates", href: "/debates" },
-  { label: "Timeline", href: "/timeline" },
-  { label: "Explore", href: "/explore" },
+/**
+ * Bookcloth colours: each area of the collection has one, used as a small
+ * mark beside its name (as a publisher's series colours its spines).
+ * Values are CSS colour tokens from globals.css.
+ */
+export const KIND_TONE: Record<EntityKind, string> = {
+  thinker: "var(--color-ink)",
+  concept: "var(--color-red)",
+  text: "var(--color-blue)",
+  debate: "var(--color-red-deep)",
+  tendency: "var(--color-olive)",
+  event: "var(--color-umber)",
+  path: "var(--color-ochre)",
+};
+
+/** The areas of the collection, in reading order. Navigation, the homepage contents and the footer all read this. */
+export const SECTIONS = [
+  { key: "thinkers", label: "Thinkers", short: "Thinkers", href: "/thinkers", tone: KIND_TONE.thinker, description: "Lives, works and intellectual relationships" },
+  { key: "concepts", label: "Concepts", short: "Concepts", href: "/concepts", tone: KIND_TONE.concept, description: "Key terms, each explained at three depths" },
+  { key: "texts", label: "Texts", short: "Texts", href: "/texts", tone: KIND_TONE.text, description: "Primary and foundational works" },
+  { key: "debates", label: "Debates", short: "Debates", href: "/debates", tone: KIND_TONE.debate, description: "Open questions and the positions taken on them" },
+  { key: "tendencies", label: "Tendencies", short: "Tendencies", href: "/tendencies", tone: KIND_TONE.tendency, description: "Schools, currents and movements" },
+  { key: "timeline", label: "Timeline", short: "Timeline", href: "/timeline", tone: KIND_TONE.event, description: "Events and periods in sequence" },
+  { key: "map", label: "Theory Map", short: "Map", href: "/map", tone: "var(--color-ink)", description: "Thinkers connected by influence, critique and response" },
+  { key: "explore", label: "Explore", short: "Explore", href: "/explore", tone: "var(--color-faint)", description: "The whole library, by kind and period" },
+] as const;
+
+/** Primary navigation: Guided, set apart, then the collection. */
+export const NAV = [{ label: "Guided", href: "/guided" }, ...SECTIONS.map((s) => ({ label: s.short, href: s.href }))] as const;
+
+/** Further pages listed in the index sheet and the footer. */
+export const MORE = [
+  { label: "Learning paths", href: "/paths" },
+  { label: "Sources & bibliography", href: "/sources" },
+  { label: "About this edition", href: "/about" },
 ] as const;
 
 /** Periods used to browse by time. Kept as configuration so editors can tune the boundaries. */
