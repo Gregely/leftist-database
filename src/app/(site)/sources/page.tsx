@@ -18,13 +18,12 @@ export default async function SourcesIndex({ searchParams }: Props) {
     <>
       <IndexHeader
         crumb="Sources"
-        tally={`${sources.length} sources`}
         title={
           <>
-            Sources &amp; bibliography<span className="text-red">.</span>
+            Sources<span className="text-red">.</span>
           </>
         }
-        lede="Every entry is meant to be traceable. Sources are first-class records: entries cite them, excerpts quote them, relationships can rest on them."
+        count={sources.length}
       />
       <Container>
         <div className="flex flex-wrap gap-x-5 gap-y-2 border-y border-ink py-3">

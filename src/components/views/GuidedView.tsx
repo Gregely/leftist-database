@@ -31,11 +31,10 @@ function StepCard({ step, href, kicker }: { step: GuidedStep; href: string; kick
 }
 
 /** A list of links in the step's margin. */
-function Leave({ title, note, children }: { title: string; note?: string; children: React.ReactNode }) {
+function Leave({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <section>
       <h2 className="label border-t border-ink pt-2.5 text-faint">{title}</h2>
-      {note && <p className="mt-1 font-serif text-[0.95rem] italic text-muted">{note}</p>}
       <ul className="mt-1">{children}</ul>
     </section>
   );
@@ -89,7 +88,7 @@ export async function GuidedView({ journey, step: stepParam, depth, links }: { j
               <p className="lede mt-6 max-w-2xl">{journey.entity.summary}</p>
               {journey.overview && (
                 <div className="mt-8 max-w-2xl">
-                  <p className="label mb-2 border-t border-ink pt-2.5 text-faint">What this journey covers</p>
+                  <p className="label mb-2 border-t border-ink pt-2.5 text-faint">Overview</p>
                   <Prose text={journey.overview} context={journey.prose.context} />
                 </div>
               )}
@@ -106,10 +105,6 @@ export async function GuidedView({ journey, step: stepParam, depth, links }: { j
                   <Prose text={journey.prerequisites} context={journey.prose.context} className="!text-[1rem]" />
                 </div>
               )}
-              <p className="font-serif text-[1rem] italic text-muted">
-                Nothing is locked: open any step, go back, skip ahead, or leave for the full Atlas at any point. Your place is
-                remembered in this browser only.
-              </p>
             </aside>
           </header>
           <div className="border-y-[3px] border-ink py-5">
@@ -152,7 +147,6 @@ export async function GuidedView({ journey, step: stepParam, depth, links }: { j
   const c = await getGuidedStepContent(journey, step);
   const prev = current > 1 ? journey.steps[current - 2] : null;
   const next = current < n ? journey.steps[current] : null;
-  const isConcept = step.entity.kind === "concept";
   const initial = depth === "standard" || depth === "deep" ? depth : "brief";
 
   return (
@@ -198,7 +192,7 @@ export async function GuidedView({ journey, step: stepParam, depth, links }: { j
             <section aria-labelledby="g-idea" className="mt-10">
               <p className="kicker flex items-center gap-2">
                 <Swatch kind={step.entity.kind} />
-                The idea · {KINDS[step.entity.kind].label}
+                {KINDS[step.entity.kind].label}
               </p>
               <h1 id="g-idea" className="display mt-3 text-[2.8rem] sm:text-[4.4rem]">
                 <Link href={step.entity.href} className="hover:text-red">
@@ -212,7 +206,6 @@ export async function GuidedView({ journey, step: stepParam, depth, links }: { j
                   levels={c.levels.map((l, i) => ({
                     key: l.key,
                     label: l.label,
-                    duration: isConcept ? ["The idea in a paragraph", "A fuller explanation", "Theory and interpretation"][i] : ["Overview", "The entry", "Further"][i],
                     available: l.texts.length > 0,
                     content: (
                       <div className="space-y-6">
@@ -264,13 +257,7 @@ export async function GuidedView({ journey, step: stepParam, depth, links }: { j
                     <StepCard step={next} href={`${links.stepPrefix}${current + 1}`} kicker={`Next · step ${current + 1}`} />
                   </>
                 ) : (
-                  <div className="max-w-2xl space-y-3">
-                    {step.nextReason && <Prose text={step.nextReason} context={c.prose.context} />}
-                    <p className="font-serif text-[1.1rem]">
-                      You have reached the end of this journey, and of what the Atlas covers on it so far. Everything you met is
-                      still one click away: return to the overview, or keep exploring the Atlas on your own.
-                    </p>
-                  </div>
+                  step.nextReason && <Prose text={step.nextReason} context={c.prose.context} className="max-w-2xl" />
                 )}
               </div>
               <nav aria-label="Journey navigation" className="grid grid-cols-3 border border-ink">
@@ -305,12 +292,6 @@ export async function GuidedView({ journey, step: stepParam, depth, links }: { j
           </div>
 
           <aside className="min-w-0 space-y-9 lg:col-span-4" aria-label="Explore from this step">
-            <div className="bg-ink px-5 py-4 text-paper">
-              <p className="label text-red-bright">Step out of the route</p>
-              <p className="mt-1 font-serif text-[1.05rem] italic text-ink-muted">
-                Anything here opens the full Atlas. The route is kept; a line under the masthead brings you back.
-              </p>
-            </div>
             <Leave title="Go deeper">
               <li className="border-b border-rule">
                 <Link href={step.entity.href} className="group block py-3" data-guided-entry>
@@ -329,7 +310,7 @@ export async function GuidedView({ journey, step: stepParam, depth, links }: { j
             </Leave>
 
             {c.along.length > 0 && (
-              <Leave title="Connections on this journey" note="Other steps this one is linked to in the Atlas.">
+              <Leave title="Connections on this journey">
                 {c.along.slice(0, 8).map((r) => (
                   <li key={r.relationshipId} className="border-b border-rule">
                     <Link href={`${links.stepPrefix}${r.stepPosition}`} className="group grid grid-cols-[2.25rem_1fr] gap-2 py-3">
@@ -361,7 +342,7 @@ export async function GuidedView({ journey, step: stepParam, depth, links }: { j
             )}
 
             {c.beyond.length > 0 && (
-              <Leave title="Explore beyond the journey" note="Related entries this journey does not stop at.">
+              <Leave title="Beyond the journey">
                 {c.beyond.map((r) => (
                   <li key={r.relationshipId} className="border-b border-rule">
                     <Link href={r.href} className="group block py-3">

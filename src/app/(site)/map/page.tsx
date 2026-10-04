@@ -8,12 +8,12 @@ import { KINDS, type EntityKind } from "@/lib/content/model";
 
 export const metadata: Metadata = {
   title: "The Theory Map",
-  description: "Thinkers and ideas connected by influence, critique, response and affinity: every line an editorial claim.",
+  description: "Thinkers and ideas connected by influence, critique, response and affinity.",
 };
 
 const VIEWS = {
-  time: { label: "By time", note: "Thinkers placed by year of birth; relations pull them together across the other axis." },
-  affinity: { label: "By affinity", note: "No time axis: entries settle near the ones they are most connected to." },
+  time: { label: "By time" },
+  affinity: { label: "By affinity" },
 } as const;
 const SCOPES = {
   thinkers: { label: "Thinkers", kinds: ["thinker"] as EntityKind[] },
@@ -45,13 +45,12 @@ export default async function MapPage({ searchParams }: Props) {
       <IndexHeader
         crumb="Theory Map"
         tone="var(--color-ink)"
-        tally={`${graph.nodes.length} entries · ${graph.edges.length} relations`}
         title={
           <>
             The Theory Map<span className="text-red">.</span>
           </>
         }
-        lede="Who drew on whom, who argued against whom, and how ideas passed from one generation to the next. Every line is an editorial claim that can carry a note and a source."
+        tally={`${graph.nodes.length} entries · ${graph.edges.length} relations`}
       />
       <Container>
         <div className="flex flex-wrap items-center gap-x-8 gap-y-3 border-y border-ink py-3">
@@ -83,7 +82,6 @@ export default async function MapPage({ searchParams }: Props) {
               </Link>
             ))}
           </div>
-          <p className="font-serif text-[0.98rem] italic text-muted lg:ml-auto">{VIEWS[view].note}</p>
         </div>
 
         <section aria-labelledby="map-heading" className="pt-8">
@@ -96,29 +94,23 @@ export default async function MapPage({ searchParams }: Props) {
             plate="Plate II"
             heading={`${SCOPES[scope].label}, ${VIEWS[view].label.toLowerCase()}`}
             title={`The Theory Map: ${SCOPES[scope].label.toLowerCase()}, ${VIEWS[view].label.toLowerCase()}`}
-            caption="Hover or focus a name to trace its lines. Select it for a summary; select it again to open the entry."
           />
         </section>
 
         <div className="mt-14 grid gap-12 lg:grid-cols-12">
           <section aria-labelledby="reading-h" className="lg:col-span-7">
             <h2 id="reading-h" className="label border-t-[3px] border-ink pt-3 font-sans">
-              How to read the map
+              Notes on the map
             </h2>
             <div className="prose-atlas mt-5 max-w-[40rem] !text-[1.08rem]">
               <p>
-                <strong>Position.</strong> Laid out by time, the horizontal axis is the year of birth (top to bottom on a
-                phone); only the other axis is free, so names drift towards those they are connected to. Laid out by
-                affinity, there is no axis at all, and entries gather near those they are most connected to.
+                By time, the horizontal axis is year of birth (vertical on a phone) and only the other axis is free, so
+                names drift towards those they are connected to. By affinity, there is no axis. Arrowheads run from the one
+                who acted to the one acted on; heavier lines carry more editorial weight.
               </p>
               <p>
-                <strong>Lines.</strong> A solid line is influence or development; a red dashed line is critique or
-                rejection; a dotted line is a response; green is a looser association. Arrowheads point from the one who
-                acted to the one acted on. Heavier lines are claims the editors weight more strongly.
-              </p>
-              <p>
-                <strong>Claims, not facts of nature.</strong> Each line is an editorial reading of the record, and can be
-                questioned. Open an entry to see the note and source behind it, or read the whole map as a list beneath it.
+                Each line is an editorial reading of the record, open to question. The note and source behind it are on
+                the entries it joins.
               </p>
             </div>
           </section>

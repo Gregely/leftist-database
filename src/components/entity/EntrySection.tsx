@@ -3,23 +3,20 @@ import type { ReactNode } from "react";
 /**
  * A section of an entry page. The margin column carries the section number
  * and name (sticky on wide screens, as a reference book's margin heads);
- * the text column carries the content.
+ * the text column carries the content. There is deliberately no subtitle:
+ * the heading names the section and the content follows it.
  */
 export function EntrySection({
   id,
   number,
   label,
-  title,
   children,
-  aside,
   tone,
 }: {
   id: string;
   number: string;
   label: string;
-  title?: ReactNode;
   children: ReactNode;
-  aside?: ReactNode;
   /** A recessed band for sections that sit apart from the main reading. */
   tone?: "deep";
 }) {
@@ -38,11 +35,9 @@ export function EntrySection({
               </span>
               <span className="label font-sans text-ink lg:mt-2 lg:block">{label}</span>
             </h2>
-            {aside && <div className="mt-6 hidden lg:block">{aside}</div>}
           </div>
         </div>
         <div className="lg:col-span-9">
-          {title && <p className="display mb-8 max-w-3xl text-balance text-[1.85rem] sm:text-[2.4rem]">{title}</p>}
           {children}
         </div>
       </div>

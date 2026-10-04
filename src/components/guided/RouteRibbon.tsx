@@ -25,16 +25,16 @@ export function RouteRibbon() {
           <span className="label mr-2 text-red">Guided</span>
           {here >= 0 ? (
             <>
-              This entry is step {here + 1} of <span className="font-serif italic">{route.title}</span>
+              Step {here + 1} of <span className="font-serif italic">{route.title}</span>
             </>
           ) : (
             <>
-              You left <span className="font-serif italic">{route.title}</span> at step {route.step} of {route.total}
+              <span className="font-serif italic">{route.title}</span>, step {route.step} of {route.total}
             </>
           )}
         </p>
         <Link href={here >= 0 ? stepHref(here + 1) : route.href} className="group label inline-flex shrink-0 items-center gap-1.5 text-red">
-          <span className="link-sweep">{here >= 0 ? `Back to step ${here + 1}` : "Return to the route"}</span>
+          <span className="link-sweep">Back to step {here >= 0 ? here + 1 : route.step}</span>
           <span aria-hidden="true">→</span>
         </Link>
         <button type="button" onClick={clearActiveRoute} className="label shrink-0 px-1 text-faint hover:text-ink" aria-label="Leave the Guided route">

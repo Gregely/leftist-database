@@ -186,7 +186,7 @@ export function ThinkerView({ t }: { t: ThinkerAggregate }) {
           </EntrySection>
         )}
 
-        <EntrySection id="ideas" number={n("ideas")} label="Core ideas" title="The concepts this thinker developed or is associated with.">
+        <EntrySection id="ideas" number={n("ideas")} label="Core ideas">
           {t.ideas.length ? (
             <ol className="grid gap-x-10 sm:grid-cols-2">
               {t.ideas.map((c, i) => (
@@ -240,7 +240,7 @@ export function ThinkerView({ t }: { t: ThinkerAggregate }) {
           )}
         </EntrySection>
 
-        <EntrySection id="influences" number={n("influences")} label="Influences" title="Where the thinking came from, and where it went.">
+        <EntrySection id="influences" number={n("influences")} label="Influences">
           <div className="grid gap-10 md:grid-cols-[1fr_auto_1fr] md:gap-8">
             <div>
               <p className="label mb-3 text-faint">← Drew on</p>
@@ -258,7 +258,7 @@ export function ThinkerView({ t }: { t: ThinkerAggregate }) {
           </div>
         </EntrySection>
 
-        <EntrySection id="disagreements" number={n("disagreements")} label="Disagreements" title="Who they argued with, and where the arguments are staged.">
+        <EntrySection id="disagreements" number={n("disagreements")} label="Disagreements">
           <div className="grid gap-10 md:grid-cols-2">
             <div>
               <p className="label mb-3 text-faint">Critiques &amp; responses</p>
@@ -316,7 +316,7 @@ export function ThinkerView({ t }: { t: ThinkerAggregate }) {
             ))}
           </ol>
           <Link href={`/timeline?focus=${entity.yearStart}&item=${entity.slug}`} className="group label mt-6 inline-flex items-center gap-1.5 text-red">
-            <span className="link-sweep">See this life on the full timeline</span> <span aria-hidden="true">→</span>
+            <span className="link-sweep">On the full timeline</span> <span aria-hidden="true">→</span>
           </Link>
         </EntrySection>
 

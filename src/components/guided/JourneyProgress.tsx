@@ -83,7 +83,7 @@ export function JourneyActions({
   return (
     <div className={compact ? "" : "border-t-[3px] border-ink pt-3"} data-journey-progress={slug}>
       <div className="flex items-baseline justify-between gap-3">
-        <p className="label text-faint">Your progress</p>
+        <p className="label text-faint">Progress</p>
         <p className="label-mono text-faint" aria-live="polite">
           {visited.length} of {total} steps read
         </p>
@@ -93,12 +93,11 @@ export function JourneyActions({
           <span key={i} title={t} className={`h-[5px] flex-1 transition-colors duration-500 ${visited.includes(i + 1) ? "bg-red" : "bg-paper-deep"}`} />
         ))}
       </div>
-      {last ? (
+      {last && (
         <p className="mt-3 text-sm text-muted">
-          You were last at step {last}: <span className="font-serif text-[1.05rem] italic text-ink">{titles[last - 1]}</span>
+          <span className="label mr-2 text-faint">Last read</span>
+          Step {last}: <span className="font-serif text-[1.05rem] italic text-ink">{titles[last - 1]}</span>
         </p>
-      ) : (
-        <p className="mt-3 text-sm text-muted">You have not started this journey yet. Begin at step 1, or open any step.</p>
       )}
       <div className="mt-4 flex flex-wrap items-center gap-3">
         {last ? (
@@ -107,7 +106,7 @@ export function JourneyActions({
               Continue <span aria-hidden="true">→</span>
             </Link>
             <Link href={`${stepHrefPrefix}1`} className="label text-muted hover:text-red">
-              Start from the beginning
+              Start again
             </Link>
           </>
         ) : (

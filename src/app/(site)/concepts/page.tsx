@@ -31,15 +31,14 @@ export default async function ConceptsIndex({ searchParams }: Props) {
   return (
     <>
       <IndexHeader
-        tone={KIND_TONE.concept}
         crumb="Concepts"
-        tally={`${list.total} concepts`}
+        tone={KIND_TONE.concept}
         title={
           <>
-            A glossary of the left<span className="text-red">.</span>
+            Concepts<span className="text-red">.</span>
           </>
         }
-        lede="Every concept opens at three depths: thirty seconds, five minutes, and a deep dive into how it has been argued over."
+        count={list.total}
       />
       <Container>
         <nav aria-label="Alphabetical index" className="scrollbar-none sticky top-14 z-20 -mx-4 overflow-x-auto border-y border-ink bg-paper/95 px-4 backdrop-blur-[3px] sm:mx-0 sm:px-0 lg:top-[60px]">

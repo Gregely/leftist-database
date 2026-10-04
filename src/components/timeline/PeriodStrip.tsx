@@ -108,11 +108,6 @@ export function PeriodStrip({
             <span aria-hidden="true" className="inline-block h-3 w-[3px] bg-umber" /> Events
           </span>
         )}
-        {active.length > 0 && (
-          <span className="font-serif italic">
-            {active.map((p) => p.label).join(" · ")}
-          </span>
-        )}
       </figcaption>
     </figure>
   );

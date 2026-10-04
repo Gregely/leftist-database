@@ -297,9 +297,6 @@ export function Timeline({ items, periods, initial }: TimelineProps) {
             ))}
           </div>
         </div>
-        <p className="label mt-2 px-4 text-faint sm:px-8 lg:px-10">
-          Scroll the track sideways · select any entry for its context · Esc closes the panel
-        </p>
       </div>
 
       {/* Vertical list (phones) */}

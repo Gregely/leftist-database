@@ -18,15 +18,14 @@ export default async function TendenciesIndex() {
   return (
     <>
       <IndexHeader
-        tone={KIND_TONE.tendency}
         crumb="Tendencies"
-        tally={`${list.total} tendencies`}
+        tone={KIND_TONE.tendency}
         title={
           <>
-            Schools, currents, traditions<span className="text-red">.</span>
+            Tendencies<span className="text-red">.</span>
           </>
         }
-        lede="Traditions overlap, split and borrow from each other. Each band shows a tendency's span; open one to see its members, texts and lineage."
+        count={list.total}
       />
       <Container>
         <div className="relative hidden h-6 border-b border-ink md:ml-[34%] md:block" aria-hidden="true">

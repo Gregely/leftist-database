@@ -71,34 +71,13 @@ export function ConceptView({ c, depth }: { c: ConceptAggregate; depth?: string 
       <SectionNav sections={sections} label="Descend into the concept" title={entity.title} />
 
       <Container>
-        <EntrySection
-          id="descent"
-          number={n("descent")}
-          label="Explanation"
-          aside={
-            <div className="border-l border-red pl-3">
-              <p className="label text-faint">Further down</p>
-              <ol className="mt-2 space-y-1 font-serif text-[1rem]">
-                {sections.slice(1).map((s) => (
-                  <li key={s.id}>
-                    <a href={`#${s.id}`} className="link-inline">
-                      {s.label}
-                    </a>
-                  </li>
-                ))}
-              </ol>
-            </div>
-          }
-        >
-          <p className="mb-6 max-w-[40rem] font-serif text-[1.15rem] italic text-muted">
-            Start with thirty seconds, and go deeper only as far as you want. Each level adds to the one above it.
-          </p>
+        <EntrySection id="descent" number={n("descent")} label="Explanation">
           <DepthReader
             initial={initial}
             levels={[
-              { key: "brief", label: "30 seconds", duration: "The idea in a paragraph", available: !!details.brief, content: <Prose text={details.brief} context={c.prose.context} className="!text-[1.5rem] !leading-[1.4]" /> },
-              { key: "standard", label: "5 minutes", duration: "A fuller explanation", available: !!details.standard, content: <Prose text={details.standard} context={c.prose.context} /> },
-              { key: "deep", label: "Deep dive", duration: "Theory and interpretation", available: !!details.deep, content: <Prose text={details.deep} context={c.prose.context} /> },
+              { key: "brief", label: "30 seconds", available: !!details.brief, content: <Prose text={details.brief} context={c.prose.context} className="!text-[1.5rem] !leading-[1.4]" /> },
+              { key: "standard", label: "5 minutes", available: !!details.standard, content: <Prose text={details.standard} context={c.prose.context} /> },
+              { key: "deep", label: "Deep dive", available: !!details.deep, content: <Prose text={details.deep} context={c.prose.context} /> },
             ]}
           />
         </EntrySection>
@@ -109,7 +88,7 @@ export function ConceptView({ c, depth }: { c: ConceptAggregate; depth?: string 
           </EntrySection>
         )}
 
-        <EntrySection id="thinkers" number={n("thinkers")} label="Thinkers" title="Who worked the idea out, and who took it further.">
+        <EntrySection id="thinkers" number={n("thinkers")} label="Thinkers">
           {c.thinkers.length ? (
             <ul className="grid gap-x-10 border-t border-ink sm:grid-cols-2 lg:grid-cols-3">
               {c.thinkers.map((t) => (
@@ -127,7 +106,7 @@ export function ConceptView({ c, depth }: { c: ConceptAggregate; depth?: string 
           )}
         </EntrySection>
 
-        <EntrySection id="interpretations" number={n("interpretations")} label="Debates" title="Where it is read differently.">
+        <EntrySection id="interpretations" number={n("interpretations")} label="Debates">
           {(details.interpretations || details.criticisms) && (
             <div className="mb-12 grid gap-10 md:grid-cols-2">
               {details.interpretations && (
@@ -146,7 +125,7 @@ export function ConceptView({ c, depth }: { c: ConceptAggregate; depth?: string 
           )}
           <div className="grid gap-10 md:grid-cols-2">
             <div>
-              <p className="label mb-3 text-faint">Staged in debates</p>
+              <p className="label mb-3 text-faint">In debates</p>
               {c.debates.length ? (
                 <ul className="border-t border-ink">
                   {c.debates.map((d) => (
@@ -161,7 +140,7 @@ export function ConceptView({ c, depth }: { c: ConceptAggregate; depth?: string 
                   ))}
                 </ul>
               ) : (
-                <EmptyNote>Not yet the subject of a debate entry.</EmptyNote>
+                <EmptyNote>No debate entries yet.</EmptyNote>
               )}
             </div>
             <div>
@@ -171,7 +150,7 @@ export function ConceptView({ c, depth }: { c: ConceptAggregate; depth?: string 
           </div>
         </EntrySection>
 
-        <EntrySection id="primary-texts" number={n("primary-texts")} label="Primary texts" title="Where the concept is worked out.">
+        <EntrySection id="primary-texts" number={n("primary-texts")} label="Primary texts">
           <Excerpts items={c.excerpts} />
           {c.texts.length > 0 && (
             <div className={c.excerpts.length ? "mt-12" : ""}>
@@ -182,7 +161,7 @@ export function ConceptView({ c, depth }: { c: ConceptAggregate; depth?: string 
           {!c.excerpts.length && !c.texts.length && <EmptyNote>No primary texts linked yet.</EmptyNote>}
         </EntrySection>
 
-        <EntrySection id="related" number={n("related")} label="Related concepts" title="The concept's neighbourhood.">
+        <EntrySection id="related" number={n("related")} label="Related concepts">
           {c.constellation.nodes.length > 1 && (
             <div className="mb-10">
               <MapFigure

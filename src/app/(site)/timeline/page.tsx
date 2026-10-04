@@ -22,13 +22,12 @@ export default async function TimelinePage({ searchParams }: Props) {
       <IndexHeader
         crumb="Timeline"
         tone={KIND_TONE.event}
-        tally={`${counts.event ?? 0} events · ${counts.text ?? 0} texts · ${counts.thinker ?? 0} lives · ${counts.tendency ?? 0} tendencies`}
         title={
           <>
-            Move through history<span className="text-red">.</span>
+            Timeline<span className="text-red">.</span>
           </>
         }
-        lede="Revolutions and congresses, books and pamphlets, lives and traditions, on one track. Zoom from centuries to decades, filter the lanes, and select anything to see what it connects to."
+        tally={`${counts.event ?? 0} events · ${counts.text ?? 0} texts · ${counts.thinker ?? 0} lives · ${counts.tendency ?? 0} tendencies`}
       />
       <Timeline
         items={items}

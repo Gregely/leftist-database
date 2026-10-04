@@ -123,7 +123,6 @@ export function MobileDock() {
                     <span className="label-mono w-5 text-faint">{String(i + 1).padStart(2, "0")}</span>
                     <span aria-hidden="true" className="h-2 w-2 shrink-0 self-center" style={{ background: l.tone }} />
                     <span className={`font-serif text-[1.55rem] leading-none ${active ? "text-red" : ""}`}>{l.label}</span>
-                    <span className="ml-auto hidden text-right text-[0.78rem] leading-tight text-faint sm:block">{l.description}</span>
                   </Link>
                 </li>
               );

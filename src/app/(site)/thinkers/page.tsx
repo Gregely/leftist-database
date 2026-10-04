@@ -36,15 +36,14 @@ export default async function ThinkersIndex({ searchParams }: Props) {
   return (
     <>
       <IndexHeader
-        tone={KIND_TONE.thinker}
         crumb="Thinkers"
-        tally={`${list.total} ${list.total === 1 ? "thinker" : "thinkers"}`}
+        tone={KIND_TONE.thinker}
         title={
           <>
-            The people who argued it out<span className="text-red">.</span>
+            Thinkers<span className="text-red">.</span>
           </>
         }
-        lede="Each line is a life, set against two and a half centuries. Filter by tendency, or sort by name."
+        count={list.total}
       />
       <Container>
         <div className="flex flex-wrap items-center gap-x-6 gap-y-3 border-y border-ink py-3">

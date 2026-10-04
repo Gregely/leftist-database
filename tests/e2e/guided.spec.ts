@@ -124,7 +124,8 @@ test("editors build a Guided journey from existing entries, and readers only see
   // Progress is remembered: Continue returns to the last step read.
   await reader.goto("/guided");
   await expect(card).toContainText("3 of 3 steps read");
-  await expect(card).toContainText("You were last at step 2");
+  await expect(card).toContainText("Last read");
+  await expect(card).toContainText("Step 2: Capitalism");
   await card.locator("[data-journey-continue]").click();
   await expect(reader).toHaveURL(new RegExp(`/guided/${slug}\\?step=2$`));
 
@@ -133,10 +134,10 @@ test("editors build a Guided journey from existing entries, and readers only see
   await expect(reader).toHaveURL(/\/concepts\/capitalism$/);
   await expect(reader.getByRole("heading", { level: 1 })).toContainText("Capitalism");
   const ribbon = reader.locator(`[data-route-ribbon="${slug}"]`);
-  await expect(ribbon).toContainText(`This entry is step 2 of ${title}`);
+  await expect(ribbon).toContainText(`Step 2 of ${title}`);
   await reader.goto("/thinkers/marx");
-  await expect(ribbon).toContainText("You left");
-  await ribbon.getByRole("link", { name: /Return to the route/ }).click();
+  await expect(ribbon).toContainText(`${title}, step 2 of 3`);
+  await ribbon.getByRole("link", { name: /Back to step 2/ }).click();
   await expect(reader).toHaveURL(new RegExp(`/guided/${slug}\\?step=2$`));
   await reader.goto("/concepts/capitalism");
   await reader.goBack();
@@ -172,5 +173,5 @@ test("Guided is in the main navigation alongside the existing sections", async (
   for (const label of ["Thinkers", "Concepts"]) await expect(nav.getByRole("link", { name: label })).toBeVisible();
   await nav.getByRole("link", { name: "Guided" }).click();
   await expect(page).toHaveURL(/\/guided$/);
-  await expect(page.getByRole("heading", { level: 1 })).toContainText("Where should I start");
+  await expect(page.getByRole("heading", { level: 1 })).toContainText("Guided");
 });

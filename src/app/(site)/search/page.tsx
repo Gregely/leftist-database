@@ -21,7 +21,7 @@ export default async function SearchPage({ searchParams }: Props) {
         </Label>
       </div>
       <form action="/search" role="search" className="border-b-[3px] border-ink py-10">
-        <label htmlFor="q" className="kicker text-red">
+        <label htmlFor="q" className="sr-only">
           Search the collection
         </label>
         <div className="mt-4 flex items-end gap-4">
@@ -83,7 +83,7 @@ export default async function SearchPage({ searchParams }: Props) {
                 </>
               ) : (
                 <>
-                  Nothing in the archive matches <em className="text-ink">“{res.query}”</em> yet.
+                  No entries match <em className="text-ink">“{res.query}”</em>.
                 </>
               )}
             </p>

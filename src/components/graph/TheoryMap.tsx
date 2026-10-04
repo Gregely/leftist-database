@@ -454,7 +454,7 @@ function HoverCard({ node, layout }: { node: LayoutNode; layout: Layout }) {
         {node.group ? ` · ${node.group}` : ""}
       </p>
       <p className="mt-1.5 line-clamp-3 font-serif text-[0.85rem] leading-snug text-ink-warm">{node.summary}</p>
-      <p className="label mt-2 text-red">{node.degree} connections · click to preview</p>
+      <p className="label mt-2 text-red">{node.degree} connections</p>
     </div>
   );
 }

@@ -17,7 +17,7 @@ import { TENDENCY_COLOR_VALUES, type TendencyColor } from "@/lib/content/model";
 import { PERIODS } from "@/lib/site";
 
 export const metadata: Metadata = {
-  title: "Explore the library",
+  title: "Explore",
   description: "Thinkers, concepts, tendencies, debates, texts and periods — the whole Atlas in one place.",
 };
 
@@ -46,14 +46,13 @@ export default async function ExplorePage() {
     <>
       <IndexHeader
         crumb="Explore"
-        tally={`${stats.entities} entries · ${stats.relationships} relationships`}
         tone="var(--color-faint)"
         title={
           <>
-            The library<span className="text-red">.</span>
+            Explore<span className="text-red">.</span>
           </>
         }
-        lede="The whole collection on one page, each kind of entry in its own form. Every entry is a node, and every line between two of them is a claim you can follow."
+        tally={`${stats.entities} entries · ${stats.relationships} relationships`}
       >
         <nav aria-label="Library sections" className="flex flex-wrap gap-x-6 gap-y-2 border-y-[3px] border-y-ink py-3">
           {[
@@ -84,7 +83,6 @@ export default async function ExplorePage() {
               plate="Plate I"
               heading="Every thinker, by year of birth"
               title="Every thinker in the Atlas, by year of birth"
-              caption="All thinkers in the Atlas. Select a name for its connections."
             />
           </div>
         </Container>
@@ -93,7 +91,7 @@ export default async function ExplorePage() {
       <Container>
         {/* Thinkers — catalogue cards */}
         <section id="thinkers" aria-labelledby="thinkers-h" className="scroll-mt-28 py-16">
-          <SectionHead number="01" id="thinkers-h" label="Thinkers" title="Lives, in order of birth." aside={<ArrowLink href="/thinkers">All {thinkersList.total}</ArrowLink>} />
+          <SectionHead number="01" id="thinkers-h" label="Thinkers" aside={<ArrowLink href="/thinkers">All {thinkersList.total}</ArrowLink>} />
           <ul className="mt-10 grid grid-cols-2 border-l border-t border-ink sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
             {thinkers.map((t) => {
               const surname = t.title.split(" ").pop() ?? t.title;
@@ -117,7 +115,7 @@ export default async function ExplorePage() {
 
         {/* Concepts — set in type */}
         <section id="concepts" aria-labelledby="concepts-h" className="scroll-mt-28 border-t border-ink py-16">
-          <SectionHead number="02" id="concepts-h" label="Concepts" title="A vocabulary, set in type." aside={<ArrowLink href="/concepts">Glossary</ArrowLink>} />
+          <SectionHead number="02" id="concepts-h" label="Concepts" aside={<ArrowLink href="/concepts">Glossary</ArrowLink>} />
           <p className="mt-10 max-w-6xl font-serif leading-[1.35]">
             {concepts.items.map((c, i) => (
               <span key={c.id}>
@@ -135,7 +133,7 @@ export default async function ExplorePage() {
 
         {/* Tendencies — stripes */}
         <section id="tendencies" aria-labelledby="tendencies-h" className="scroll-mt-28 border-t border-ink py-16">
-          <SectionHead number="03" id="tendencies-h" label="Tendencies" title="Traditions and their splits." aside={<ArrowLink href="/tendencies">All tendencies</ArrowLink>} />
+          <SectionHead number="03" id="tendencies-h" label="Tendencies" aside={<ArrowLink href="/tendencies">All tendencies</ArrowLink>} />
           <ul className="mt-10 grid gap-px bg-rule sm:grid-cols-2 lg:grid-cols-3">
             {tendencies.items.map((t) => (
               <li key={t.id} className="bg-paper">
@@ -176,7 +174,7 @@ export default async function ExplorePage() {
       <Container>
         {/* Texts — a shelf of spines */}
         <section id="texts" aria-labelledby="texts-h" className="scroll-mt-28 py-16">
-          <SectionHead number="05" id="texts-h" label="Texts" title="The shelf, in order of publication." aside={<ArrowLink href="/texts">Catalogue</ArrowLink>} />
+          <SectionHead number="05" id="texts-h" label="Texts" aside={<ArrowLink href="/texts">Catalogue</ArrowLink>} />
           <ul className="scrollbar-thin -mx-4 mt-10 flex items-end gap-1 overflow-x-auto border-b-4 border-ink px-4 pb-0 sm:mx-0 sm:px-0">
             {texts.items.map((t, i) => (
               <li key={t.id} className="shrink-0">
@@ -198,7 +196,7 @@ export default async function ExplorePage() {
 
         {/* Periods */}
         <section id="periods" aria-labelledby="periods-h" className="scroll-mt-28 border-t border-ink py-16">
-          <SectionHead number="06" id="periods-h" label="Historical periods" title="Browse by time." aside={<ArrowLink href="/timeline">Timeline</ArrowLink>} />
+          <SectionHead number="06" id="periods-h" label="Historical periods" aside={<ArrowLink href="/timeline">Timeline</ArrowLink>} />
           <ol className="mt-10 grid gap-px bg-ink sm:grid-cols-2 lg:grid-cols-3">
             {PERIODS.map((p, i) => {
               const n = events.filter((e) => e.year >= p.from && e.year <= p.to);
