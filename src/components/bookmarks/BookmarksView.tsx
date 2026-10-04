@@ -9,13 +9,7 @@ export function BookmarksView() {
   if (!items.length) {
     return (
       <div className="border-y border-ink py-12">
-        <p className="lede max-w-xl text-muted">
-          Nothing saved yet. Use <span className="label text-ink">Save</span> on any thinker, concept, text or debate to keep
-          it here.
-        </p>
-        <Link href="/explore" className="btn mt-6">
-          Explore the library →
-        </Link>
+        <p className="lede max-w-xl text-muted">Nothing saved yet.</p>
       </div>
     );
   }

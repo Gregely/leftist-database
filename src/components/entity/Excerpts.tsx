@@ -26,7 +26,7 @@ export function Excerpts({ items, empty }: { items: ExcerptRecord[]; empty?: str
               </blockquote>
             ) : (
               <p className="max-w-[42rem] border-l border-dashed border-rule pl-7 font-serif text-[1.15rem] italic text-muted">
-                Passage reference — the excerpt will be added from a verified edition.
+                Passage reference. Wording to follow from a verified edition.
               </p>
             )}
             <figcaption className="mt-3 pl-7 text-[0.9rem] leading-snug">

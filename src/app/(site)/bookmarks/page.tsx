@@ -12,10 +12,10 @@ export default function BookmarksPage() {
         crumb="Bookmarks"
         title={
           <>
-            Your reading list<span className="text-red">.</span>
+            Saved<span className="text-red">.</span>
           </>
         }
-        lede="Entries you have saved. They are kept in this browser only — nothing is sent to the Atlas."
+        tally="Kept in this browser only"
       />
       <Container>
         <BookmarksView />

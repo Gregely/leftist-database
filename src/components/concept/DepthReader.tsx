@@ -5,7 +5,6 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 export interface DepthLevel {
   key: "brief" | "standard" | "deep";
   label: string;
-  duration: string;
   content: ReactNode;
   available: boolean;
 }
@@ -62,7 +61,6 @@ export function DepthReader({ levels, initial = "brief" }: { levels: DepthLevel[
                 <span className={`numeral text-[1.5rem] leading-none sm:text-[1.9rem] ${reached ? "text-red" : "text-faint group-hover:text-ink"}`}>{NUMERALS[i]}</span>
                 <span className={`label sm:text-[0.82rem] ${reached ? "text-ink" : "text-muted"}`}>{l.label}</span>
               </span>
-              <span className="mt-1 hidden font-serif text-[0.95rem] italic text-faint sm:block">{l.duration}</span>
               {/* Depth bar: fills as the reader descends. */}
               <span aria-hidden="true" className="absolute inset-x-0 bottom-0 h-[5px] bg-paper-deep">
                 <span className={`block h-full bg-red transition-[width] duration-500 ${reached ? "w-full" : "w-0"}`} />
@@ -90,16 +88,12 @@ export function DepthReader({ levels, initial = "brief" }: { levels: DepthLevel[
                     {NUMERALS[i]}
                   </p>
                   <p className="label md:mt-2">{l.label}</p>
-                  <p className="font-serif text-[0.95rem] italic text-faint md:mt-0.5">{l.duration}</p>
                 </div>
                 <div className="max-w-[42rem]">
                   {l.available ? (
                     l.content
                   ) : (
-                    <p className="font-serif italic text-muted">
-                      This level has not been written yet. The Atlas is built to hold it, and editors can add it from the
-                      editorial desk.
-                    </p>
+                    <p className="font-serif italic text-muted">Not yet written.</p>
                   )}
                 </div>
               </div>
@@ -110,10 +104,7 @@ export function DepthReader({ levels, initial = "brief" }: { levels: DepthLevel[
                     onClick={() => goTo(i + 1)}
                     className="group flex w-full max-w-[42rem] items-center justify-between gap-4 border-y border-ink py-3 text-left transition-colors hover:bg-ink hover:px-4 hover:text-paper"
                   >
-                    <span>
-                      <span className="label block">Go deeper: {levels[i + 1].label}</span>
-                      <span className="mt-0.5 block font-serif text-[1rem] italic text-muted group-hover:text-ink-muted">{levels[i + 1].duration}</span>
-                    </span>
+                    <span className="label">Go deeper: {levels[i + 1].label}</span>
                     <span aria-hidden="true" className="text-[1.4rem] text-red transition-transform group-hover:translate-y-1 group-hover:text-red-bright">
                       ↓
                     </span>

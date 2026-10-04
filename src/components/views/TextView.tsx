@@ -87,17 +87,17 @@ export function TextView({ t }: { t: TextAggregate }) {
         }
         band={
           <div className="pb-10">
-            <div className="grid gap-x-8 gap-y-5 sm:grid-cols-2 lg:grid-cols-4" role="group" aria-label="Catalogue card">
-              <Card label="What it is">
+            <div className="grid gap-x-8 gap-y-5 sm:grid-cols-2 lg:grid-cols-4">
+              <Card label="Form">
                 <span className="capitalize">{details?.form || "Text"}</span>
                 {details?.language && <span className="text-muted">, in {details.language}</span>}
               </Card>
-              <Card label="Who wrote it">{t.authors.length ? <EntityLinks items={t.authors} /> : <span className="italic text-faint">Not recorded</span>}</Card>
-              <Card label="When">
+              <Card label="Author">{t.authors.length ? <EntityLinks items={t.authors} /> : <span className="italic text-faint">Not recorded</span>}</Card>
+              <Card label="Written">
                 {year || "—"}
                 {details?.publicationNote && <span className="mt-0.5 block text-[0.95rem] text-muted">{details.publicationNote}</span>}
               </Card>
-              <Card label="Read it">
+              <Card label="Full text">
                 {details?.readingUrl ? (
                   <a href={details.readingUrl} className="link-inline" target="_blank" rel="noopener noreferrer">
                     Open-access copy ↗
@@ -113,7 +113,6 @@ export function TextView({ t }: { t: TextAggregate }) {
             </div>
             {entity.yearStart != null && (
               <div className="mt-10">
-                <p className="label mb-2 text-faint">Where it falls</p>
                 <PeriodStrip
                   from={entity.yearStart}
                   to={entity.yearEnd}
@@ -157,9 +156,9 @@ export function TextView({ t }: { t: TextAggregate }) {
           )}
         </EntrySection>
         <EntrySection id="passages" number={n("passages")} label="Passages" tone="deep">
-          <Excerpts items={t.excerpts} empty="No passages from this text have been catalogued yet." />
+          <Excerpts items={t.excerpts} empty="No passages catalogued yet." />
         </EntrySection>
-        <EntrySection id="conversation" number={n("conversation")} label="In conversation" title="What it answered, and what answered it.">
+        <EntrySection id="conversation" number={n("conversation")} label="In conversation">
           <div className="grid gap-10 md:grid-cols-2">
             <div>
               <p className="label mb-3 text-faint">Responses &amp; critiques</p>

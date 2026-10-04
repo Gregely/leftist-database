@@ -3,20 +3,25 @@ import type { ReactNode } from "react";
 import { Container } from "./primitives";
 
 /**
- * Masthead for index pages: the catalogue line (with the section's
- * bookcloth colour and its extent), a large title, and a standfirst.
+ * Masthead for index pages: the catalogue line, the section's name set large,
+ * and its extent as a figure. No standfirst: the name and the list beneath it
+ * say what the page is.
  */
 export function IndexHeader({
   crumb,
   title,
-  lede,
+  count,
+  unit,
   tally,
   tone,
   children,
 }: {
   crumb: string;
   title: ReactNode;
-  lede?: ReactNode;
+  /** The number of entries, set as a large figure beside the title. */
+  count?: number;
+  unit?: string;
+  /** Further figures in the catalogue line, e.g. a breakdown by kind. */
   tally?: ReactNode;
   /** The section's bookcloth colour (a CSS colour). */
   tone?: string;
@@ -37,9 +42,14 @@ export function IndexHeader({
         </p>
         {tally && <p className="label-mono text-faint">{tally}</p>}
       </div>
-      <div className="grid gap-6 pb-10 pt-9 sm:pb-12 sm:pt-12 lg:grid-cols-12 lg:gap-10">
-        <h1 className="display text-balance text-[3.2rem] sm:text-[5rem] lg:col-span-7 xl:text-[5.8rem]">{title}</h1>
-        {lede && <div className="lede text-ink-warm lg:col-span-5 lg:pt-5">{lede}</div>}
+      <div className="flex flex-wrap items-end justify-between gap-x-10 gap-y-3 pb-8 pt-8 sm:pb-10 sm:pt-10">
+        <h1 className="display text-balance text-[3.2rem] sm:text-[5rem] xl:text-[5.8rem]">{title}</h1>
+        {count != null && (
+          <p className="flex items-baseline gap-2 pb-2">
+            <span className="numeral text-[2.6rem] leading-none text-red sm:text-[3.4rem]">{count}</span>
+            {unit && <span className="label text-faint">{unit}</span>}
+          </p>
+        )}
       </div>
       {children}
     </Container>

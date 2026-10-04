@@ -13,15 +13,14 @@ export default async function PathsIndex() {
   return (
     <>
       <IndexHeader
-        tone={KIND_TONE.path}
         crumb="Learning paths"
-        tally={`${paths.length} routes`}
+        tone={KIND_TONE.path}
         title={
           <>
-            Routes through the material<span className="text-red">.</span>
+            Learning paths<span className="text-red">.</span>
           </>
         }
-        lede="A path suggests an order, never a requirement. Every stop opens onto the rest of the Atlas, and you can leave the route whenever something catches your eye."
+        count={paths.length}
       />
       <Container>
         <ol className="border-t-[3px] border-ink">

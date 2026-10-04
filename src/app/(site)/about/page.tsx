@@ -13,13 +13,12 @@ export default async function AboutPage() {
     <>
       <IndexHeader
         crumb="About"
-        tally={SITE.edition}
         title={
           <>
             About this edition<span className="text-red">.</span>
           </>
         }
-        lede={SITE.description}
+        tally={SITE.edition}
       />
       <Container>
         <div className="grid gap-12 border-t border-ink py-12 lg:grid-cols-12">

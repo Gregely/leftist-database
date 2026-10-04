@@ -68,10 +68,7 @@ export function DebateCompare({
   return (
     <div>
       {/* Positions */}
-      <p className="font-serif text-[1.05rem] italic text-muted">
-        {positions.length} positions. Mark two or more with <span className="not-italic">Compare</span> to set them against each other below.
-      </p>
-      <ol className="mt-6 border-t-[3px] border-ink">
+      <ol className="border-t-[3px] border-ink">
         {positions.map((p, i) => {
           const on = selected.includes(p.id);
           return (
@@ -189,11 +186,10 @@ export function DebateCompare({
             <div>
               <p className="label">
                 <span aria-hidden="true" className="mr-3 text-red">⇄</span>
-                {comparing ? `Comparing ${columns.map((c) => c.label).join(" · ")}` : "All positions compared"}
+                {comparing ? `Comparing ${columns.map((c) => c.label).join(" · ")}` : "All positions"}
               </p>
               <p className="mt-2 text-sm text-muted" aria-live="polite">
                 {counts.agree ?? 0} shared · {counts.diverge ?? 0} divergent · {counts.partial ?? 0} partly addressed
-                {!comparing && " — select positions above to narrow the comparison."}
               </p>
             </div>
             <div className="flex items-center gap-4">
@@ -286,7 +282,7 @@ export function DebateCompare({
                 <StanceGlyph stance={s} size={11} /> {STANCE_LABELS[s]}
               </span>
             ))}
-            <span className="text-faint">Stances are editorial readings — select a stance with a dotted underline for the note.</span>
+            <span className="text-faint">Stances are editorial readings.</span>
           </p>
         </div>
       )}

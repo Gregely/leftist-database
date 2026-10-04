@@ -8,9 +8,9 @@ test.describe("home & theory map", () => {
     // Guided sits beside the search, with other ways in beneath it: one way of reading among several.
     await expect(page.getByRole("region", { name: "Guided" }).getByRole("link", { name: /Explore Guided/ })).toHaveAttribute("href", "/guided");
     const waysIn = page.getByRole("navigation", { name: "Other ways in" });
-    await expect(waysIn.getByRole("link", { name: /The Theory Map/ })).toHaveAttribute("href", "/map");
-    await expect(waysIn.getByRole("link", { name: /in thirty seconds/ })).toHaveAttribute("href", /\/concepts\/.+\?depth=brief$/);
-    const collection = page.getByRole("region", { name: "Explore the collection" });
+    await expect(waysIn.getByRole("link", { name: /Theory Map/ })).toHaveAttribute("href", "/map");
+    await expect(waysIn.getByRole("link", { name: /30 seconds/ })).toHaveAttribute("href", /\/concepts\/.+\?depth=brief$/);
+    const collection = page.getByRole("region", { name: "Contents" });
     const sections = [
       ["Thinkers", "/thinkers"],
       ["Concepts", "/concepts"],
@@ -24,10 +24,10 @@ test.describe("home & theory map", () => {
     for (const [name, href] of sections) await expect(collection.getByRole("link", { name: new RegExp(`^\\d+ ${name}`) })).toHaveAttribute("href", href);
     // Guided is one option among several: a compact block above the full index, not a panel that outweighs it.
     const box = async (name: string) => (await page.getByRole("region", { name }).boundingBox())!;
-    expect((await box("Guided")).height).toBeLessThan((await box("Explore the collection")).height / 2);
-    expect((await box("Explore the collection")).y).toBeLessThan((await page.locator("section[aria-labelledby=map-heading]").boundingBox())!.y);
+    expect((await box("Guided")).height).toBeLessThan((await box("Contents")).height / 2);
+    expect((await box("Contents")).y).toBeLessThan((await page.locator("section[aria-labelledby=map-heading]").boundingBox())!.y);
     // Routes, including the learning paths, are further down the page.
-    await expect(page.getByRole("region", { name: "Routes through the collection" }).getByRole("link", { name: /First steps into Marxism/ })).toBeVisible();
+    await expect(page.getByRole("region", { name: "Routes" }).getByRole("link", { name: /First steps into Marxism/ })).toBeVisible();
     // Search is always in the masthead.
     await page.getByRole("banner").getByRole("button", { name: /Search/ }).click();
     await expect(page.getByRole("dialog", { name: "Search the archive" })).toBeVisible();
@@ -53,7 +53,7 @@ test.describe("home & theory map", () => {
     const map = page.locator("section[aria-labelledby=map-heading]");
     const marx = map.locator('svg:visible g[role=button][aria-label^="Karl Marx"]');
     await marx.hover();
-    await expect(map.getByText("click to preview")).toBeVisible();
+    await expect(map.getByText(/^\d+ connections$/)).toBeVisible();
     await marx.click();
     const panel = map.getByRole("link", { name: /Open thinker/ });
     await expect(panel).toBeVisible();

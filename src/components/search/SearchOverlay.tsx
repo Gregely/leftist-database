@@ -164,7 +164,7 @@ export function SearchOverlay({ initialQuery, onClose }: { initialQuery: string;
                 </ul>
               </div>
               <div className="md:col-span-4 md:col-start-9">
-                <p className="label mb-4 text-muted">Or browse the collection</p>
+                <p className="label mb-4 text-muted">Browse</p>
                 <ul className="divide-y divide-rule border-y border-ink">
                   {SECTIONS.map((sec) => (
                     <li key={sec.href}>
@@ -182,7 +182,7 @@ export function SearchOverlay({ initialQuery, onClose }: { initialQuery: string;
 
           {q.trim() && res && res.total === 0 && !loading && (
             <p className="lede text-muted">
-              Nothing in the archive matches <em>“{res.query}”</em> yet. Try a broader term, or a different spelling.
+              No entries match <em>“{res.query}”</em>.
             </p>
           )}
 

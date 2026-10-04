@@ -8,14 +8,8 @@ import { SECTIONS } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Guided",
-  description: "Not sure where to start? Guided journeys walk you through the Atlas one idea at a time.",
+  description: "Guided journeys: structured routes through the Atlas, one idea at a time.",
 };
-
-const HOW = [
-  ["One idea at a time", "Each step explains one idea, from a short version to a deeper one, and says why it matters for the next."],
-  ["Every step is a real entry", "Steps open onto the full thinker, concept, text or debate. Leave whenever something catches your eye."],
-  ["Your place is kept", "Progress is remembered in this browser, and a line under the masthead brings you back to the route."],
-] as const;
 
 export default async function GuidedIndex() {
   const [journeys, paths] = await Promise.all([listGuidedJourneys(), listPaths()]);
@@ -24,29 +18,16 @@ export default async function GuidedIndex() {
       <IndexHeader
         crumb="Guided"
         tone="var(--color-red)"
-        tally={journeys.length ? `${journeys.length} ${journeys.length === 1 ? "journey" : "journeys"}` : undefined}
         title={
           <>
-            Where should I start<span className="text-red">?</span>
+            Guided<span className="text-red">.</span>
           </>
         }
-        lede="Guided journeys take you through the Atlas one idea at a time: where you are, what the idea is, why it matters, and where it leads next. Every step opens onto the full entries, so you can leave the route whenever you like and pick it up again later."
+        count={journeys.length || undefined}
       />
       <Container>
-        <ol className="grid gap-x-10 gap-y-6 border-y border-ink py-6 md:grid-cols-3">
-          {HOW.map(([h, p], i) => (
-            <li key={h} className="grid grid-cols-[2rem_1fr] gap-2">
-              <span className="numeral text-[1.6rem] leading-none text-red">{["I", "II", "III"][i]}</span>
-              <span>
-                <span className="label block">{h}</span>
-                <span className="mt-1 block font-serif text-[1.02rem] leading-snug text-muted">{p}</span>
-              </span>
-            </li>
-          ))}
-        </ol>
-
         {journeys.length ? (
-          <ol className="mt-12 border-t-[3px] border-ink">
+          <ol className="border-t-[3px] border-ink">
             {journeys.map((j) => {
               const titles = j.steps.map((s) => s.title);
               return (
@@ -65,7 +46,7 @@ export default async function GuidedIndex() {
                         {titles.length} steps{j.estimatedTime ? ` · ${j.estimatedTime}` : ""}
                       </p>
                       <ArrowLink href={`/guided/${j.slug}`} className="mt-5">
-                        See the whole journey
+                        All steps
                       </ArrowLink>
                     </div>
                     <div className="space-y-8 lg:col-span-5">
@@ -92,8 +73,8 @@ export default async function GuidedIndex() {
             })}
           </ol>
         ) : (
-          <div className="mt-12 border-t-[3px] border-ink py-8">
-            <EmptyNote>No Guided journeys have been published yet. In the meantime, the learning paths below and the whole Atlas can be explored freely.</EmptyNote>
+          <div className="border-t-[3px] border-ink py-8">
+            <EmptyNote>No Guided journeys have been published yet.</EmptyNote>
           </div>
         )}
 
@@ -101,7 +82,7 @@ export default async function GuidedIndex() {
           <section aria-labelledby="paths-h" className="mt-16">
             <div className="flex items-baseline justify-between border-t-[3px] border-ink pt-3">
               <h2 id="paths-h" className="label font-sans">
-                Shorter routes: learning paths
+                Learning paths
               </h2>
               <ArrowLink href="/paths">All paths</ArrowLink>
             </div>
@@ -122,7 +103,7 @@ export default async function GuidedIndex() {
 
         <section className="mt-16" aria-labelledby="own-h">
           <h2 id="own-h" className="label border-t-[3px] border-ink pt-3 font-sans">
-            Prefer to find your own way?
+            The collection
           </h2>
           <ul className="mt-2 grid gap-x-10 sm:grid-cols-2 lg:grid-cols-4">
             {SECTIONS.map((s) => (

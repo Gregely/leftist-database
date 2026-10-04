@@ -57,10 +57,17 @@ function DebateInTime({ d }: { d: DebateAggregate }) {
   for (let y = Math.ceil(from / step) * step; y <= to; y += step) ticks.push(y);
   return (
     <figure className="mt-12">
-      <figcaption className="label mb-3 flex flex-wrap justify-between gap-2 text-faint">
-        <span>The debate in time</span>
-        <span className="font-serif text-[0.95rem] normal-case italic tracking-normal">
-          Each position&apos;s key texts by year{events.length ? "; vertical lines mark historical touchstones" : ""}
+      <figcaption className="label mb-3 flex flex-wrap items-center justify-between gap-x-5 gap-y-2 text-faint">
+        <span className="text-ink">In time</span>
+        <span className="flex items-center gap-4">
+          <span className="inline-flex items-center gap-1.5">
+            <span aria-hidden="true" className="inline-block h-2.5 w-2.5 bg-blue" /> Key texts
+          </span>
+          {events.length > 0 && (
+            <span className="inline-flex items-center gap-1.5">
+              <span aria-hidden="true" className="inline-block h-3 w-px bg-umber" /> Events
+            </span>
+          )}
         </span>
       </figcaption>
       <div className="border-t border-ink">
@@ -169,7 +176,7 @@ export function DebateView({ d }: { d: DebateAggregate }) {
               {d.body && <Prose text={d.body} context={d.prose.context} className="mt-6 max-w-[40rem]" />}
               {d.context && (
                 <>
-                  <p className="label mb-3 mt-10 border-t border-ink pt-2.5 text-red">Why it mattered</p>
+                  <p className="label mb-3 mt-10 border-t border-ink pt-2.5 text-faint">Historical context</p>
                   <Prose text={d.context} context={d.prose.context} className="max-w-[40rem]" />
                 </>
               )}
@@ -205,19 +212,18 @@ export function DebateView({ d }: { d: DebateAggregate }) {
                 </div>
               )}
               <p className="border-l-2 border-red pl-4 text-[0.88rem] leading-relaxed text-muted">
-                The Atlas presents positions descriptively. Summaries are simplifications and stances are editorial readings,
-                open to correction; the aim is to map a disagreement, not to settle it.
+                Positions are summarised descriptively. Stances are editorial readings, open to correction.
               </p>
             </aside>
           </div>
           <DebateInTime d={d} />
         </EntrySection>
 
-        <EntrySection id="positions" number={n("positions")} label="Positions" title="How the traditions answer.">
+        <EntrySection id="positions" number={n("positions")} label="Positions">
           <DebateCompare positions={d.positions} propositions={d.propositions} />
         </EntrySection>
 
-        <EntrySection id="arguments" number={n("arguments")} label="Arguments" title="How the argument developed: claims, and the replies to them.">
+        <EntrySection id="arguments" number={n("arguments")} label="Arguments">
           {d.arguments.length ? (
             <ul className="border-b border-ink">
               {d.arguments.map((a) => (
@@ -225,7 +231,7 @@ export function DebateView({ d }: { d: DebateAggregate }) {
               ))}
             </ul>
           ) : (
-            <EmptyNote>No arguments have been mapped for this debate yet.</EmptyNote>
+            <EmptyNote>No arguments mapped yet.</EmptyNote>
           )}
         </EntrySection>
 

@@ -63,7 +63,6 @@ export async function PathView({ path, step: stepParam }: { path: PathAggregate;
               </p>
               <h2 className="display mt-4 text-[3rem] sm:text-[4.6rem]">{step.entity.title}</h2>
               <p className="mt-6 max-w-2xl border-l-[3px] border-red pl-4 font-serif text-[1.2rem] leading-snug">
-                <span className="label mb-1 block text-faint">Why this stop</span>
                 {step.framing}
               </p>
               <p className="lede mt-8 max-w-2xl">{step.brief || step.entity.summary}</p>
@@ -115,7 +114,7 @@ export async function PathView({ path, step: stepParam }: { path: PathAggregate;
                   </ul>
                 </div>
               )}
-              <p className="label mb-3 text-faint">Leave the path — detours</p>
+              <p className="label mb-3 text-faint">Detours</p>
               <ul className="border-t border-rule">
                 {detours.map((d) => (
                   <li key={d.relationshipId} className="border-b border-rule">
@@ -128,7 +127,6 @@ export async function PathView({ path, step: stepParam }: { path: PathAggregate;
                   </li>
                 ))}
               </ul>
-              <p className="mt-4 text-xs text-muted">The route will be here when you come back. Progress is kept in this browser only.</p>
             </aside>
           </div>
         ) : (
@@ -162,10 +160,6 @@ export async function PathView({ path, step: stepParam }: { path: PathAggregate;
               <Link href="?step=1" scroll={false} className="btn btn-red w-full justify-between">
                 Begin the path <span aria-hidden="true">→</span>
               </Link>
-              <p className="mt-4 text-sm text-muted">
-                Move forward and back, or jump to any stop on the route. Every stop links out to the full Atlas entry and
-                to detours — you are never confined to the path.
-              </p>
             </aside>
           </div>
         )}

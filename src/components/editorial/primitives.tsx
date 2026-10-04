@@ -24,13 +24,12 @@ export function Swatch({ kind, tone, className = "" }: { kind?: EntityKind; tone
 }
 
 /**
- * Section opening: the double rule, a condensed label and an optional
- * display line. `tone="ink"` for sections set on a dark ground.
+ * Section opening: the double rule and a condensed label, with an optional
+ * link or count at the right. `tone="ink"` for sections set on a dark ground.
  */
 export function SectionHead({
   number,
   label,
-  title,
   id,
   aside,
   className = "",
@@ -38,7 +37,6 @@ export function SectionHead({
 }: {
   number?: string;
   label: string;
-  title?: ReactNode;
   id?: string;
   aside?: ReactNode;
   className?: string;
@@ -54,9 +52,6 @@ export function SectionHead({
         </h2>
         {aside && <div className="pt-1.5">{aside}</div>}
       </div>
-      {title && (
-        <p className={`display mt-5 max-w-4xl text-balance text-[2rem] sm:text-[2.75rem] ${ink ? "text-paper" : ""}`}>{title}</p>
-      )}
     </header>
   );
 }

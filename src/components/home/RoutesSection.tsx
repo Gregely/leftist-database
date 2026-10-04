@@ -19,8 +19,7 @@ export function RoutesSection({ number, journeys, paths }: { number?: string; jo
         <SectionHead
           number={number}
           id="routes-heading"
-          label="Routes through the collection"
-          title="For readers who want an order to follow."
+          label="Routes"
           aside={
             <span className="flex gap-5">
               <ArrowLink href="/guided">Guided</ArrowLink>
@@ -28,11 +27,7 @@ export function RoutesSection({ number, journeys, paths }: { number?: string; jo
             </span>
           }
         />
-        <p className="mt-4 max-w-2xl text-muted">
-          Guided journeys and learning paths take a subject in order. Every stop is a full entry, and any of them can be left
-          for the rest of the collection.
-        </p>
-        <ul className="mt-10 grid gap-x-14 gap-y-2 lg:grid-cols-2">
+        <ul className="mt-4 grid gap-x-14 gap-y-2 lg:grid-cols-2">
           {routes.map((r) => (
             <li key={r.id} className="border-t border-ink" data-home-route={r.slug ?? undefined}>
               <Link href={r.href} className="group block py-5">

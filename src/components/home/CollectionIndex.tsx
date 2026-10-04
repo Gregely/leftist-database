@@ -7,8 +7,6 @@ export interface CollectionItem {
   href: string;
   /** Bookcloth colour of the area. */
   tone: string;
-  /** What the section contains, in a few words. */
-  description: string;
   /** A few real titles from the section. */
   examples?: string;
   count?: number;
@@ -19,13 +17,13 @@ export interface CollectionItem {
 /**
  * The front door's table of contents: every area of the collection at equal
  * weight, set like the contents page of a reference book — number, name, dot
- * leaders, extent — with a line on what is inside and a few real entries.
+ * leaders, extent — with a few of the entries inside.
  */
 export function CollectionIndex({ items, number, aside }: { items: CollectionItem[]; number?: string; aside?: ReactNode }) {
   return (
     <section aria-labelledby="collection-heading" data-home-collection>
       <Container className="pb-14 pt-10 sm:pb-20 sm:pt-14">
-        <SectionHead number={number} id="collection-heading" label="Explore the collection" aside={aside ?? <ArrowLink href="/explore">Full library</ArrowLink>} />
+        <SectionHead number={number} id="collection-heading" label="Contents" aside={aside ?? <ArrowLink href="/explore">Full library</ArrowLink>} />
         <ol className="mt-2 grid gap-x-12 md:grid-cols-2 md:[grid-auto-flow:column] md:[grid-template-rows:repeat(4,auto)]">
           {items.map((item, i) => (
             <li key={item.label} className="border-b border-rule">
@@ -44,8 +42,7 @@ export function CollectionIndex({ items, number, aside }: { items: CollectionIte
                     <span aria-hidden="true" className="text-red transition-transform duration-300 group-hover:translate-x-1">→</span>
                   )}
                 </span>
-                <span className="mt-1.5 block pl-8 text-[0.9rem] leading-snug text-muted">{item.description}</span>
-                {item.examples && <span className="mt-0.5 block truncate pl-8 font-serif text-[0.98rem] italic text-faint">{item.examples}</span>}
+                {item.examples && <span className="mt-1.5 block truncate pl-8 font-serif text-[1.02rem] italic text-muted">{item.examples}</span>}
               </Link>
             </li>
           ))}

@@ -17,9 +17,7 @@ export function SiteFooter() {
         <div className="grid gap-12 border-t-[3px] border-paper/80 pt-8 md:grid-cols-12">
           <div className="md:col-span-5">
             <Wordmark variant="stacked" className="text-[2.6rem] text-paper sm:text-[3.4rem]" />
-            <p className="mt-6 max-w-sm font-serif text-[1.15rem] leading-snug text-ink-muted">
-              {SITE.tagline}: ideas, thinkers, texts, tendencies and debates, and the relations between them.
-            </p>
+            <p className="mt-6 max-w-sm font-serif text-[1.15rem] italic leading-snug text-ink-muted">{SITE.tagline}</p>
           </div>
           <nav aria-label="Footer" className="grid grid-cols-2 gap-10 sm:grid-cols-3 md:col-span-7">
             <div>

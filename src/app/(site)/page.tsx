@@ -26,16 +26,16 @@ export default async function HomePage() {
     { ...section("texts"), count: d.counts.text, examples: titles(d.texts, 2) },
     { ...section("debates"), count: d.counts.debate, examples: titles(d.debates, 2) },
     { ...section("tendencies"), count: d.counts.tendency, examples: titles(d.tendencies, 3) },
-    { ...section("timeline"), count: d.counts.event, examples: `${PERIODS[0].from} to the present, in ${PERIODS.length} periods` },
-    { ...section("map"), count: d.stats.relationships, unit: "links", examples: "Each line between two names is an editorial claim" },
+    { ...section("timeline"), count: d.counts.event, examples: PERIODS.map((p) => p.label).join(" · ") },
+    { ...section("map"), count: d.stats.relationships, unit: "links", examples: [...d.graph.nodes].sort((a, b) => b.degree - a.degree).slice(0, 4).map((n) => n.title.split(" ").pop()).join(" · ") },
     { ...section("explore"), count: d.stats.entities, unit: "entries", examples: `${d.stats.sources} sources in the bibliography` },
   ];
-  // Beside Guided: other ways for a newcomer to begin, each pointing at real entries.
+  // Beside Guided: other places to begin, each a real destination.
   const waysIn = [
-    lead && { label: "Start with an idea", title: `${lead.title}, in thirty seconds`, href: `${lead.href}?depth=brief` },
-    d.paths[0] && { label: "Follow a learning path", title: d.paths[0].title, href: d.paths[0].href },
-    { label: "Trace the connections", title: "The Theory Map", href: "/map" },
-    { label: "Browse by period", title: `${PERIODS[0].from} to the present`, href: "/timeline" },
+    lead && { label: "Concept · 30 seconds", title: lead.title, href: `${lead.href}?depth=brief` },
+    d.paths[0] && { label: "Learning path", title: d.paths[0].title, href: d.paths[0].href },
+    { label: "Theory Map", title: `${d.stats.relationships} relations`, href: "/map" },
+    { label: "Timeline", title: `${PERIODS[0].from} to the present`, href: "/timeline" },
   ].filter((w): w is { label: string; title: string; href: string } => !!w);
   // Search suggestions are real entries: a concept, an event, a thinker, a text.
   const suggestions = [lead?.title, d.markers[0]?.title, d.thinkers[3]?.title.split(" ").pop(), d.texts[0]?.title]
@@ -57,20 +57,18 @@ export default async function HomePage() {
 
         <div className="grid gap-10 pb-8 pt-8 sm:pt-12 lg:grid-cols-12 lg:gap-10 lg:pb-10">
           <div className="lg:col-span-8">
-            <p className="kicker text-red">A reference work on the left</p>
-            <h1 className="display mt-4 text-balance text-[3.3rem] sm:text-[5.4rem] xl:text-[6.6rem]">
+            <h1 className="display text-balance text-[3.3rem] sm:text-[5.4rem] xl:text-[6.6rem]">
               A map of <span className="italic">socialist</span> thought<span className="text-red">.</span>
             </h1>
             <p className="lede mt-6 max-w-[38rem] text-ink-warm">
-              The thinkers, concepts, texts, tendencies and debates of the socialist tradition, from its forerunners to
-              its later critics, and a record of how they connect: who influenced whom, who answered whom, where they
-              disagreed. Look something up, browse a section, or follow a Guided route.
+              A reference work on the socialist tradition, from its forerunners to its later critics: its thinkers,
+              concepts, texts, tendencies and debates, and how they connect. Who influenced whom, who answered whom,
+              where they disagreed.
             </p>
             <HomeSearch
               className="mt-9 max-w-[44rem]"
               label="Search the collection"
               suggestions={suggestions}
-              hint="Press / to search from any page."
             />
           </div>
           <div className="lg:col-span-4 lg:pt-3">
@@ -103,11 +101,6 @@ export default async function HomePage() {
         <SectionHead
           number="02"
           label="Concepts"
-          title={
-            <>
-              The vocabulary of the left, from the elementary to the contested<span className="text-red">.</span>
-            </>
-          }
           aside={<ArrowLink href="/concepts">All concepts</ArrowLink>}
         />
         <div className="mt-10 grid gap-12 lg:grid-cols-12">
@@ -122,21 +115,16 @@ export default async function HomePage() {
                 </Link>
               </h3>
               <p className="lede mt-4 text-ink-warm">{lead.summary}</p>
-              <p className="label mt-8 text-faint">Read it at three depths</p>
-              <ol className="mt-2 border-t border-ink">
+              <ol className="mt-8 grid grid-cols-3 border-t-[3px] border-ink">
                 {[
-                  ["30 seconds", "brief", "The idea in a paragraph"],
-                  ["5 minutes", "standard", "A fuller explanation"],
-                  ["Deep dive", "deep", "Theory and interpretation"],
-                ].map(([l, depth, note], i) => (
-                  <li key={depth} className="border-b border-rule">
-                    <Link href={`${lead.href}?depth=${depth}`} className="group grid grid-cols-[2.5rem_1fr_auto] items-baseline gap-3 py-3">
-                      <span className="numeral text-[1.35rem] text-red">{["I", "II", "III"][i]}</span>
-                      <span>
-                        <span className="label group-hover:text-red">{l}</span>
-                        <span className="ml-3 font-serif italic text-muted">{note}</span>
-                      </span>
-                      <span aria-hidden="true" className="text-red transition-transform group-hover:translate-y-0.5">↓</span>
+                  ["30 seconds", "brief"],
+                  ["5 minutes", "standard"],
+                  ["Deep dive", "deep"],
+                ].map(([l, depth], i) => (
+                  <li key={depth} className={`border-b border-ink ${i ? "border-l border-l-rule" : ""}`}>
+                    <Link href={`${lead.href}?depth=${depth}`} className="group flex items-baseline gap-2 px-2 py-3 hover:bg-paper-warm sm:px-3">
+                      <span className="numeral text-[1.4rem] leading-none text-red">{["I", "II", "III"][i]}</span>
+                      <span className="label group-hover:text-red">{l}</span>
                     </Link>
                   </li>
                 ))}
@@ -180,11 +168,6 @@ export default async function HomePage() {
             number="03"
             id="debates-heading"
             label="Debates"
-            title={
-              <>
-                The open questions, and how the traditions answer them<span className="text-red-bright">.</span>
-              </>
-            }
             aside={<ArrowLink href="/debates" tone="paper">All debates</ArrowLink>}
           />
           <ol className="mt-12">
@@ -208,7 +191,7 @@ export default async function HomePage() {
       <Container className="py-16 sm:py-24">
         <div className="grid gap-16 lg:grid-cols-12 lg:gap-10">
           <div className="lg:col-span-5">
-            <SectionHead number="04" label="From the shelves" aside={<ArrowLink href="/texts">All texts</ArrowLink>} />
+            <SectionHead number="04" label="Texts" aside={<ArrowLink href="/texts">All texts</ArrowLink>} />
             <ol className="mt-4">
               {d.texts.map((t) => (
                 <li key={t.id} className="border-b border-rule">
@@ -275,25 +258,15 @@ export default async function HomePage() {
             number="07"
             id="map-heading"
             label="The Theory Map"
-            title={
-              <>
-                Who drew on whom, who argued against whom<span className="text-red">.</span>
-              </>
-            }
             aside={<ArrowLink href="/map">Open the full map</ArrowLink>}
           />
-          <p className="mt-4 max-w-2xl text-muted">
-            Thinkers are placed by year of birth, left to right (top to bottom on a phone); every line is an editorial claim
-            of influence, critique or response. Hover or focus a name to trace its connections, select it for a summary, and
-            select it again to open the entry.
-          </p>
-          <div className="mt-8">
+          <div className="mt-6">
             <MapFigure
               graph={d.graph}
               mode="chronological"
               plate="Plate I"
+              heading="Featured thinkers, by year of birth"
               title="The Theory Map: thinkers arranged by year of birth, connected by influence, critique and response"
-              caption={`The ${d.graph.nodes.length} featured thinkers. Each line is an editorial claim, with a note and, in time, a source.`}
             />
           </div>
         </Container>
@@ -306,11 +279,6 @@ export default async function HomePage() {
             number="08"
             id="moments-heading"
             label="Historical moments"
-            title={
-              <>
-                Two and a half centuries of revolution, organisation and argument<span className="text-red">.</span>
-              </>
-            }
             aside={<ArrowLink href="/timeline">Enter the timeline</ArrowLink>}
           />
           <div className="mt-10">

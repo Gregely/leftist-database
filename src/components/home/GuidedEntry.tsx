@@ -16,10 +16,6 @@ export function GuidedEntry({ journeys }: { journeys: GuidedListing[] }) {
         Guided
       </h2>
       <p className="mt-2 font-serif text-[1.55rem] leading-[1.12] sm:text-[1.8rem]">Structured routes through the collection.</p>
-      <p className="mt-2 text-[0.92rem] leading-snug text-ink-muted">
-        Step-by-step introductions. Each step explains one idea, shows why it matters for the next, and opens onto the full
-        entries.
-      </p>
       {lead && (
         <div className="mt-4 border-t border-white/20 pt-3" data-home-journey={lead.slug}>
           <p className="label text-ink-muted">Featured journey</p>

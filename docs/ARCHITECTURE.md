@@ -103,6 +103,11 @@ screen (Index · Guided · Search · Saved); Index opens the whole collection as
 running head (`SectionNav`) with the entry title, its sections and a reading-progress hairline. While a reader follows
 a Guided journey, `RouteRibbon` shows the way back under the masthead (`lib/client/route.ts`, browser only).
 
+**Copy.** Headings stand alone. `SectionHead`, `EntrySection` and `IndexHeader` take no subtitle or standfirst on
+purpose: a section is named, then its content follows. Index mastheads give the section's name and its extent as a
+figure; charts carry visual keys rather than captions explaining how to read them. Prose in the interface is kept
+for substance (method notes, sample and verification flags, empty states), never for describing the page itself.
+
 Primitives (`components/editorial`): `SectionHead`, `Label`, `ArrowLink`, `Swatch`, `KindTag`, `SampleMark`,
 `MetaList` (catalogue record), `EntityLinks` / `entityLinks`, `Question`, `Prose`, `Notes`, `IndexHeader`, `Pager`.
 Entry components (`components/entity`): `EntryHeader` (title block + `band`), `SectionNav`, `EntrySection` (margin

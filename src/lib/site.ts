@@ -33,14 +33,14 @@ export const KIND_TONE: Record<EntityKind, string> = {
 
 /** The areas of the collection, in reading order. Navigation, the homepage contents and the footer all read this. */
 export const SECTIONS = [
-  { key: "thinkers", label: "Thinkers", short: "Thinkers", href: "/thinkers", tone: KIND_TONE.thinker, description: "Lives, works and intellectual relationships" },
-  { key: "concepts", label: "Concepts", short: "Concepts", href: "/concepts", tone: KIND_TONE.concept, description: "Key terms, each explained at three depths" },
-  { key: "texts", label: "Texts", short: "Texts", href: "/texts", tone: KIND_TONE.text, description: "Primary and foundational works" },
-  { key: "debates", label: "Debates", short: "Debates", href: "/debates", tone: KIND_TONE.debate, description: "Open questions and the positions taken on them" },
-  { key: "tendencies", label: "Tendencies", short: "Tendencies", href: "/tendencies", tone: KIND_TONE.tendency, description: "Schools, currents and movements" },
-  { key: "timeline", label: "Timeline", short: "Timeline", href: "/timeline", tone: KIND_TONE.event, description: "Events and periods in sequence" },
-  { key: "map", label: "Theory Map", short: "Map", href: "/map", tone: "var(--color-ink)", description: "Thinkers connected by influence, critique and response" },
-  { key: "explore", label: "Explore", short: "Explore", href: "/explore", tone: "var(--color-faint)", description: "The whole library, by kind and period" },
+  { key: "thinkers", label: "Thinkers", short: "Thinkers", href: "/thinkers", tone: KIND_TONE.thinker },
+  { key: "concepts", label: "Concepts", short: "Concepts", href: "/concepts", tone: KIND_TONE.concept },
+  { key: "texts", label: "Texts", short: "Texts", href: "/texts", tone: KIND_TONE.text },
+  { key: "debates", label: "Debates", short: "Debates", href: "/debates", tone: KIND_TONE.debate },
+  { key: "tendencies", label: "Tendencies", short: "Tendencies", href: "/tendencies", tone: KIND_TONE.tendency },
+  { key: "timeline", label: "Timeline", short: "Timeline", href: "/timeline", tone: KIND_TONE.event },
+  { key: "map", label: "Theory Map", short: "Map", href: "/map", tone: "var(--color-ink)" },
+  { key: "explore", label: "Explore", short: "Explore", href: "/explore", tone: "var(--color-faint)" },
 ] as const;
 
 /** Primary navigation: Guided, set apart, then the collection. */

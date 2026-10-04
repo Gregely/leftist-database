@@ -14,15 +14,14 @@ export default async function DebatesIndex() {
   return (
     <>
       <IndexHeader
-        tone={KIND_TONE.debate}
         crumb="Debates"
-        tally={`${list.total} open questions`}
+        tone={KIND_TONE.debate}
         title={
           <>
-            Questions the left keeps asking<span className="text-red">.</span>
+            Debates<span className="text-red">.</span>
           </>
         }
-        lede="Each debate sets out the positions taken on one question, with their claims, assumptions, texts and criticisms, and lets you compare them. None is presented as the answer."
+        count={list.total}
       />
       <Container>
         <ol className="border-t-[3px] border-ink">

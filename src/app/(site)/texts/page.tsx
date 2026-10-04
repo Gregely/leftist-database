@@ -29,15 +29,14 @@ export default async function TextsIndex({ searchParams }: Props) {
   return (
     <>
       <IndexHeader
-        tone={KIND_TONE.text}
         crumb="Texts"
-        tally={`${total} texts`}
+        tone={KIND_TONE.text}
         title={
           <>
-            The catalogue<span className="text-red">.</span>
+            Texts<span className="text-red">.</span>
           </>
         }
-        lede="Books, pamphlets, notebooks and essays, in order of first publication, with their authors, their form and how hard they are to read."
+        count={total}
       />
       <Container>
         <div className="flex flex-wrap items-center gap-x-5 gap-y-2 border-y border-ink py-3">
