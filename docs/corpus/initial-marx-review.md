@@ -1,6 +1,6 @@
 # Initial Marx Corpus — review summary
 
-Generated 2026-10-02 from the database by `npm run corpus -- report`. Every entry below is **unpublished**: new entries are drafts, and entries that already existed as public sample records have a pending new version whose text and structure stay off the public site until an editor publishes them. Read them in the desk, or as a connected whole in the collection preview (Preview → *Include unpublished “Initial Marx Corpus” entries*).
+Generated 2026-10-04 from the database by `npm run corpus -- report`. Every entry below is **unpublished**: new entries are drafts, and entries that already existed as public sample records have a pending new version whose text and structure stay off the public site until an editor publishes them. Read them in the desk, or as a connected whole in the collection preview (Preview → *Include unpublished “Initial Marx Corpus” entries*).
 
 Research decisions, known problems, gaps and architecture notes are in [`initial-marx-notes.md`](initial-marx-notes.md).
 
@@ -37,7 +37,6 @@ Nothing in this corpus is ready for publication without a human review: the rese
 | --- | --- |
 | Missing source | 7 |
 | Disputed interpretation | 10 |
-| Incomplete metadata | 5 |
 | Possible duplicate | 1 |
 | Specialist review recommended | 21 |
 | Replaces sample content | 54 |
@@ -48,11 +47,11 @@ Each entry with what needs checking. Notes are internal (Review tab of the entry
 
 ### Thinkers
 
-- **Adam Smith** (`th_sf2c5zx6vj`) — Submitted · draft, not public
+- **Adam Smith** (`th_50i0w7791d`) — Submitted · draft, not public
   - No flags. Read for accuracy and balance before approving.
-- **Charles Fourier** (`th_tayg0ovlac`) — Submitted · draft, not public
+- **Charles Fourier** (`th_sv1nl3dcx3`) — Submitted · draft, not public
   - No flags. Read for accuracy and balance before approving.
-- **David Ricardo** (`th_r88sewatf7`) — Submitted · draft, not public
+- **David Ricardo** (`th_q0xvexhro5`) — Submitted · draft, not public
   - No flags. Read for accuracy and balance before approving.
 - **Eduard Bernstein** (`th_bernstein`) — Submitted · live sample version unchanged, new version pending
   - [Replaces sample content] Replaces the seeded sample entry for Bernstein.
@@ -61,19 +60,18 @@ Each entry with what needs checking. Notes are internal (Review tab of the entry
 - **Friedrich Engels** (`th_engels`) — Submitted · live sample version unchanged, new version pending
   - [Replaces sample content] Replaces the seeded sample entry for Engels.
   - [Disputed interpretation] The 'Engels distorted Marx' thesis and its critics are presented as an open debate. _(field: legacy)_
-  - [Incomplete metadata] Image “Friedrich Engels, 1877”: Commons attributes the photograph to William Hall (1826–c. 1898) and dates it May 1877; confirm against the original record before publication.
 - **G. W. F. Hegel** (`th_hegel`) — Submitted · live sample version unchanged, new version pending
   - [Replaces sample content] This version replaces the seeded sample entry for Hegel. The sample's own relationships, citations and excerpts remain attached; decide which to keep.
   - [Specialist review recommended] Hegel interpretation is a specialist field; a Hegel scholar should check the characterisation of the dialectic and of the Philosophy of Right.
   - [Check · warning] A quotation is marked “needs review” (Preface).
   - [Quotation · Needs review] “The owl of Minerva, takes its flight only when the shades of night are gathering.”
-- **Georgi Plekhanov** (`th_3xn18w4j2r`) — Submitted · draft, not public
+- **Georgi Plekhanov** (`th_919kdwg17t`) — Submitted · draft, not public
   - [Specialist review recommended] The coinage of “dialectical materialism” is usually attributed to Plekhanov (1891); Joseph Dietzgen used a similar phrase earlier. Check against Baron. _(field: legacy)_
   - [Check · warning] A quotation is marked “needs review” (Section VI).
   - [Quotation · Needs review] “Owing to the specific qualities of their minds and characters, influential individuals can…”
-- **Henri de Saint-Simon** (`th_iedjdbwyjt`) — Submitted · draft, not public
+- **Henri de Saint-Simon** (`th_wt3wkvcggh`) — Submitted · draft, not public
   - [Specialist review recommended] Biographical details (American war service, speculation, imprisonment) follow Manuel; confirm against a recent biography.
-- **Karl Kautsky** (`th_svz7g5ksho`) — Submitted · draft, not public
+- **Karl Kautsky** (`th_d75q0g51cx`) — Submitted · draft, not public
   - [Disputed interpretation] Kautsky's reputation as a fatalist is contested in recent scholarship; both readings are attributed. _(field: legacy)_
   - [Specialist review recommended] Kautsky's exact advice to the Reichstag group on 3–4 August 1914 is reported differently in the literature; the wording avoids a specific claim. Check against Steenson or Salvadori. _(field: body)_
   - [Check · warning] A quotation is marked “needs review” (Ch. 5, quoting Kautsky's article in Die Neue Zeit, December 1893).
@@ -83,29 +81,27 @@ Each entry with what needs checking. Notes are internal (Review tab of the entry
 - **Karl Marx** (`th_marx`) — Submitted · live sample version unchanged, new version pending
   - [Replaces sample content] Replaces the seeded sample entry for Marx; the sample's relationships (including to later thinkers outside this corpus) remain attached and should be reviewed.
   - [Disputed interpretation] The 'one Marx or two' and the 'Marx as nineteenth-century figure' debates are presented as open; reviewers should check the balance. _(field: legacy)_
-  - [Incomplete metadata] Image “Karl Marx, photographed by John Jabez Edwin Mayall”: Commons dates the photograph before 24 August 1875 (Mayall, via the IISH); the downloaded file carried embedded agency metadata dating it “circa 1865”, which was stripped. Confirm the date against the IISH record.
   - [Check · warning] Unverified quotation (Thesis XI): check the wording against the cited edition.
   - [Quotation · Unverified] “The philosophers have only interpreted the world, in various ways; the point is to change …”
-- **Ludwig Feuerbach** (`th_yoo170umv0`) — Submitted · draft, not public
+- **Ludwig Feuerbach** (`th_3804a7veqi`) — Submitted · draft, not public
   - [Specialist review recommended] The characterisation of Feuerbach's ambivalence about 'materialism' follows the SEP entry; a specialist should confirm the wording.
   - [Check · warning] A quotation is marked “needs review” (Part I).
   - [Quotation · Needs review] “Enthusiasm was general; we all became at once Feuerbachians.”
 - **Pierre-Joseph Proudhon** (`th_proudhon`) — Submitted · live sample version unchanged, new version pending
   - [Replaces sample content] Replaces the seeded sample entry for Proudhon; existing sample relationships remain attached.
   - [Specialist review recommended] The sentence on antisemitic passages in Proudhon's notebooks needs a precise scholarly citation (the notebooks, the Carnets, and a study discussing them); Woodcock is cited for the general point only. _(field: legacy)_
-- **Robert Owen** (`th_jtoz6izgrn`) — Submitted · draft, not public
+- **Robert Owen** (`th_8ui48l3xyf`) — Submitted · draft, not public
   - No flags. Read for accuracy and balance before approving.
 - **Rosa Luxemburg** (`th_luxemburg`) — Submitted · live sample version unchanged, new version pending
   - [Replaces sample content] Replaces the seeded sample entry for Luxemburg.
   - [Disputed interpretation] The 'spontaneism' label is contested; both readings are attributed. _(field: legacy)_
-  - [Incomplete metadata] Image “Rosa Luxemburg”: Photographer and date are unknown (Commons suggests the 1910s). Confirm provenance and public-domain status before publication.
 - **Vladimir Lenin** (`th_lenin`) — Submitted · live sample version unchanged, new version pending
   - [Replaces sample content] Replaces the seeded sample entry for Lenin.
   - [Disputed interpretation] Interpretations of Lenin are deeply contested; check that no reading is presented as settled and that the terror and repression after 1917 are neither omitted nor sensationalised. _(field: legacy)_
 
 ### Concepts
 
-- **Accumulation** (`co_0xyuysbt14`) — Submitted · draft, not public
+- **Accumulation** (`co_42z934vqw0`) — Submitted · draft, not public
   - [Missing source] Primitive accumulation spans chapters 26–32; check the locators and add a historical source on English enclosure. _(field: standard)_
   - [Check · warning] A quotation is marked “needs review” (Chapter 25, section 4).
   - [Quotation · Needs review] “Accumulation of wealth at one pole is, therefore, at the same time accumulation of misery,…”
@@ -115,10 +111,10 @@ Each entry with what needs checking. Notes are internal (Review tab of the entry
   - [Check · warning] A quotation is marked “needs review” (First manuscript, “Estranged Labour”).
   - [Quotation · Unverified] “The worker therefore only feels himself outside his work, and in his work feels outside hi…”
   - [Quotation · Needs review] “The worker becomes all the poorer the more wealth he produces, the more his production inc…”
-- **Bourgeoisie** (`co_22f0ymcagz`) — Submitted · draft, not public
+- **Bourgeoisie** (`co_c4ytqu8q1z`) — Submitted · draft, not public
   - [Check · warning] A quotation is marked “needs review” (End of section I).
   - [Quotation · Needs review] “What the bourgeoisie therefore produces, above all, are its own grave-diggers.”
-- **Capital** (`co_v0bzkfnupl`) — Submitted · draft, not public
+- **Capital** (`co_hzmiutc97d`) — Submitted · draft, not public
   - [Missing source] The Cambridge capital controversy needs a source (e.g. a survey of the debate); none was added rather than cite a work that does not cover it. _(field: criticisms)_
   - [Possible duplicate] The sample concept “Capitalism” (co_capitalism) lists “Capital” as an alias. Remove that alias, or decide whether the two entries should be merged.
   - [Check · warning] A quotation is marked “needs review” (Chapter 10, section 1).
@@ -146,7 +142,7 @@ Each entry with what needs checking. Notes are internal (Review tab of the entry
   - [Replaces sample content] Replaces the seeded sample concept.
   - [Check · warning] A quotation is marked “needs review” (Chapter 1, section 4).
   - [Quotation · Needs review] “There it is a definite social relation between men, that assumes, in their eyes, the fanta…”
-- **Communism** (`co_w2bamiy5yf`) — Submitted · draft, not public
+- **Communism** (`co_wzpouvvx43`) — Submitted · draft, not public
   - [Specialist review recommended] Short phrases from the 1844 Manuscripts, Capital (Moore–Aveling) and Capital vol. III (ch. 48) were matched against marxists.org transcriptions but carry no inline locator; add citations to the printed editions. _(field: deep)_
   - [Check · warning] A quotation is marked “needs review” (Part I).
   - [Check · warning] A quotation is marked “needs review” (Part I).
@@ -156,13 +152,13 @@ Each entry with what needs checking. Notes are internal (Review tab of the entry
   - [Replaces sample content] Replaces the seeded sample concept 'Dialectics'. Check the sample's existing relationships.
   - [Check · warning] A quotation is marked “needs review” (Afterword to the second German edition (1873)).
   - [Quotation · Needs review] “With him it is standing on its head. It must be turned right side up again, if you would d…”
-- **Dictatorship of the proletariat** (`co_8g9m7txy12`) — Submitted · draft, not public
+- **Dictatorship of the proletariat** (`co_uog9ap36w0`) — Submitted · draft, not public
   - [Disputed interpretation] The meaning of the term is genuinely contested. Wording has been kept to attributed positions; please check that no reading is presented as settled.
   - [Check · warning] A quotation is marked “needs review” (Introduction to the 1891 edition, closing paragraph).
   - [Check · warning] A quotation is marked “needs review” (Part IV).
   - [Quotation · Needs review] “Well and good, gentlemen, do you want to know what this dictatorship looks like? Look at t…”
   - [Quotation · Needs review] “Between capitalist and communist society there lies the period of the revolutionary transf…”
-- **Exchange-value** (`co_8c3hqxv8vq`) — Submitted · draft, not public
+- **Exchange-value** (`co_7dw581hx6u`) — Submitted · draft, not public
   - [Specialist review recommended] The claim about when the exchange-value/value distinction became explicit (2nd edition, 1872) follows Heinrich; check the edition history. _(field: deep)_
 - **Exploitation** (`co_exploitation`) — Submitted · live sample version unchanged, new version pending
   - [Replaces sample content] Replaces the seeded sample concept.
@@ -173,7 +169,7 @@ Each entry with what needs checking. Notes are internal (Review tab of the entry
   - [Check · warning] A quotation is marked “needs review” (Letter of 21–22 September 1890).
   - [Quotation · Needs review] “It is not the consciousness of men that determines their existence, but their social exist…”
   - [Quotation · Needs review] “According to the materialist conception of history, the ultimately determining element in …”
-- **Idealism** (`co_423knxyvmh`) — Submitted · draft, not public
+- **Idealism** (`co_bd458jcrbq`) — Submitted · draft, not public
   - [Check · warning] A quotation is marked “needs review” (Preface).
   - [Quotation · Needs review] “What is rational is real; And what is real is rational.”
 - **Ideology** (`co_ideology`) — Submitted · live sample version unchanged, new version pending
@@ -193,33 +189,33 @@ Each entry with what needs checking. Notes are internal (Review tab of the entry
   - [Replaces sample content] Replaces the seeded sample concept.
   - [Check · warning] A quotation is marked “needs review” (Chapter 6).
   - [Quotation · Needs review] “For the conversion of his money into capital, therefore, the owner of money must meet in t…”
-- **Materialism** (`co_l3mcgavgdc`) — Submitted · draft, not public
+- **Materialism** (`co_bejd3gz1xy`) — Submitted · draft, not public
   - No flags. Read for accuracy and balance before approving.
-- **Mode of production** (`co_tk17fpnzoa`) — Submitted · draft, not public
+- **Mode of production** (`co_gh8rd2ac9h`) — Submitted · draft, not public
   - [Specialist review recommended] The account of the Asiatic mode of production controversy is compressed; a specialist in Marxist historiography should check it. _(field: deep)_
-- **Praxis** (`co_o7vy6e85me`) — Submitted · draft, not public
+- **Praxis** (`co_3fl6qnwyy8`) — Submitted · draft, not public
   - [Check · warning] A quotation is marked “needs review” (Introduction, closing section).
   - [Check · warning] A quotation is marked “needs review” (Thesis XI).
   - [Quotation · Needs review] “The head of this emancipation is philosophy, its heart the proletariat.”
   - [Quotation · Needs review] “The philosophers have only interpreted the world, in various ways; the point is to change …”
-- **Productive forces** (`co_9dx9yxwxnb`) — Submitted · draft, not public
+- **Productive forces** (`co_c166n1ljl1`) — Submitted · draft, not public
   - [Check · warning] A quotation is marked “needs review” (Preface).
   - [Quotation · Needs review] “No social order is ever destroyed before all the productive forces for which it is suffici…”
-- **Proletariat** (`co_v1oby31zz1`) — Submitted · draft, not public
+- **Proletariat** (`co_857hg5x4vb`) — Submitted · draft, not public
   - [Missing source] The immiseration debate should cite the specific chapter of Capital (ch. 25) and a secondary discussion of absolute vs relative immiseration. _(field: deep)_
   - [Check · warning] A quotation is marked “needs review” (Engels's note to the English edition of 1888).
   - [Quotation · Needs review] “By proletariat, the class of modern wage labourers who, having no means of production of t…”
-- **Reformism** (`co_g59r67u8hv`) — Submitted · draft, not public
+- **Reformism** (`co_dutxrpvqqs`) — Submitted · draft, not public
   - [Check · warning] A quotation is marked “needs review” (Ch. 8).
   - [Quotation · Needs review] “That is why people who pronounce themselves in favour of the method of legislative reform …”
-- **Relations of production** (`co_gtws2mnjo0`) — Submitted · draft, not public
+- **Relations of production** (`co_soxciz9y4m`) — Submitted · draft, not public
   - No flags. Read for accuracy and balance before approving.
-- **Revisionism** (`co_bsnwps9kbn`) — Submitted · draft, not public
+- **Revisionism** (`co_7f7sm6qhr3`) — Submitted · draft, not public
   - No flags. Read for accuracy and balance before approving.
-- **Revolution** (`co_t290r2mawl`) — Submitted · draft, not public
+- **Revolution** (`co_vbc3410at5`) — Submitted · draft, not public
   - [Check · warning] A quotation is marked “needs review” (Part III).
   - [Quotation · Needs review] “Revolutions are the locomotives of history.”
-- **Spontaneity** (`co_c3cjhzndsn`) — Submitted · draft, not public
+- **Spontaneity** (`co_gfwh18d1ec`) — Submitted · draft, not public
   - No flags. Read for accuracy and balance before approving.
 - **Surplus Value** (`co_surplus-value`) — Submitted · live sample version unchanged, new version pending
   - [Replaces sample content] Replaces the seeded sample concept.
@@ -229,7 +225,7 @@ Each entry with what needs checking. Notes are internal (Review tab of the entry
   - [Replaces sample content] Replaces the seeded sample concept. Keeps its existing links to later traditions (hegemony, ISAs).
   - [Check · warning] A quotation is marked “needs review” (Part III).
   - [Quotation · Needs review] “State interference in social relations becomes, in one domain after another, superfluous, …”
-- **Use-value** (`co_3w6uxyvzv7`) — Submitted · draft, not public
+- **Use-value** (`co_7c2kz051k0`) — Submitted · draft, not public
   - No flags. Read for accuracy and balance before approving.
 - **Value** (`co_value`) — Submitted · live sample version unchanged, new version pending
   - [Replaces sample content] Replaces the seeded sample concept.
@@ -242,41 +238,40 @@ Each entry with what needs checking. Notes are internal (Review tab of the entry
 
 ### Texts
 
-- **A Contribution to the Critique of Political Economy** (`tx_7otzkai94d`) — Submitted · draft, not public
+- **A Contribution to the Critique of Political Economy** (`tx_npul6bvzip`) — Submitted · draft, not public
   - No flags. Read for accuracy and balance before approving.
 - **Capital, Volume I** (`tx_capital-volume-one`) — Submitted · live sample version unchanged, new version pending
   - [Replaces sample content] Replaces the seeded sample text record.
   - [Check · warning] A quotation is marked “needs review” (Chapter 1, opening).
   - [Quotation · Needs review] “The wealth of those societies in which the capitalist mode of production prevails, present…”
-- **Contribution to the Critique of Hegel's Philosophy of Right: Introduction** (`tx_9172cpu7y3`) — Submitted · draft, not public
+- **Contribution to the Critique of Hegel's Philosophy of Right: Introduction** (`tx_gd37gidikr`) — Submitted · draft, not public
   - [Check · warning] A quotation is marked “needs review” (Introduction, opening section).
   - [Quotation · Needs review] “Religion is the sigh of the oppressed creature, the heart of a heartless world, and the so…”
-- **Critique of the Gotha Programme** (`tx_34onm6hra0`) — Submitted · draft, not public
+- **Critique of the Gotha Programme** (`tx_x9g9osn1n7`) — Submitted · draft, not public
   - No flags. Read for accuracy and balance before approving.
 - **Economic and Philosophic Manuscripts of 1844** (`tx_economic-philosophic-manuscripts`) — Submitted · live sample version unchanged, new version pending
   - [Replaces sample content] Replaces the seeded sample text record.
   - [Specialist review recommended] The editorial question of whether the 1844 notebooks form one work should be checked against MEGA editorial scholarship. _(field: body)_
-- **Grundrisse** (`tx_rjf10p2v4t`) — Submitted · draft, not public
+- **Grundrisse** (`tx_ukc9ftjkgg`) — Submitted · draft, not public
   - [Specialist review recommended] Short phrases (“rich totality of many determinations and relations”, “general intellect”) were matched against the marxists.org transcription of Nicolaus's translation; check against the printed edition. Characterisations of later readings (Rosdolsky, autonomism) need specialist review. _(field: body)_
 - **Imperialism, the Highest Stage of Capitalism** (`tx_imperialism-highest-stage`) — Submitted · live sample version unchanged, new version pending
   - [Replaces sample content] Replaces the seeded sample text record.
 - **Manifesto of the Communist Party** (`tx_communist-manifesto`) — Submitted · live sample version unchanged, new version pending
   - [Replaces sample content] Replaces the seeded sample text record.
-  - [Incomplete metadata] Image “Manifest der Kommunistischen Partei, first edition (1848)”: The Commons file gives a secondary web source (Britannica) rather than a holding library; prefer a scan from a named library before publication.
 - **Social Reform or Revolution?** (`tx_social-reform-or-revolution`) — Submitted · live sample version unchanged, new version pending
   - [Replaces sample content] Replaces the seeded sample text record.
   - [Check · warning] A quotation is marked “needs review” (Introduction).
   - [Quotation · Needs review] “Between social reforms and revolution there exists for the Social Democracy an indissolubl…”
-- **Socialism: Utopian and Scientific** (`tx_wuk1l96did`) — Submitted · draft, not public
+- **Socialism: Utopian and Scientific** (`tx_hzfvoh4g46`) — Submitted · draft, not public
   - [Check · warning] A quotation is marked “needs review” (Part II, closing paragraph).
   - [Quotation · Needs review] “These two great discoveries, the materialistic conception of history and the revelation of…”
-- **The Civil War in France** (`tx_ni2cty7prz`) — Submitted · draft, not public
+- **The Civil War in France** (`tx_o7biou91a7`) — Submitted · draft, not public
   - [Check · warning] A quotation is marked “needs review” (Part III).
   - [Quotation · Needs review] “But the working class cannot simply lay hold of the ready-made state machinery, and wield …”
-- **The Eighteenth Brumaire of Louis Bonaparte** (`tx_xpzdiz6qxg`) — Submitted · draft, not public
+- **The Eighteenth Brumaire of Louis Bonaparte** (`tx_140d3cem25`) — Submitted · draft, not public
   - [Check · warning] A quotation is marked “needs review” (Chapter I).
   - [Quotation · Needs review] “Men make their own history, but they do not make it as they please; they do not make it un…”
-- **The Essence of Christianity** (`tx_yjlc72zzzv`) — Submitted · draft, not public
+- **The Essence of Christianity** (`tx_zuv1yexzu9`) — Submitted · draft, not public
   - No flags. Read for accuracy and balance before approving.
 - **The German Ideology** (`tx_the-german-ideology`) — Submitted · live sample version unchanged, new version pending
   - [Replaces sample content] Replaces the seeded sample text record.
@@ -303,9 +298,9 @@ Each entry with what needs checking. Notes are internal (Review tab of the entry
 
 ### Tendencies
 
-- **Classical political economy** (`td_az8jbwagyv`) — Submitted · draft, not public
+- **Classical political economy** (`td_5tvz93lskb`) — Submitted · draft, not public
   - No flags. Read for accuracy and balance before approving.
-- **Early socialism** (`td_d107iaxvd1`) — Submitted · draft, not public
+- **Early socialism** (`td_k80e4cp3c6`) — Submitted · draft, not public
   - [Disputed interpretation] The 'utopian' label is contested; the entry presents it as Marx and Engels's polemical classification, not as a neutral category.
 - **German Idealism** (`td_german-idealism`) — Submitted · live sample version unchanged, new version pending
   - [Replaces sample content] Replaces the seeded sample entry for German Idealism. The end year (1854, Schelling's death) is a conventional choice; some histories end the movement in 1831 or the 1840s.
@@ -318,22 +313,22 @@ Each entry with what needs checking. Notes are internal (Review tab of the entry
   - [Quotation · Needs review] “Just as Marx used to say, commenting on the French “Marxists” of the late [18]70s: “All I …”
 - **Social Democracy & Revisionism** (`td_social-democracy`) — Submitted · live sample version unchanged, new version pending
   - [Replaces sample content] Replaces the seeded sample tendency (“Social Democracy & Revisionism”); the old title is kept as an alias. Revisionism now has its own concept entry.
-- **Young Hegelians** (`td_wv7eqxd828`) — Submitted · draft, not public
+- **Young Hegelians** (`td_lf491x8koq`) — Submitted · draft, not public
   - [Specialist review recommended] Membership and dates of the Young Hegelian movement vary between accounts; 1835–1845 is a conventional bracket.
 
 ### Debates
 
-- **Could Russia make a socialist revolution?** (`db_ct32sffn5g`) — Submitted · draft, not public
+- **Could Russia make a socialist revolution?** (`db_y3j2vo8025`) — Submitted · draft, not public
   - [Check · warning] A quotation is marked “needs review” (Preface to the Russian edition of 1882).
   - [Check · warning] A quotation is marked “needs review” (Ch. VIII, “A Workers' Government”).
   - [Quotation · Needs review] “If the Russian Revolution becomes the signal for a proletarian revolution in the West, so …”
   - [Quotation · Needs review] “Without the direct State support of the European proletariat the working class of Russia c…”
-- **How should a revolutionary party be organised?** (`db_av76k6bcgf`) — Submitted · draft, not public
+- **How should a revolutionary party be organised?** (`db_bubwaw7tys`) — Submitted · draft, not public
   - [Check · warning] A quotation is marked “needs review” (Closing paragraph).
   - [Quotation · Needs review] “Historically, the errors committed by a truly revolutionary movement are infinitely more f…”
 - **Reform or revolution?** (`db_reform-or-revolution`) — Submitted · live sample version unchanged, new version pending
   - [Replaces sample content] Replaces the seeded sample debate's introduction and structure.
-- **What does historical materialism claim?** (`db_l2hwz1y2jy`) — Submitted · draft, not public
+- **What does historical materialism claim?** (`db_ivh2ycnw3k`) — Submitted · draft, not public
   - [Check · warning] A quotation is marked “needs review” (Ch. IV, “The Commonwealth of the Future”).
   - [Check · warning] A quotation is marked “needs review” (Ch. I).
   - [Quotation · Needs review] “The capitalist social system has run its course; its dissolution is now only a question of…”
@@ -345,7 +340,7 @@ Each entry with what needs checking. Notes are internal (Review tab of the entry
 - **What is the state?** (`db_what-is-the-state`) — Submitted · live sample version unchanged, new version pending
   - [Replaces sample content] The seeded debate structure (positions from Marx & Engels to Althusser) is kept unchanged; only the summary, background and context are revised.
   - [Specialist review recommended] Consider adding a Kautsky position (democratic republic; dictatorship as a 'condition') to the structure; the corpus left the seeded positions untouched.
-- **What should socialists do when war comes?** (`db_ikycfm6l6y`) — Submitted · draft, not public
+- **What should socialists do when war comes?** (`db_k5z4yh1ubg`) — Submitted · draft, not public
   - [Check · warning] A quotation is marked “needs review” (Ch. 1).
   - [Check · warning] A quotation is marked “needs review” (Closing part of the manifesto).
   - [Quotation · Needs review] “Friedrich Engels once said: “Bourgeois society stands at the crossroads, either transition…”
@@ -353,7 +348,7 @@ Each entry with what needs checking. Notes are internal (Review tab of the entry
 
 ### Events
 
-- **Bismarck's Anti-Socialist Laws** (`ev_sk3cangi52`) — Submitted · draft, not public
+- **Bismarck's Anti-Socialist Laws** (`ev_3dkdccr5wm`) — Submitted · draft, not public
   - No flags. Read for accuracy and balance before approving.
 - **Bolshevik–Menshevik split** (`ev_bolshevik-menshevik-split`) — Submitted · live sample version unchanged, new version pending
   - [Replaces sample content] Replaces the seeded sample event.
@@ -363,7 +358,7 @@ Each entry with what needs checking. Notes are internal (Review tab of the entry
   - [Replaces sample content] Replaces the seeded sample event.
   - [Check · warning] A quotation is marked “needs review” (Preamble).
   - [Quotation · Needs review] “That the emancipation of the working classes must be conquered by the working classes them…”
-- **Louis Bonaparte's coup d'état** (`ev_71r0jzu3ja`) — Submitted · draft, not public
+- **Louis Bonaparte's coup d'état** (`ev_tpc8t3bwyq`) — Submitted · draft, not public
   - No flags. Read for accuracy and balance before approving.
 - **Revolutions of 1848** (`ev_revolutions-of-1848`) — Submitted · live sample version unchanged, new version pending
   - [Replaces sample content] Replaces the seeded sample event.
@@ -374,25 +369,25 @@ Each entry with what needs checking. Notes are internal (Review tab of the entry
   - [Specialist review recommended] Check the extent of Luxemburg's support for the rising and the attribution of responsibility for the murders against Gietinger. _(field: body)_
 - **The 1905 Russian Revolution** (`ev_revolution-1905`) — Submitted · live sample version unchanged, new version pending
   - [Replaces sample content] Replaces the seeded sample event.
-- **The Basel Congress of the International** (`ev_k4my7cacg7`) — Submitted · draft, not public
+- **The Basel Congress of the International** (`ev_lmg02r9s5r`) — Submitted · draft, not public
   - [Check · warning] A quotation is marked “needs review” (Manifesto).
   - [Quotation · Needs review] “The proletarians consider it a crime to fire at each other for the profits of the capitali…”
-- **The Communist League is founded** (`ev_demkr9h23z`) — Submitted · draft, not public
+- **The Communist League is founded** (`ev_9101ux5nab`) — Submitted · draft, not public
   - No flags. Read for accuracy and balance before approving.
-- **The Emancipation of Labour Group is founded** (`ev_h1t55x88ld`) — Submitted · draft, not public
+- **The Emancipation of Labour Group is founded** (`ev_omdim5fcfc`) — Submitted · draft, not public
   - [Specialist review recommended] Check the attribution of the 1882 Russian translation of the Manifesto (usually credited to Plekhanov) and the membership list against Baron. _(field: body)_
   - [Check · warning] A quotation is marked “needs review” (Closing words).
   - [Quotation · Needs review] “In conclusion I repeat – and I insist on this important point: the revolutionary movement …”
-- **The Erfurt Programme** (`ev_ciwzl0ya6a`) — Submitted · draft, not public
+- **The Erfurt Programme** (`ev_0susraiuvr`) — Submitted · draft, not public
   - [Check · warning] A quotation is marked “needs review” (Part I).
   - [Quotation · Needs review] “It cannot bring about the transfer of the means of production into the possession of the c…”
-- **The February Revolution** (`ev_z0g0eqeqmj`) — Submitted · draft, not public
+- **The February Revolution** (`ev_a2jera4std`) — Submitted · draft, not public
   - [Check · warning] A quotation is marked “needs review” (Thesis 5).
   - [Quotation · Needs review] “Not a parliamentary republic—to return to a parliamentary republic from the Soviets of Wor…”
 - **The French Revolution** (`ev_french-revolution`) — Submitted · live sample version unchanged, new version pending
   - [Replaces sample content] Replaces the seeded sample event.
   - [Missing source] The revisionist challenge to the 'bourgeois revolution' interpretation (Cobban, Furet) should cite a historiographical source; Hobsbawm predates most of it. _(field: significance)_
-- **The Gotha Unity Congress** (`ev_s1b2cxzr3f`) — Submitted · draft, not public
+- **The Gotha Unity Congress** (`ev_hv8baz8815`) — Submitted · draft, not public
   - No flags. Read for accuracy and balance before approving.
 - **The Hague Congress** (`ev_hague-congress`) — Submitted · live sample version unchanged, new version pending
   - [Replaces sample content] Replaces the seeded sample event.
@@ -406,21 +401,20 @@ Each entry with what needs checking. Notes are internal (Review tab of the entry
 - **The Paris Commune** (`ev_paris-commune`) — Submitted · live sample version unchanged, new version pending
   - [Replaces sample content] Replaces the seeded sample event.
   - [Specialist review recommended] Casualty figures for the Bloody Week are disputed (older estimates of 20,000+ dead have been revised downward by Tombs and others); no figure is given. Check the list of Commune measures against Tombs. _(field: body)_
-  - [Incomplete metadata] Image “Barricade on the Chaussée Ménilmontant, 18 March 1871”: Record the photographer if Paris Musées names one. The shop sign gives the address 45–47 Boulevard du Prince-Eugène (now Boulevard Voltaire); confirm that the museum's location (Chaussée Ménilmontant) is correct.
   - [Check · warning] A quotation is marked “needs review” (Part III).
   - [Check · warning] A quotation is marked “needs review” (Letter of 22 February 1881).
   - [Quotation · Needs review] “It was essentially a working class government, the product of the struggle of the producin…”
   - [Quotation · Needs review] “Perhaps you will point to the Paris Commune; but apart from the fact that this was merely …”
-- **The revisionism controversy** (`ev_77vnfwzxxj`) — Submitted · draft, not public
+- **The revisionism controversy** (`ev_xql6c95gfh`) — Submitted · draft, not public
   - No flags. Read for accuracy and balance before approving.
-- **The Rheinische Zeitung is banned** (`ev_h2a26t5om9`) — Submitted · draft, not public
+- **The Rheinische Zeitung is banned** (`ev_08ayflcxi1`) — Submitted · draft, not public
   - No flags. Read for accuracy and balance before approving.
 - **The SPD votes for war credits** (`ev_war-credits-1914`) — Submitted · live sample version unchanged, new version pending
   - [Replaces sample content] Replaces the seeded sample event.
   - [Specialist review recommended] The internal vote of the Reichstag group (often given as 78 to 14) is deliberately not stated; confirm and add with a citation if wanted. _(field: body)_
-- **The world economic crisis of 1857** (`ev_onu10cbjh4`) — Submitted · draft, not public
+- **The world economic crisis of 1857** (`ev_w0ejijqu6b`) — Submitted · draft, not public
   - No flags. Read for accuracy and balance before approving.
-- **The Zimmerwald Conference** (`ev_yw47oog0y7`) — Submitted · draft, not public
+- **The Zimmerwald Conference** (`ev_9yv4ipb76o`) — Submitted · draft, not public
   - [Check · warning] A quotation is marked “needs review” (Opening).
   - [Quotation · Needs review] “The war has lasted more than a year. Millions of corpses cover the battlefields. Millions …”
 
@@ -431,7 +425,7 @@ Each entry with what needs checking. Notes are internal (Review tab of the entry
 
 ## Automated checks
 
-- **warning** · duplicates · capital — Possible duplicates: Capitalism (co_capitalism), Capital (co_v0bzkfnupl).
+- **warning** · duplicates · capital — Possible duplicates: Capitalism (co_capitalism), Capital (co_hzmiutc97d).
 - **warning** · schema · thinker:marx — Unverified quotation (Thesis XI): check the wording against the cited edition.
 - **warning** · schema · thinker:hegel — A quotation is marked “needs review” (Preface).
 - **warning** · schema · thinker:bernstein — A quotation is marked “needs review” (Preface).
