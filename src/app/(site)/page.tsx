@@ -60,13 +60,13 @@ export default async function HomePage() {
             <h1 className="display text-balance text-[3.3rem] sm:text-[5.4rem] xl:text-[6.6rem]">
               A map of <span className="italic">socialist</span> thought<span className="text-red">.</span>
             </h1>
-            <p className="lede mt-6 max-w-[38rem] text-ink-warm">
-              A reference work on the socialist tradition, from its forerunners to its later critics: its thinkers,
-              concepts, texts, tendencies and debates, and how they connect. Who influenced whom, who answered whom,
-              where they disagreed.
+            {/* The standfirst: second to the title, larger than body text, its measure close to the title's width. */}
+            <p className="mt-6 max-w-[34rem] text-pretty font-serif text-[1.3rem] font-[350] leading-[1.42] text-ink-warm sm:mt-7 sm:max-w-[36rem] sm:text-[1.5rem] sm:leading-[1.38] xl:max-w-[37rem] xl:text-[1.7rem] xl:leading-[1.34]">
+              A digital resource for understanding socialism: its thinkers, ideas, texts and debates, and the tradition of
+              thought behind the struggle for a better society.
             </p>
             <HomeSearch
-              className="mt-9 max-w-[44rem]"
+              className="mt-9 max-w-[44rem] sm:mt-10"
               label="Search the collection"
               suggestions={suggestions}
             />
