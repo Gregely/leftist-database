@@ -43,8 +43,14 @@ export const SECTIONS = [
   { key: "explore", label: "Explore", short: "Explore", href: "/explore", tone: "var(--color-faint)" },
 ] as const;
 
-/** Primary navigation: Guided, set apart, then the collection. */
-export const NAV = [{ label: "Guided", href: "/guided" }, ...SECTIONS.map((s) => ({ label: s.short, href: s.href }))] as const;
+/** Explore: the gateway to the whole collection, and the parent of every section below. */
+export const EXPLORE = SECTIONS.find((s) => s.key === "explore")!;
+
+/** The collection's contents, in reading order — what Explore leads into. */
+export const COLLECTION = SECTIONS.filter((s) => s.key !== "explore");
+
+/** Primary navigation: Guided on its own; then Explore, followed by its contents. */
+export const NAV = [{ label: "Guided", href: "/guided" }, { label: EXPLORE.label, href: EXPLORE.href }, ...COLLECTION.map((s) => ({ label: s.label, href: s.href }))] as const;
 
 /** Further pages listed in the index sheet and the footer. */
 export const MORE = [

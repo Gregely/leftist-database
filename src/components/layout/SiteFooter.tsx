@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { MORE, SECTIONS, SITE } from "@/lib/site";
+import { COLLECTION, EXPLORE, MORE, SITE } from "@/lib/site";
 import { Wordmark } from "./Wordmark";
 
 const WAYS_IN = [
@@ -21,9 +21,13 @@ export function SiteFooter() {
           </div>
           <nav aria-label="Footer" className="grid grid-cols-2 gap-10 sm:grid-cols-3 md:col-span-7">
             <div>
-              <h2 className="label mb-3 border-b border-white/20 pb-2 font-sans text-ink-muted">The collection</h2>
+              <h2 className="label mb-3 border-b border-white/20 pb-2 font-sans">
+                <Link href={EXPLORE.href} className="font-semibold tracking-[0.16em] text-paper hover:text-red-bright">
+                  {EXPLORE.label}
+                </Link>
+              </h2>
               <ul className="space-y-1.5">
-                {SECTIONS.map((l) => (
+                {COLLECTION.map((l) => (
                   <li key={l.href} className="flex items-center gap-2">
                     <span aria-hidden="true" className="h-1.5 w-1.5 shrink-0 opacity-80" style={{ background: l.tone === "var(--color-ink)" ? "var(--color-paper)" : l.tone }} />
                     <Link href={l.href} className="link-sweep font-serif text-[1.05rem]">

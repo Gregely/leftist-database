@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { MORE, SECTIONS } from "@/lib/site";
+import { COLLECTION, EXPLORE, MORE } from "@/lib/site";
 import { useSearch } from "@/components/search/SearchProvider";
 import { useBookmarks } from "@/lib/client/bookmarks";
 import { useActiveRoute } from "@/lib/client/route";
@@ -24,9 +24,10 @@ export function RunningHead() {
 
 /**
  * The reading dock: a fixed bar at the foot of the screen on phones and
- * tablets, within reach of the thumb. Index opens the whole collection as a
- * sheet; Guided, Search and Saved are one tap away. It slides out of the way
- * while reading down a page and returns on the way back up.
+ * tablets, within reach of the thumb, in the masthead's order. Guided is its
+ * own destination; Explore opens the collection as a sheet (Explore itself,
+ * then its sections); Search and Saved are one tap away. It slides out of the
+ * way while reading down a page and returns on the way back up.
  */
 export function MobileDock() {
   const [open, setOpen] = useState(false);
@@ -69,6 +70,8 @@ export function MobileDock() {
   }, [open]);
 
   const guided = isActive(pathname, "/guided");
+  const explore = isActive(pathname, EXPLORE.href);
+  const inCollection = explore || COLLECTION.some((s) => isActive(pathname, s.href));
   const cell = "flex h-14 flex-1 flex-col items-center justify-center gap-1 transition-colors";
 
   return (
@@ -79,56 +82,32 @@ export function MobileDock() {
       {open && (
         <nav
           id="site-index"
-          aria-label="Site index"
+          aria-label="Explore"
           className="fixed inset-x-0 bottom-14 z-50 max-h-[calc(100dvh-7.5rem)] overflow-y-auto border-t-[3px] border-ink bg-paper px-4 pb-6 pt-4 animate-rise sm:px-8 lg:hidden"
         >
-          <form action="/search" role="search" className="flex items-end gap-3 border-b border-ink pb-1.5">
-            <label htmlFor="dock-search" className="sr-only">
-              Search thinkers, concepts, texts and debates
-            </label>
-            <input
-              id="dock-search"
-              name="q"
-              type="search"
-              placeholder="Search the Atlas…"
-              className="w-full bg-transparent font-serif text-[1.35rem] italic placeholder:text-faint focus:outline-none"
-            />
-            <button type="submit" className="label pb-1.5 text-red">
-              Go
-            </button>
-          </form>
-
           <Link
-            href={route && !guided ? route.href : "/guided"}
-            className="mt-4 flex items-center justify-between gap-4 bg-ink px-4 py-3 text-paper"
+            href={EXPLORE.href}
+            aria-current={explore ? "page" : undefined}
+            className="flex items-baseline justify-between gap-4 border-b-[3px] border-double border-ink pb-2"
           >
-            <span>
-              <span className="label flex items-center gap-2 text-red-bright">
-                <RouteGlyph /> Guided
-              </span>
-              <span className="mt-1 block font-serif text-[1.15rem] leading-tight">
-                {route && !guided ? `Return to step ${route.step} of ${route.title}` : "Structured routes through the collection"}
-              </span>
-            </span>
-            <span aria-hidden="true" className="text-xl text-red-bright">→</span>
+            <span className={`label font-semibold tracking-[0.16em] text-[0.8rem] ${explore ? "text-red" : ""}`}>{EXPLORE.label}</span>
+            <span aria-hidden="true" className="text-red">→</span>
           </Link>
-
-          <p className="label mt-6 text-faint">The collection</p>
-          <ol className="mt-1 border-t border-ink">
-            {SECTIONS.map((l, i) => {
+          <ol className="ml-1 mt-1 border-l border-ink pl-4">
+            {COLLECTION.map((l, i) => {
               const active = isActive(pathname, l.href);
               return (
-                <li key={l.href} className="border-b border-rule">
+                <li key={l.href} className="border-b border-rule last:border-b-0">
                   <Link href={l.href} aria-current={active ? "page" : undefined} className="flex items-baseline gap-3 py-2.5">
                     <span className="label-mono w-5 text-faint">{String(i + 1).padStart(2, "0")}</span>
                     <span aria-hidden="true" className="h-2 w-2 shrink-0 self-center" style={{ background: l.tone }} />
-                    <span className={`font-serif text-[1.55rem] leading-none ${active ? "text-red" : ""}`}>{l.label}</span>
+                    <span className={`font-serif text-[1.5rem] leading-none ${active ? "text-red" : ""}`}>{l.label}</span>
                   </Link>
                 </li>
               );
             })}
           </ol>
-          <ul className="mt-5 flex flex-wrap gap-x-5 gap-y-2">
+          <ul className="mt-5 flex flex-wrap gap-x-5 gap-y-2 border-t border-rule pt-4">
             {MORE.map((l) => (
               <li key={l.href}>
                 <Link href={l.href} className="label text-muted hover:text-red">
@@ -144,25 +123,25 @@ export function MobileDock() {
         className={`fixed inset-x-0 bottom-0 z-50 border-t border-ink bg-paper/97 backdrop-blur-[3px] transition-transform duration-300 lg:hidden ${hidden && !open ? "translate-y-full" : ""}`}
       >
         <div className="mx-auto flex max-w-xl items-stretch divide-x divide-rule">
+          <Link href={route && !guided ? route.href : "/guided"} className={`${cell} ${guided ? "text-red" : ""}`}>
+            <RouteGlyph className="text-red" />
+            <span className="label">{route && !guided ? `Step ${route.step}` : "Guided"}</span>
+          </Link>
           <button
             ref={btn}
             type="button"
             onClick={() => setOpen((o) => !o)}
             aria-expanded={open}
             aria-controls="site-index"
-            className={`${cell} ${open ? "bg-ink text-paper" : ""}`}
+            className={`${cell} ${open ? "bg-ink text-paper" : inCollection ? "text-red" : ""}`}
           >
             <span aria-hidden="true" className="relative block h-2.5 w-4">
               <span className={`absolute left-0 top-0 h-[1.5px] w-4 bg-current transition-transform ${open ? "translate-y-[4.5px] rotate-45" : ""}`} />
               <span className={`absolute left-0 top-[4.5px] h-[1.5px] w-3 bg-red transition-opacity ${open ? "opacity-0" : ""}`} />
               <span className={`absolute left-0 top-[9px] h-[1.5px] w-4 bg-current transition-transform ${open ? "-translate-y-[4.5px] -rotate-45" : ""}`} />
             </span>
-            <span className="label">{open ? "Close" : "Index"}</span>
+            <span className="label font-semibold">{open ? "Close" : EXPLORE.label}</span>
           </button>
-          <Link href={route && !guided ? route.href : "/guided"} className={`${cell} ${guided ? "text-red" : ""}`}>
-            <RouteGlyph className="text-red" />
-            <span className="label">{route && !guided ? `Step ${route.step}` : "Guided"}</span>
-          </Link>
           <button type="button" onClick={() => openSearch()} className={cell} aria-haspopup="dialog">
             <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true">
               <circle cx="6" cy="6" r="4.8" fill="none" stroke="currentColor" strokeWidth="1.4" />

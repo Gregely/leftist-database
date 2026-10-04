@@ -33,6 +33,19 @@ test.describe("home & theory map", () => {
     await expect(page.getByRole("dialog", { name: "Search the archive" })).toBeVisible();
   });
 
+  test("the masthead sets Guided apart and Explore over the collection's sections", async ({ page }) => {
+    await page.goto("/thinkers");
+    const primary = page.getByRole("navigation", { name: "Primary" });
+    const links = primary.getByRole("link");
+    await expect(links.nth(0)).toHaveAccessibleName("Guided");
+    await expect(links.nth(1)).toHaveAccessibleName("Explore");
+    const contents = primary.getByRole("list", { name: "The collection" });
+    expect(await contents.getByRole("link").allInnerTexts()).toEqual(["Thinkers", "Concepts", "Texts", "Debates", "Tendencies", "Timeline", "Theory Map"]);
+    await expect(contents.getByRole("link", { name: "Guided" })).toHaveCount(0);
+    await expect(contents.getByRole("link", { name: "Thinkers" })).toHaveAttribute("aria-current", "page");
+    await expect(links.nth(1)).not.toHaveAttribute("aria-current", "page");
+  });
+
   test("the Theory Map has its own page, with two layouts and a choice of what to include", async ({ page }) => {
     await page.goto("/");
     await page.getByRole("navigation", { name: "Primary" }).getByRole("link", { name: "Map" }).click();

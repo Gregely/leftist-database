@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { SECTIONS } from "@/lib/site";
+import { COLLECTION, EXPLORE, SECTIONS } from "@/lib/site";
 import { useActiveRoute } from "@/lib/client/route";
 
 export function isActive(pathname: string, href: string) {
@@ -32,17 +32,29 @@ export function RouteGlyph({ className = "" }: { className?: string }) {
   );
 }
 
-const linkCls = (active: boolean) =>
-  `label relative flex h-full items-center whitespace-nowrap transition-colors hover:text-red ${active ? "text-red" : "text-ink"} after:absolute after:inset-x-0 after:bottom-0 after:h-[3px] after:origin-left after:bg-red after:transition-transform after:duration-300 ${active ? "after:scale-x-100" : "after:scale-x-0 hover:after:scale-x-100"}`;
+/** The red bar under the current page; an ink hairline marks the family a page belongs to. */
+const bar = (state: "page" | "family" | null) =>
+  `after:absolute after:inset-x-0 after:bottom-0 after:origin-left after:transition-transform after:duration-300 ${
+    state === "page" ? "after:h-[3px] after:scale-x-100 after:bg-red" : state === "family" ? "after:h-px after:scale-x-100 after:bg-ink" : "after:h-[3px] after:scale-x-0 after:bg-red hover:after:scale-x-100"
+  }`;
 
-/** Desktop primary navigation: Guided, set apart, then the collection in reading order. */
+const linkCls = (active: boolean) =>
+  `label relative flex h-full items-center whitespace-nowrap transition-colors hover:text-red ${active ? "text-red" : "text-ink"} ${bar(active ? "page" : null)}`;
+
+/**
+ * Desktop primary navigation. Guided stands on its own. Explore leads the
+ * collection: set heavier, then a short rule and its contents in a quieter
+ * serif, like a running table of contents.
+ */
 export function NavLinks() {
   const pathname = usePathname() ?? "/";
   const route = useActiveRoute();
   const guided = isActive(pathname, "/guided");
+  const explore = isActive(pathname, EXPLORE.href);
+  const inCollection = explore || COLLECTION.some((s) => isActive(pathname, s.href));
   return (
     <ul className="flex h-full items-stretch">
-      <li className="flex items-stretch border-r border-rule pr-5 xl:pr-6">
+      <li className="flex items-stretch border-r border-ink/70 pr-4 xl:pr-7">
         <Link href="/guided" aria-current={guided ? "page" : undefined} className={`${linkCls(guided)} gap-2`}>
           <RouteGlyph className="text-red" />
           Guided
@@ -53,16 +65,44 @@ export function NavLinks() {
           )}
         </Link>
       </li>
-      {SECTIONS.map((item) => {
-        const active = isActive(pathname, item.href);
-        return (
-          <li key={item.href} className="flex items-stretch pl-4 xl:pl-5">
-            <Link href={item.href} aria-current={active ? "page" : undefined} className={linkCls(active)}>
-              {item.short}
-            </Link>
-          </li>
-        );
-      })}
+      <li className="flex items-stretch pl-4 xl:pl-7">
+        <Link
+          href={EXPLORE.href}
+          aria-current={explore ? "page" : undefined}
+          className={`label relative flex h-full items-center whitespace-nowrap font-semibold tracking-[0.16em] transition-colors hover:text-red ${explore ? "text-red" : "text-ink"} ${bar(explore ? "page" : inCollection ? "family" : null)}`}
+        >
+          {EXPLORE.label}
+        </Link>
+        <span aria-hidden="true" className="mx-2.5 h-px w-3 self-center bg-ink xl:mx-4 xl:w-6" />
+        <ul aria-label="The collection" className="flex items-stretch">
+          {COLLECTION.map((item, i) => {
+            const active = isActive(pathname, item.href);
+            return (
+              <li key={item.href} className="flex items-stretch">
+                {i > 0 && (
+                  <span aria-hidden="true" className="self-center px-1 text-faint xl:px-2">
+                    ·
+                  </span>
+                )}
+                <Link
+                  href={item.href}
+                  aria-current={active ? "page" : undefined}
+                  className={`relative flex h-full items-center whitespace-nowrap font-serif text-[0.9rem] transition-colors hover:text-red xl:text-[1.02rem] ${active ? "text-red" : "text-ink-warm"} ${bar(active ? "page" : null)}`}
+                >
+                  {item.short === item.label ? (
+                    item.label
+                  ) : (
+                    <>
+                      <span className="xl:hidden">{item.short}</span>
+                      <span className="hidden xl:inline">{item.label}</span>
+                    </>
+                  )}
+                </Link>
+              </li>
+            );
+          })}
+        </ul>
+      </li>
     </ul>
   );
 }

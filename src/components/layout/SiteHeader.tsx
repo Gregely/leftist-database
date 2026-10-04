@@ -28,13 +28,13 @@ export function SiteHeader() {
           <NavLinks />
         </nav>
         <div className="hidden items-center gap-5 lg:flex">
-          <SearchTrigger className="group flex w-[3rem] items-center justify-between gap-3 border-b border-ink pb-1 text-left transition-colors hover:border-red xl:w-[12.5rem]">
+          <SearchTrigger className="group flex w-[3rem] items-center justify-between gap-3 border-b border-ink pb-1 text-left transition-colors hover:border-red min-[1440px]:w-[12.5rem]">
             <span className="flex items-center gap-2">
               <SearchGlyph />
-              <span className="hidden font-serif text-[0.98rem] italic text-faint group-hover:text-ink xl:inline">Search the Atlas</span>
-              <span className="sr-only xl:hidden">Search</span>
+              <span className="hidden font-serif text-[0.98rem] italic text-faint group-hover:text-ink min-[1440px]:inline">Search the Atlas</span>
+              <span className="sr-only min-[1440px]:hidden">Search</span>
             </span>
-            <kbd className="label-mono hidden border border-rule px-1.5 leading-[1.35] text-faint xl:inline">/</kbd>
+            <kbd className="label-mono hidden border border-rule px-1.5 leading-[1.35] text-faint min-[1440px]:inline">/</kbd>
           </SearchTrigger>
           <BookmarkCount />
         </div>

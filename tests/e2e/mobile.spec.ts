@@ -11,11 +11,15 @@ for (const path of PAGES) {
   });
 }
 
-test("index menu opens and navigates", async ({ page }) => {
+test("the dock keeps Guided apart and opens Explore with the collection beneath it", async ({ page }) => {
   await page.goto("/");
-  await page.getByRole("button", { name: "Index" }).click();
-  const nav = page.getByRole("navigation", { name: "Site index" });
+  const guided = page.getByRole("link", { name: "Guided" }).last();
+  await expect(guided).toHaveAttribute("href", "/guided");
+  await page.getByRole("button", { name: "Explore" }).click();
+  const nav = page.getByRole("navigation", { name: "Explore" });
   await expect(nav).toBeVisible();
+  await expect(nav.getByRole("link", { name: "Explore" })).toHaveAttribute("href", "/explore");
+  await expect(nav.getByRole("link", { name: "Guided" })).toHaveCount(0);
   await nav.getByRole("link", { name: "Debates" }).click();
   await expect(page).toHaveURL(/\/debates$/);
 });
