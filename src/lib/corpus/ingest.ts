@@ -416,6 +416,9 @@ async function importBatch(
 async function importEntity(corpus: Corpus, e: CorpusEntity, actor: Actor, summary: ImportSummary, log: Log) {
   const { kind, slug } = parseKey(e.key);
   let row = await resolveKey(e.key);
+  // No fields: the entity annotates an existing entry with notes and citations and leaves its content alone.
+  const annotation = Object.keys(e.fields).length === 0;
+  if (annotation && !row) throw new Error(`${e.key} annotates an entry that does not exist.`);
   const created = !row;
   if (!row) {
     const id = await createEntity(actor, kind, { title: e.title });
@@ -424,7 +427,7 @@ async function importEntity(corpus: Corpus, e: CorpusEntity, actor: Actor, summa
   const input: Record<string, unknown> = { isSample: false, ...e.fields, title: e.title, slug };
   const before = await readWorkingFields(row);
   const after = coerceValues(kind, input, before);
-  const changed = Object.keys(after).some((k) => (after[k] ?? "") !== (before[k] ?? ""));
+  const changed = !annotation && Object.keys(after).some((k) => (after[k] ?? "") !== (before[k] ?? ""));
   if (changed) {
     await saveContent(actor, row.id, row.lockVersion, input, { message: `${corpus.collection} — research import` });
     (created ? summary.created : summary.amended).push(e.key);

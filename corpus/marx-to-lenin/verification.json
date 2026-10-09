@@ -1,0 +1,521 @@
+{
+  "checkedAt": "2026-10-09T13:42:21.829Z",
+  "quotes": {
+    "ml-engels-irony-of-history": {
+      "url": "https://www.marxists.org/archive/marx/works/1850/class-struggles-france/intro.htm",
+      "status": 200,
+      "matched": true,
+      "provenance": "“ The Revolutionary Act. Military Insurrection or Political and Economic Action? ”; translated: Henry Kuhn, with an Appendix by Daniel De Leon",
+      "detail": "verbatim"
+    },
+    "ml-labriola-critical-communism": {
+      "url": "https://www.marxists.org/archive/labriola/works/al00.htm",
+      "status": 200,
+      "matched": true,
+      "detail": "verbatim"
+    },
+    "ml-webb-organic-changes": {
+      "url": "https://www.gutenberg.org/cache/epub/69088/pg69088-images.html",
+      "status": 200,
+      "matched": true,
+      "detail": "verbatim"
+    },
+    "ml-morris-trafalgar": {
+      "url": "https://www.marxists.org/archive/morris/works/1890/nowhere/nowhere.htm",
+      "status": 200,
+      "matched": true,
+      "detail": "verbatim"
+    },
+    "ml-jaures-majority": {
+      "url": "https://www.marxists.org/archive/jaures/1906/studies-socialism/ch10.htm",
+      "status": 200,
+      "matched": true,
+      "detail": "verbatim"
+    },
+    "ml-bebel-equality": {
+      "url": "https://www.marxists.org/archive/bebel/1879/woman-socialism/introduction.htm",
+      "status": 200,
+      "matched": true,
+      "detail": "verbatim"
+    },
+    "ml-zetkin-joint-struggle": {
+      "url": "https://www.marxists.org/archive/zetkin/1896/10/women.htm",
+      "status": 200,
+      "matched": true,
+      "detail": "verbatim"
+    },
+    "ml-zetkin-agitation": {
+      "url": "https://www.marxists.org/archive/zetkin/1896/10/women.htm",
+      "status": 200,
+      "matched": true,
+      "detail": "verbatim"
+    },
+    "ml-kollontai-means": {
+      "url": "https://www.marxists.org/archive/kollonta/1909/social-basis.htm",
+      "status": 200,
+      "matched": true,
+      "provenance": "abstract from Selected Writings of Alexandra Kollontai , Allison & Busby, 1977;; translated: and Edited : by Alix Holt",
+      "detail": "verbatim"
+    },
+    "ml-engels-twofold-production": {
+      "url": "https://www.marxists.org/archive/marx/works/1884/origin-family/preface.htm",
+      "status": 200,
+      "matched": true,
+      "detail": "verbatim"
+    },
+    "ml-engels-world-historical-defeat": {
+      "url": "https://www.marxists.org/archive/marx/works/1884/origin-family/ch02c.htm",
+      "status": 200,
+      "matched": true,
+      "detail": "verbatim"
+    },
+    "ml-engels-first-class-oppression": {
+      "url": "https://www.marxists.org/archive/marx/works/1884/origin-family/ch02d.htm",
+      "status": 200,
+      "matched": true,
+      "detail": "verbatim"
+    },
+    "ml-lenin-development-preface": {
+      "url": "https://www.marxists.org/archive/lenin/works/1899/devel/preface1.htm",
+      "status": 200,
+      "matched": true,
+      "detail": "verbatim"
+    },
+    "ml-trotsky-not-a-substitute": {
+      "url": "https://www.marxists.org/archive/trotsky/1904/tasks/ch03.htm",
+      "status": 200,
+      "matched": true,
+      "detail": "verbatim"
+    },
+    "ml-trotsky-backward-country": {
+      "url": "https://www.marxists.org/archive/trotsky/1931/tpr/rp04.htm",
+      "status": 200,
+      "matched": true,
+      "detail": "verbatim"
+    },
+    "ml-marx-engels-permanent": {
+      "url": "https://www.marxists.org/archive/marx/works/1847/communist-league/1850-ad1.htm",
+      "status": 200,
+      "matched": true,
+      "provenance": "Communist Review , Vol. 6, No. 10, February, 1926;",
+      "detail": "verbatim"
+    },
+    "ml-luxemburg-national-paraphrase": {
+      "url": "https://www.marxists.org/archive/luxemburg/1909/national-question/ch01.htm",
+      "status": 200,
+      "matched": true,
+      "detail": "verbatim"
+    },
+    "ml-lenin-democratic-content": {
+      "url": "https://www.marxists.org/archive/lenin/works/1914/self-det/ch04.htm",
+      "status": 200,
+      "matched": true,
+      "detail": "verbatim"
+    },
+    "ml-connolly-sacred-duty": {
+      "url": "https://www.marxists.org/archive/connolly/1910/lih/foreword.htm",
+      "status": 200,
+      "matched": true,
+      "detail": "verbatim"
+    },
+    "ml-lenin-putsch": {
+      "url": "https://www.marxists.org/archive/lenin/works/1916/jul/x01.htm",
+      "status": 200,
+      "matched": true,
+      "provenance": "Lenin Collected Works , UNKNOWN, 1974, Moscow, Volume 22 , pages 320-360.; translated: UNKNOWN UNKNOWN",
+      "detail": "verbatim"
+    },
+    "ml-hobson-taproot": {
+      "url": "https://www.marxists.org/archive/hobson/1902/imperialism/pt1ch6.htm",
+      "status": 200,
+      "matched": true,
+      "detail": "verbatim"
+    },
+    "ml-hilferding-definition": {
+      "url": "https://www.marxists.org/archive/hilferding/1910/finkap/ch14.htm",
+      "status": 200,
+      "matched": true,
+      "detail": "verbatim"
+    },
+    "ml-hilferding-domination": {
+      "url": "https://www.marxists.org/archive/hilferding/1910/finkap/ch22.htm",
+      "status": 200,
+      "matched": true,
+      "detail": "verbatim"
+    },
+    "ml-hilferding-only-socialism": {
+      "url": "https://www.marxists.org/archive/hilferding/1910/finkap/ch25.htm",
+      "status": 200,
+      "matched": true,
+      "detail": "verbatim"
+    },
+    "ml-kautsky-ultra": {
+      "url": "https://www.marxists.org/archive/kautsky/1914/09/ultra-imp.htm",
+      "status": 200,
+      "matched": true,
+      "detail": "verbatim"
+    },
+    "ml-bukharin-state-trusts": {
+      "url": "https://www.marxists.org/archive/bukharin/works/1917/imperial/12.htm",
+      "status": 200,
+      "matched": true,
+      "detail": "verbatim"
+    },
+    "ml-engels-aristocracy": {
+      "url": "https://www.marxists.org/archive/marx/works/1892/01/11.htm",
+      "status": 200,
+      "matched": true,
+      "provenance": "Marx Engels On Britain , Progress Publishers 1953; Written : by Frederick Engels, London, January 11th, 1892;",
+      "detail": "verbatim"
+    },
+    "ml-lenin-labour-aristocracy": {
+      "url": "https://www.marxists.org/archive/lenin/works/1916/oct/x01.htm",
+      "status": 200,
+      "matched": true,
+      "provenance": "Lenin Collected Works , Progress Publishers, 1964, Moscow, Volume 23 , pages 105-120.; translated: M. S. Levin, The Late Joe Fineberg andOthers",
+      "detail": "verbatim"
+    },
+    "ml-lenin-stuttgart-colonial": {
+      "url": "https://www.marxists.org/archive/lenin/works/1907/oct/20.htm",
+      "status": 200,
+      "matched": true,
+      "provenance": "Lenin Collected Works , Progress Publishers, 1972, Moscow, Volume 13 , pages 75-81.; translated: Bernard Isaacs",
+      "detail": "verbatim"
+    },
+    "ml-luxemburg-first-mode": {
+      "url": "https://www.marxists.org/archive/luxemburg/1913/accumulation-capital/ch32.htm",
+      "status": 200,
+      "matched": true,
+      "detail": "verbatim"
+    },
+    "ml-lenin-defeat": {
+      "url": "https://www.marxists.org/archive/lenin/works/1915/jul/26.htm",
+      "status": 200,
+      "matched": true,
+      "provenance": "Lenin Collected Works , Progress Publishers, 1974, Moscow, Volume 21 , pages 275-280.",
+      "detail": "verbatim"
+    },
+    "ml-junius-bourgeois-society": {
+      "url": "https://www.marxists.org/archive/luxemburg/1915/junius/ch01.htm",
+      "status": 200,
+      "matched": true,
+      "detail": "verbatim"
+    },
+    "ml-lenin-dual-power": {
+      "url": "https://www.marxists.org/archive/lenin/works/1917/apr/09.htm",
+      "status": 200,
+      "matched": true,
+      "provenance": "Lenin Collected Works , Progress Publishers, 1964 , Moscow, Volume 24 , pages 38-41 .; translated: Isaacs Bernard",
+      "detail": "verbatim"
+    },
+    "ml-april-theses-second-stage": {
+      "url": "https://www.marxists.org/archive/lenin/works/1917/apr/04.htm",
+      "status": 200,
+      "matched": true,
+      "provenance": "Lenin’s Collected Works , Progress Publishers, 1964, Moscow, Volume 24 , pp. 19-26.; translated: Isaacs Bernard",
+      "detail": "verbatim"
+    }
+  },
+  "sources": {
+    "src_ml_labriola_essays": {
+      "status": 200,
+      "ok": true,
+      "detail": "page mentions “Critical communism”"
+    },
+    "src_ml_fabian_essays": {
+      "status": 200,
+      "ok": true,
+      "detail": "page mentions “important organic changes can only be”"
+    },
+    "src_ml_news_from_nowhere": {
+      "status": 200,
+      "ok": true,
+      "detail": "page mentions “That massacre of Trafalgar Square began the civil war”"
+    },
+    "src_ml_jaures_studies": {
+      "status": 200,
+      "ok": true,
+      "detail": "page mentions “immense majority”"
+    },
+    "src_ml_jaures_general_strike": {
+      "status": 200,
+      "ok": true,
+      "detail": "page mentions “general strike”"
+    },
+    "src_ml_bebel_woman": {
+      "status": 200,
+      "ok": true,
+      "detail": "page mentions “equality of the sexes”"
+    },
+    "src_ml_zetkin_1896": {
+      "status": 200,
+      "ok": true,
+      "detail": "page mentions “joint struggle with the male of her class”"
+    },
+    "src_ml_kollontai_1909": {
+      "status": 200,
+      "ok": true,
+      "detail": "page mentions “only a means of advancing the struggle”"
+    },
+    "src_ml_engels_origin": {
+      "status": 200,
+      "ok": true,
+      "detail": "page mentions “world historical defeat of the female”"
+    },
+    "src_ml_luxemburg_accumulation": {
+      "status": 200,
+      "ok": true,
+      "detail": "page mentions “first mode of economy”"
+    },
+    "src_ml_engels_1892_preface": {
+      "status": 200,
+      "ok": true,
+      "detail": "page mentions “aristocracy among the working-class”"
+    },
+    "src_ml_lenin_development": {
+      "status": 200,
+      "ok": true,
+      "detail": "page mentions “development of capitalism in Russia”"
+    },
+    "src_ml_trotsky_tasks": {
+      "status": 200,
+      "ok": true,
+      "detail": "page mentions “not a substitute for the proletariat”"
+    },
+    "src_ml_lenin_dual_power": {
+      "status": 200,
+      "ok": true,
+      "detail": "page mentions “dual power”"
+    },
+    "src_ml_luxemburg_national": {
+      "status": 200,
+      "ok": true,
+      "detail": "page mentions “paraphrase of the old slogan of bourgeois nationalism”"
+    },
+    "src_ml_lenin_self_det": {
+      "status": 200,
+      "ok": true,
+      "detail": "page mentions “general democratic content”"
+    },
+    "src_ml_lenin_self_det_summed": {
+      "status": 200,
+      "ok": true,
+      "detail": "page mentions “in its scientific sense”"
+    },
+    "src_ml_connolly_lih": {
+      "status": 200,
+      "ok": true,
+      "detail": "page mentions “sacred national and religious duty”"
+    },
+    "src_ml_hilferding_fc": {
+      "status": 200,
+      "ok": true,
+      "detail": "page mentions “finance capital”"
+    },
+    "src_ml_lenin_stuttgart": {
+      "status": 200,
+      "ok": true,
+      "detail": "page mentions “civilising role”"
+    },
+    "src_ml_lenin_split": {
+      "status": 200,
+      "ok": true,
+      "detail": "page mentions “labour aristocracy”"
+    },
+    "src_ml_lenin_defeat": {
+      "status": 200,
+      "ok": true,
+      "detail": "page mentions “cannot but desire the defeat”"
+    },
+    "src_ml_bukharin_iwe": {
+      "status": 200,
+      "ok": true,
+      "detail": "page mentions “World Economy”"
+    },
+    "src_ml_eley_forging": {
+      "status": 200,
+      "ok": true,
+      "detail": "Open Library: “Forging Democracy”, Geoff Eley, first published 2002"
+    },
+    "src_ml_goldberg_jaures": {
+      "status": 200,
+      "ok": true,
+      "detail": "Open Library: “The life of Jean Jaurès”, Harvey Goldberg, first published 1962"
+    },
+    "src_ml_stuart_guesdists": {
+      "status": 200,
+      "ok": true,
+      "detail": "Open Library: “Marxism at Work”, Robert Stuart, first published 2002"
+    },
+    "src_ml_maehl_bebel": {
+      "status": 200,
+      "ok": true,
+      "detail": "Open Library: “August Bebel”, William Harvey Maehl, first published 1980"
+    },
+    "src_ml_mackenzie_fabians": {
+      "status": 200,
+      "ok": true,
+      "detail": "Open Library: “The First Fabians”, Norman Ian MacKenzie, first published 1977"
+    },
+    "src_ml_thompson_morris": {
+      "status": 200,
+      "ok": true,
+      "detail": "Open Library: “William Morris”, E. P. Thompson, first published 1955"
+    },
+    "src_ml_jennings_syndicalism": {
+      "status": 200,
+      "ok": true,
+      "detail": "Open Library: “Syndicalism in France”, Jeremy Jennings, first published 1990"
+    },
+    "src_ml_sorel_reflections": {
+      "status": 200,
+      "ok": true,
+      "detail": "Open Library: “Reflections on violence”, Georges Sorel, first published 1910"
+    },
+    "src_ml_dubofsky_iww": {
+      "status": 200,
+      "ok": true,
+      "detail": "Open Library: “We shall be all”, Melvyn Dubofsky, first published 1969"
+    },
+    "src_ml_quataert_feminists": {
+      "status": 200,
+      "ok": true,
+      "detail": "Open Library: “Reluctant Feminists in German Social Democracy, 1885-1917”, Jean H. Quataert, first published 2015"
+    },
+    "src_ml_boxer_socialist_women": {
+      "status": 200,
+      "ok": true,
+      "detail": "Open Library: “Socialist Women”, Marilyn J. Boxer, first published 1978"
+    },
+    "src_ml_foner_zetkin": {
+      "status": 200,
+      "ok": true,
+      "detail": "Open Library: “Clara Zetkin, selected writings”, Klara Zetkin, first published 1984"
+    },
+    "src_ml_kollontai_selected": {
+      "status": 200,
+      "ok": true,
+      "detail": "Open Library: “Selected writing of Alexandra Kollontai”, Alexandra Kollontai, first published 1977"
+    },
+    "src_ml_clements_kollontai": {
+      "status": 200,
+      "ok": true,
+      "detail": "Open Library: “Bolshevik feminist”, Barbara Evans Clements, first published 1979"
+    },
+    "src_ml_stites_women": {
+      "status": 200,
+      "ok": true,
+      "detail": "Open Library: “The women's liberation movement in Russia”, Richard Stites, first published 1978"
+    },
+    "src_ml_venturi_roots": {
+      "status": 200,
+      "ok": true,
+      "detail": "Open Library: “Roots Of Revolution A History Of The Populist And Socialist Movements In Nineteenth Century Russia”, Franco Venturi, first published 1960"
+    },
+    "src_ml_walicki_controversy": {
+      "status": 200,
+      "ok": true,
+      "detail": "Open Library: “The controversy over capitalism”, Andrzej Walicki, first published 1969"
+    },
+    "src_ml_haimson_origins": {
+      "status": 200,
+      "ok": true,
+      "detail": "Open Library: “The Russian marxists and the origins of Bolshevism”, L. H. Haimson, first published 1955"
+    },
+    "src_ml_getzler_martov": {
+      "status": 200,
+      "ok": true,
+      "detail": "Open Library: “Martov”, Israel Getzler, first published 1967"
+    },
+    "src_ml_deutscher_armed": {
+      "status": 200,
+      "ok": true,
+      "detail": "Open Library: “The Prophet Armed”, Isaac Deutscher, first published 1954"
+    },
+    "src_ml_kneipaz_trotsky": {
+      "status": 200,
+      "ok": true,
+      "detail": "Open Library: “The social and political thought of Leon Trotsky”, Baruch Knei-Paz, first published 1978"
+    },
+    "src_ml_day_gaido_witnesses": {
+      "status": 200,
+      "ok": true,
+      "detail": "Open Library: “Witnesses to permanent revolution”, Day, Richard B., Daniel Gaido, first published 2009"
+    },
+    "src_ml_rabinowitch_bolsheviks": {
+      "status": 200,
+      "ok": true,
+      "detail": "Open Library: “The Bolsheviks come to power”, Alexander Rabinowitch, first published 1976"
+    },
+    "src_ml_cohen_bukharin": {
+      "status": 200,
+      "ok": true,
+      "detail": "Open Library: “Bukharin and the Bolshevik Revolution”, Stephen F. Cohen, first published 1974"
+    },
+    "src_ml_bauer_nationalities": {
+      "status": 200,
+      "ok": true,
+      "detail": "Open Library: “The Question of Nationalities and Social Democracy”, Otto Bauer, first published 2000"
+    },
+    "src_ml_bottomore_austro": {
+      "status": 200,
+      "ok": true,
+      "detail": "Open Library: “Austro-Marxism”, T. B. Bottomore, Patrick Goode, first published 1978"
+    },
+    "src_ml_connor_national": {
+      "status": 200,
+      "ok": true,
+      "detail": "Open Library: “The national question in Marxist-Leninist theory and strategy”, Walker Connor, first published 1984"
+    },
+    "src_ml_nevin_connolly": {
+      "status": 200,
+      "ok": true,
+      "detail": "Open Library: “James Connolly”, Donal Nevin, first published 2005"
+    },
+    "src_ml_townshend_easter": {
+      "status": 200,
+      "ok": true,
+      "detail": "Open Library: “EASTER 1916: THE IRISH REBELLION”, CHARLES TOWNSHEND, first published 2005"
+    },
+    "src_ml_tobias_bund": {
+      "status": 200,
+      "ok": true,
+      "detail": "Open Library: “The Jewish Bund in Russia”, Henry J. Tobias, first published 1972"
+    },
+    "src_ml_frankel_prophecy": {
+      "status": 200,
+      "ok": true,
+      "detail": "Open Library: “Prophecy and politics”, Jonathan Frankel, first published 1981"
+    },
+    "src_ml_anweiler_soviets": {
+      "status": 200,
+      "ok": true,
+      "detail": "Open Library: “The soviets”, Oskar Anweiler, first published 1974"
+    },
+    "src_ml_brewer_imperialism": {
+      "status": 200,
+      "ok": true,
+      "detail": "Open Library: “Marxist theories of imperialism”, Brewer, Anthony, first published 1980"
+    },
+    "src_ml_day_gaido_imperialism": {
+      "status": 200,
+      "ok": true,
+      "detail": "Open Library: “Discovering imperialism”, Day, Richard B., first published 2011"
+    },
+    "src_ml_cain_hobson": {
+      "status": 200,
+      "ok": true,
+      "detail": "Open Library: “Hobson and Imperialism”, P. J. Cain, first published 2002"
+    },
+    "src_ml_smaldone_hilferding": {
+      "status": 200,
+      "ok": true,
+      "detail": "Open Library: “Rudolf Hilferding”, William Smaldone, first published 1998"
+    },
+    "src_ml_riddell_struggle": {
+      "status": 200,
+      "ok": true,
+      "detail": "Open Library: “Lenin's struggle for a revolutionary International”, Vladimir Il’ich Lenin, John Riddell, John Riddell, first published 1984"
+    }
+  }
+}

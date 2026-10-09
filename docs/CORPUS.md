@@ -8,8 +8,14 @@ validated, versioned, staged and audited exactly as if an editor had typed it.
 A corpus never publishes anything. Every entry it touches ends the import as a draft (or, with `--submit`, in the
 review queue), tagged with the corpus's **collection** name.
 
-The first corpus is **Initial Marx Corpus** (`corpus/initial-marx/`); its review queue is
-[`docs/corpus/initial-marx-review.md`](corpus/initial-marx-review.md).
+The corpora, in import order (`corpus/index.ts`):
+
+| Corpus | Collection | Requires | Review queue |
+| --- | --- | --- | --- |
+| `initial-marx` | Initial Marx Corpus | — | [`initial-marx-review.md`](corpus/initial-marx-review.md) |
+| `guided-understanding-marx` | Guided journeys | `initial-marx` | — |
+| `marx-to-lenin` | Marx to Lenin Corpus | `initial-marx` | [`marx-to-lenin-review.md`](corpus/marx-to-lenin-review.md); research in [`marx-to-lenin-research.md`](corpus/marx-to-lenin-research.md) |
+| `guided-marx-to-lenin` | Guided journeys | `marx-to-lenin` | — |
 
 ## Commands
 
@@ -22,8 +28,8 @@ npm run corpus -- report initial-marx [--http …]   # writes docs/corpus/initia
 ```
 
 - **setup** is how a new checkout (or any database without the corpora) gets them, because `data/*.db` is not in
-  Git. It applies migrations, then goes through `corpus/index.ts` in dependency order (`requires`; the Guided
-  journey needs the Initial Marx Corpus) and imports with `--submit` each corpus none of whose entries carry its
+  Git. It applies migrations, then goes through `corpus/index.ts` in dependency order (`requires`, as in the
+  table above) and imports with `--submit` each corpus none of whose entries carry its
   collection label yet. A corpus that is fully present is left untouched, even if editors have changed it since; a
   partly present one stops the run with the missing keys, to be completed deliberately with `import`. It ends with
   the database checks and the desk and preview URLs of each path (ids differ between databases). It never seeds,
@@ -50,13 +56,20 @@ finished corpus defines (so early batches can link ahead), and ordered **batches
 
 - **Entities** are addressed by `kind:slug`. An existing entry with that slug is *amended* (for a live entry, a new
   working version — the published one is untouched); otherwise one is created. `fields` uses the editor field names
-  in `lib/editorial/fields.ts`.
-- **Prose** uses the desk's markup: `[[kind:slug]]` links, `[cite:src_id, locator]` citations, `##` headings. Voice
-  markers make the status of a claim explicit: `**Text.**` (what a source says), `**Interpretation.**`,
-  `**Context.**` and `**Disputed.**` (where scholars disagree; give both readings with their holders).
+  in `lib/editorial/fields.ts` (tendencies have no subtitle, events no aliases). An entity with `fields: {}`
+  *annotates* an existing entry: its flags and citations are added and its text is left alone. Use it to attach
+  review notes or sources to another corpus's entries instead of rewriting them.
+- **Prose** uses the desk's markup: `[[kind:slug]]` links, `[cite:src_id, locator]` citations, `##` headings for
+  real sections. Do not use bold labels such as `**Text.**` or `**Interpretation.**` to mark the status of a claim
+  (the Initial Marx Corpus still has some; they are being removed). Say it in the sentence instead: attribute what a
+  source says to the source, name the historian behind a reading, and where scholars disagree give the readings
+  with their holders. Avoid terms the period did not use unless the sentence says they are later.
 - **Locators** are chapters, sections, letters and dates — never invented page numbers.
 - **Relationships** need a note and should name a source; `basis: "interpretive"` marks a reading rather than a
   documented fact. On a live entry they are staged and released with the entry named by `on` (default: `from`).
+  Prose may link ahead to entries of later batches, but relationships, excerpts, debate positions and path steps
+  are imported batch by batch and may only name entries defined in their own or an earlier batch (or already in
+  the database); `check` reports any that do not.
 - **Excerpts** carry an `archiveUrl`. A verbatim match makes the excerpt *Needs review* with a provenance note; no
   match makes it *Unverified* with a flag. The import never marks anything *Verified* — that is a reviewer's job.
 - **Flags** (`missing-source`, `disputed`, `unverified-quotation`, `uncertain-relationship`, `incomplete-metadata`,
@@ -73,7 +86,7 @@ finished corpus defines (so early batches can link ahead), and ordered **batches
 ## Reviewing a corpus
 
 1. Open **Content** and filter by the collection, or open any entry's preview and choose *Include unpublished
-   “Initial Marx Corpus” entries* to read the whole corpus together — links, maps, timelines and paths then follow
+   “Initial Marx Corpus” entries* (or the collection under review) to read the whole corpus together — links, maps, timelines and paths then follow
    the drafts.
 2. Work through the review queue document: flags per entry, then quotations (check each against a printed edition
    and set *Verified*), then relationships.

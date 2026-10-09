@@ -45,6 +45,9 @@ const norm = (t: string) =>
     .replace(/[^a-z0-9]+/g, " ")
     .trim();
 
+/** An entity with no fields annotates an existing entry: its notes and citations are added, its content is left as it is. */
+export const isAnnotation = (e: CorpusEntity) => Object.keys(e.fields).length === 0;
+
 function allEntities(corpus: Corpus, upTo?: string) {
   const out: CorpusEntity[] = [];
   for (const b of corpus.batches) {
@@ -100,6 +103,12 @@ export async function checkData(corpus: Corpus, upTo?: string): Promise<CheckIss
   for (const e of entities) {
     const { kind } = parseKey(e.key);
     const defs = fieldsFor(kind);
+    // No fields: the entity only annotates an entry that already exists (notes and citations; its text is untouched).
+    if (isAnnotation(e)) {
+      if (!(await resolveKey(e.key))) issues.push({ level: "error", area: "data", key: e.key, message: "Annotates an entry that does not exist in this database." });
+      for (const c of e.citations ?? []) useSource(c.source, e.key);
+      continue;
+    }
     for (const name of Object.keys(e.fields)) {
       if (!defs.some((d) => d.name === name)) issues.push({ level: "error", area: "data", key: e.key, message: `Unknown field "${name}" for a ${kind}.` });
     }
@@ -124,14 +133,26 @@ export async function checkData(corpus: Corpus, upTo?: string): Promise<CheckIss
     if (kind === "concept" && !(e.fields.brief && e.fields.standard && e.fields.deep)) issues.push({ level: "warning", area: "data", key: e.key, message: "Concept lacks one of the three explanation depths." });
   }
 
+  // Structure (relationships, excerpts, debates, paths) is imported batch by batch, so it may only
+  // refer to entries defined in its own or an earlier batch, or already in the database.
+  const definedAt = new Map<string, number>();
+  batches.forEach((b, i) => (b.entities ?? []).forEach((e) => definedAt.has(e.key) || definedAt.set(e.key, i)));
+  const unknownAt = async (key: string, i: number) => {
+    if ((definedAt.get(key) ?? Infinity) <= i || (await resolveKey(key as EntityKey))) return null;
+    return definedAt.has(key) || laterKeys.has(key) ? `${key} is defined only in a later batch` : `Unknown entry ${key}`;
+  };
+
   // Relationships
   const seen = new Set<string>();
   const years = new Map(entities.map((e) => [e.key, { start: e.fields.yearStart as number | null, end: e.fields.yearEnd as number | null }]));
-  for (const b of batches) for (const r of b.relationships ?? []) {
+  for (const [bi, b] of batches.entries()) for (const r of b.relationships ?? []) {
     const label = `${r.from} ${r.type} ${r.to}`;
     if (!ALL_RELATIONSHIP_TYPES.includes(r.type)) issues.push({ level: "error", area: "relationships", key: label, message: "Unknown relationship type." });
     if (r.from === r.to) issues.push({ level: "error", area: "relationships", key: label, message: "Relationship to itself." });
-    for (const k of [r.from, r.to]) if (!(await known(k))) issues.push({ level: "error", area: "relationships", key: label, message: `Unknown endpoint ${k}.` });
+    for (const k of [r.from, r.to, r.on].filter(Boolean) as string[]) {
+      const problem = await unknownAt(k, bi);
+      if (problem) issues.push({ level: "error", area: "relationships", key: label, message: `${problem}.` });
+    }
     const canon = normaliseRelationship(r.from, r.type, r.to);
     const id = `${canon.fromId}|${canon.type}|${canon.toId}`;
     if (seen.has(id)) issues.push({ level: "error", area: "relationships", key: label, message: "Duplicate relationship (after normalising inverse types)." });
@@ -152,19 +173,27 @@ export async function checkData(corpus: Corpus, upTo?: string): Promise<CheckIss
   }
 
   // Excerpts
-  for (const b of batches) for (const x of b.excerpts ?? []) {
+  for (const [bi, b] of batches.entries()) for (const x of b.excerpts ?? []) {
     useSource(x.source, x.key);
     if (!x.locator) issues.push({ level: "warning", area: "sources", key: x.key, message: "Quotation has no locator." });
-    for (const k of [x.entity, x.speaker, x.text].filter(Boolean) as string[]) if (!(await known(k))) issues.push({ level: "error", area: "data", key: x.key, message: `Unknown entry ${k}.` });
+    for (const k of [x.entity, x.speaker, x.text].filter(Boolean) as string[]) {
+      const problem = await unknownAt(k, bi);
+      if (problem) issues.push({ level: "error", area: "data", key: x.key, message: `${problem}.` });
+    }
   }
 
   // Debates
-  for (const b of batches) for (const d of b.debates ?? []) {
+  for (const [bi, b] of batches.entries()) for (const d of b.debates ?? []) {
+    const debateProblem = await unknownAt(d.debate, bi);
+    if (debateProblem) issues.push({ level: "error", area: "data", key: d.debate, message: `${debateProblem}.` });
     const props = new Set(d.propositions.map((p) => p.key));
     if (d.positions.length < 3) issues.push({ level: "info", area: "data", key: d.debate, message: `Only ${d.positions.length} positions.` });
     for (const p of d.positions) {
       for (const k of Object.keys(p.stances)) if (!props.has(k)) issues.push({ level: "error", area: "data", key: d.debate, message: `${p.label}: stance on unknown proposition ${k}.` });
-      for (const k of [p.holder, ...(p.links ?? [])].filter(Boolean) as string[]) if (!(await known(k))) issues.push({ level: "error", area: "data", key: d.debate, message: `${p.label}: unknown entry ${k}.` });
+      for (const k of [p.holder, ...(p.links ?? [])].filter(Boolean) as string[]) {
+        const problem = await unknownAt(k, bi);
+        if (problem) issues.push({ level: "error", area: "data", key: d.debate, message: `${p.label}: ${problem}.` });
+      }
     }
   }
 
@@ -179,7 +208,7 @@ export async function checkData(corpus: Corpus, upTo?: string): Promise<CheckIss
   // Paths: prerequisites come first
   const presupposes = new Map<string, string[]>();
   for (const b of batches) for (const r of b.relationships ?? []) if (r.type === "PRESUPPOSES") presupposes.set(r.from, [...(presupposes.get(r.from) ?? []), r.to]);
-  for (const b of batches) for (const p of b.paths ?? []) {
+  for (const [bi, b] of batches.entries()) for (const p of b.paths ?? []) {
     // Reading order: each main step, then its side routes.
     const order = p.steps.flatMap((s) => [s.entity, ...(s.branches ?? []).map((b) => b.entity)]);
     order.forEach((k, i) => {
@@ -188,7 +217,11 @@ export async function checkData(corpus: Corpus, upTo?: string): Promise<CheckIss
         if (j > i) issues.push({ level: "warning", area: "path", key: p.path, message: `${k} comes before its prerequisite ${pre}.` });
       }
     });
-    for (const s of p.steps) for (const k of [s.entity, ...(s.branches ?? []).map((b) => b.entity)]) if (!(await known(k))) issues.push({ level: "error", area: "path", key: p.path, message: `Unknown step ${k}.` });
+    for (const s of p.steps)
+      for (const k of [p.path, s.entity, ...(s.branches ?? []).map((b) => b.entity)]) {
+        const problem = await unknownAt(k, bi);
+        if (problem) issues.push({ level: "error", area: "path", key: p.path, message: `Step: ${problem}.` });
+      }
   }
 
   for (const [id, v] of sources) if (!v.used) issues.push({ level: "info", area: "sources", key: id, message: "Source is not cited anywhere yet." });

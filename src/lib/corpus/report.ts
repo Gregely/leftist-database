@@ -5,6 +5,7 @@ import "server-only";
  * (the flags recorded as internal notes, structural checks, quotations
  * awaiting verification, sources still missing).
  */
+import { existsSync } from "node:fs";
 import { and, eq, inArray, sql } from "drizzle-orm";
 import { ready } from "@/lib/db/client";
 import * as s from "@/lib/db/schema";
@@ -29,8 +30,24 @@ export async function buildReport(corpus: Corpus, checks: CheckIssue[] = []): Pr
     db.select({ id: s.sources.id, title: s.sources.title, createdBy: s.sources.createdBy }).from(s.sources),
   ]);
   const importer = (await db.select().from(s.users).where(eq(s.users.email, "research-import@atlas.invalid")).get())?.id;
-  const corpusSources = sources.filter((x) => x.createdBy === importer);
-  const corpusRels = rels.filter((r) => r.createdBy === importer);
+  // Count what this corpus defines, not everything the shared import account has written for other corpora.
+  const defined = corpus.batches.flatMap((b) => b.sources ?? []);
+  const corpusSources = sources.filter((x) => defined.some((d) => d.id === x.id && !d.reuse));
+  const reusedSources = sources.filter((x) => defined.some((d) => d.id === x.id && d.reuse));
+  const keyOf = new Map((await db.select({ id: s.entities.id, kind: s.entities.kind, slug: s.entities.slug }).from(s.entities)).map((e) => [`${e.kind}:${e.slug}`, e.id]));
+  const pairs = new Set(corpus.batches.flatMap((b) => b.relationships ?? []).flatMap((r) => [`${keyOf.get(r.from)}|${keyOf.get(r.to)}`, `${keyOf.get(r.to)}|${keyOf.get(r.from)}`]));
+  const corpusRels = rels.filter((r) => r.createdBy === importer && pairs.has(`${r.fromId}|${r.toId}`));
+  const bodies = new Set(corpus.batches.flatMap((b) => b.excerpts ?? []).map((x) => x.body.trim()));
+
+  // Where each entry came from: created by this corpus, an existing entry it rewrote, or one it only annotated (notes, citations).
+  const message = `${corpus.collection} — research import`;
+  const revs = ids.length ? await db.select({ entityId: s.revisions.entityId, version: s.revisions.version, message: s.revisions.message }).from(s.revisions).where(inArray(s.revisions.entityId, ids)) : [];
+  const origin = (id: string) => {
+    const mine = revs.filter((v) => v.entityId === id).sort((a, b) => a.version - b.version);
+    if (mine[0]?.message === "Created" && mine[1]?.message === message) return "new";
+    return mine.some((v) => v.message === message) ? "revised" : "annotated";
+  };
+  const notesFile = ["research", "notes"].map((x) => `${corpus.dir.split("/").pop()}-${x}.md`).find((f) => existsSync(`docs/corpus/${f}`));
 
   const flagOf = (body: string) => (Object.entries(FLAG_LABELS).find(([, l]) => body.startsWith(`[${l}]`))?.[0] as FlagType | undefined) ?? null;
   const count = <T,>(xs: T[], f: (x: T) => boolean) => xs.filter(f).length;
@@ -56,17 +73,21 @@ export async function buildReport(corpus: Corpus, checks: CheckIssue[] = []): Pr
   const L: string[] = [];
   L.push(`# ${corpus.collection} — review summary`, "");
   L.push(`Generated ${new Date().toISOString().slice(0, 10)} from the database by \`npm run corpus -- report\`. Every entry below is **unpublished**: new entries are drafts, and entries that already existed as public sample records have a pending new version whose text and structure stay off the public site until an editor publishes them. Read them in the desk, or as a connected whole in the collection preview (Preview → *Include unpublished “${corpus.collection}” entries*).`, "");
-  L.push(`Research decisions, known problems, gaps and architecture notes are in [\`${corpus.dir.split("/").pop()}-notes.md\`](${corpus.dir.split("/").pop()}-notes.md).`, "");
+  if (notesFile) L.push(`Research decisions, known problems, gaps and architecture notes are in [\`${notesFile}\`](${notesFile}).`, "");
   L.push("## Totals", "");
   L.push("| | Count |", "| --- | --- |");
-  for (const k of KIND_ORDER) L.push(`| ${KINDS[k].plural} | ${byKind[k].length} (${count(byKind[k], (r) => !r.isSample && r.publishedRevision == null)} new, ${count(byKind[k], (r) => r.publishedRevision != null)} amending existing sample entries) |`);
-  L.push(`| Sources catalogued by the corpus | ${corpusSources.length} (plus ${new Set(cites.map((c) => c.sourceId)).size - corpusSources.filter((x) => cites.some((c) => c.sourceId === x.id)).length} existing records reused) |`);
+  for (const k of KIND_ORDER) {
+    const n = (o: string) => count(byKind[k], (r) => origin(r.id) === o);
+    L.push(`| ${KINDS[k].plural} | ${byKind[k].length} (${n("new")} new, ${n("revised")} revising existing entries, ${n("annotated")} existing entries with notes or citations only) |`);
+  }
+  L.push(`| Sources catalogued by the corpus | ${corpusSources.length} (plus ${reusedSources.length} existing records reused) |`);
   L.push(`| Relationships recorded by the corpus | ${corpusRels.length} (${count(corpusRels, (r) => !!r.sourceId)} with a source) |`);
   L.push(`| Citations on corpus entries | ${cites.length} |`);
-  const ownExcerpts = excerpts.filter((x) => x.createdBy === importer);
+  const ownExcerpts = excerpts.filter((x) => x.createdBy === importer && bodies.has(x.body.trim()));
   const tally = (xs: typeof excerpts) => Object.entries(VERIFICATION_LABELS).map(([k, l]) => `${count(xs, (x) => x.verification === k)} ${l.toLowerCase()}`).join(", ");
   L.push(`| Excerpts added by the corpus | ${ownExcerpts.length} — ${tally(ownExcerpts)} |`);
-  L.push(`| Existing sample excerpts on amended entries | ${excerpts.length - ownExcerpts.length} — ${tally(excerpts.filter((x) => x.createdBy !== importer))} |`);
+  const otherExcerpts = excerpts.filter((x) => !ownExcerpts.includes(x));
+  L.push(`| Existing excerpts on revised or annotated entries | ${otherExcerpts.length} — ${tally(otherExcerpts)} |`);
   L.push("");
   L.push("## Editorial state", "");
   L.push("| State | Entries |", "| --- | --- |");
@@ -91,8 +112,9 @@ export async function buildReport(corpus: Corpus, checks: CheckIssue[] = []): Pr
     for (const r of byKind[k]) {
       const fl = flagged.get(r.id) ?? [];
       const iss = issuesById.get(r.id) ?? [];
-      const xs = excerpts.filter((x) => x.entityId === r.id);
-      const state = `${STATUS_LABELS[r.status as WorkflowStatus] ?? r.status}${r.live ? " · live sample version unchanged, new version pending" : " · draft, not public"}`;
+      const xs = ownExcerpts.filter((x) => x.entityId === r.id);
+      const o = origin(r.id);
+      const state = `${STATUS_LABELS[r.status as WorkflowStatus] ?? r.status}${!r.live ? " · draft, not public" : o === "annotated" ? " · live version unchanged; review notes and staged citations only" : " · live version unchanged, new version pending"}`;
       L.push(`- **${r.title}** (\`${r.id}\`) — ${state}`);
       for (const f of fl) L.push(`  - ${f.body}${f.field ? ` _(field: ${f.field})_` : ""}`);
       for (const i of iss) L.push(`  - [Check · ${i.level}] ${i.message}`);
