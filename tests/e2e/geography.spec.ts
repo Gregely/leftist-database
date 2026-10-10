@@ -24,22 +24,36 @@ async function findOnMap(page: Page, query: string, option: RegExp) {
   await page.getByRole("listbox", { name: "Places and entries" }).getByRole("option", { name: option }).first().click();
 }
 
-test("Geography and the Theory Map are separate links in the main navigation", async ({ page }) => {
+test("Geography and the Theory Map are separate destinations in Explore's menu", async ({ page }) => {
   await page.goto("/");
-  const contents = page.getByRole("navigation", { name: "Primary" }).getByRole("list", { name: "The collection" });
-  await expect(contents.getByRole("link", { name: "Geography" })).toHaveAttribute("href", "/geography");
-  await expect(contents.getByRole("link", { name: /Map$/ })).toHaveAttribute("href", "/map");
+  const primary = page.getByRole("navigation", { name: "Primary" });
+  const toggle = primary.getByRole("button", { name: "The collection's sections" });
+  // Retry if the dev server's first compile of a route refreshes the page just after the click.
+  const open = () =>
+    expect(async () => {
+      if ((await toggle.getAttribute("aria-expanded")) !== "true") await toggle.click();
+      await expect(primary.getByRole("list", { name: "Maps & time" })).toBeVisible({ timeout: 1000 });
+    }).toPass();
+  const group = primary.getByRole("list", { name: "Maps & time" });
+  await open();
+  await expect(group.getByRole("link", { name: "Geography" })).toHaveAttribute("href", "/geography");
+  await expect(group.getByRole("link", { name: "Theory Map" })).toHaveAttribute("href", "/map");
 
-  await contents.getByRole("link", { name: "Geography" }).click();
+  await group.getByRole("link", { name: "Geography" }).click();
   await expect(page).toHaveURL(/\/geography$/);
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Geography.");
-  await expect(contents.getByRole("link", { name: "Geography" })).toHaveAttribute("aria-current", "page");
-  await expect(contents.getByRole("link", { name: /Map$/ })).not.toHaveAttribute("aria-current", "page");
+  await expect(primary).toContainText("Current section: Geography");
+  await open();
+  await expect(group.getByRole("link", { name: "Geography" })).toHaveAttribute("aria-current", "page");
+  await expect(group.getByRole("link", { name: "Theory Map" })).not.toHaveAttribute("aria-current", "page");
+  await page.keyboard.press("Escape");
+  await page.waitForLoadState("networkidle");
   // Its own controls, not the Theory Map's.
   await expect(page.getByRole("button", { name: /Relations/ })).toHaveCount(0);
   await expect(map(page).locator("svg g[role=button]").first()).toBeVisible();
 
-  await contents.getByRole("link", { name: /Map$/ }).click();
+  await open();
+  await group.getByRole("link", { name: "Theory Map" }).click();
   await expect(page).toHaveURL(/\/map$/);
   await expect(page.getByRole("heading", { level: 1 })).toContainText("The Theory Map");
   await expect(page.getByRole("region", { name: /^Theory Map/ })).toBeVisible();

@@ -5,8 +5,9 @@ import { RunningHead } from "./MobileDock";
 import { Wordmark } from "./Wordmark";
 
 /**
- * The masthead. Desktop: wordmark, Guided set apart, the collection in reading
- * order, and a search field that is always one keystroke away ("/").
+ * The masthead. Desktop: the wordmark, then Guided and Explore (whose menu
+ * holds the collection's sections), and on the right a search field that is
+ * always one keystroke away ("/") and the Saved count.
  * Phones: wordmark and a running head naming the current section; search and
  * the rest of the navigation live in the dock at the foot of the screen.
  */
@@ -19,22 +20,23 @@ export function SiteHeader() {
       >
         Skip to content
       </a>
-      <div className="mx-auto flex h-14 max-w-[1440px] items-stretch justify-between gap-5 px-4 sm:px-8 lg:h-[60px] lg:gap-3 lg:px-6 xl:gap-5 xl:px-10">
-        <div className="flex min-w-0 items-center gap-3">
-          <Wordmark className="text-[1.15rem] lg:text-[1.3rem]" />
-          <RunningHead />
+      <div className="mx-auto flex h-14 max-w-[1440px] items-stretch justify-between gap-6 px-4 sm:px-8 lg:h-[60px] lg:px-8 xl:px-10">
+        <div className="flex min-w-0 items-stretch gap-3 lg:gap-9 xl:gap-12">
+          <div className="flex min-w-0 items-center gap-3">
+            <Wordmark className="text-[1.15rem] lg:text-[1.35rem]" />
+            <RunningHead />
+          </div>
+          <nav aria-label="Primary" className="hidden lg:flex lg:items-stretch">
+            <NavLinks />
+          </nav>
         </div>
-        <nav aria-label="Primary" className="hidden lg:flex lg:items-stretch">
-          <NavLinks />
-        </nav>
-        <div className="hidden items-center gap-3 lg:flex xl:gap-5">
-          <SearchTrigger className="group flex w-[3rem] items-center justify-between gap-3 border-b border-ink pb-1 text-left transition-colors hover:border-red min-[1536px]:w-[12.5rem]">
+        <div className="hidden shrink-0 items-center gap-6 lg:flex">
+          <SearchTrigger className="group flex w-[10.5rem] items-center justify-between gap-3 border-b border-ink pb-1 text-left transition-colors hover:border-red xl:w-[13rem]">
             <span className="flex items-center gap-2">
               <SearchGlyph />
-              <span className="hidden font-serif text-[0.98rem] italic text-faint group-hover:text-ink min-[1536px]:inline">Search the Atlas</span>
-              <span className="sr-only min-[1536px]:hidden">Search</span>
+              <span className="font-serif text-[0.98rem] italic text-faint group-hover:text-ink">Search the Atlas</span>
             </span>
-            <kbd className="label-mono hidden border border-rule px-1.5 leading-[1.35] text-faint min-[1536px]:inline">/</kbd>
+            <kbd className="label-mono hidden border border-rule px-1.5 leading-[1.35] text-faint xl:inline">/</kbd>
           </SearchTrigger>
           <BookmarkCount />
         </div>

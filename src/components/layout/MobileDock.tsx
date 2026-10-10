@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { COLLECTION, EXPLORE, MORE } from "@/lib/site";
+import { COLLECTION, EXPLORE, EXPLORE_GROUPS, MORE } from "@/lib/site";
 import { useSearch } from "@/components/search/SearchProvider";
 import { useBookmarks } from "@/lib/client/bookmarks";
 import { useActiveRoute } from "@/lib/client/route";
@@ -26,7 +26,8 @@ export function RunningHead() {
  * The reading dock: a fixed bar at the foot of the screen on phones and
  * tablets, within reach of the thumb, in the masthead's order. Guided is its
  * own destination; Explore opens the collection as a sheet (Explore itself,
- * then its sections); Search and Saved are one tap away. It slides out of the
+ * then its sections in the masthead menu's groups); Search and Saved are one
+ * tap away. It slides out of the
  * way while reading down a page and returns on the way back up.
  */
 export function MobileDock() {
@@ -83,34 +84,46 @@ export function MobileDock() {
         <nav
           id="site-index"
           aria-label="Explore"
-          className="fixed inset-x-0 bottom-14 z-50 max-h-[calc(100dvh-7.5rem)] overflow-y-auto border-t-[3px] border-ink bg-paper px-4 pb-6 pt-4 animate-rise sm:px-8 lg:hidden"
+          className="fixed inset-x-0 bottom-14 z-50 max-h-[calc(100dvh-7.5rem)] overflow-y-auto border-t-[3px] border-ink bg-paper px-4 pb-5 pt-4 animate-rise sm:px-8 lg:hidden"
         >
           <Link
             href={EXPLORE.href}
-            aria-current={explore ? "page" : undefined}
-            className="flex items-baseline justify-between gap-4 border-b-[3px] border-double border-ink pb-2"
+            aria-current={explore && pathname === EXPLORE.href ? "page" : undefined}
+            className="flex items-baseline justify-between gap-4 border-b border-ink pb-2"
           >
-            <span className={`label font-semibold tracking-[0.16em] text-[0.8rem] ${explore ? "text-red" : ""}`}>{EXPLORE.label}</span>
-            <span aria-hidden="true" className="text-red">→</span>
+            <span className={`label text-[0.8rem] font-semibold tracking-[0.16em] ${pathname === EXPLORE.href ? "text-red" : ""}`}>
+              {EXPLORE.label} <span className="font-normal text-faint">· the whole collection</span>
+            </span>
+            <span aria-hidden="true" className="text-red">
+              →
+            </span>
           </Link>
-          <ol className="ml-1 mt-1 border-l border-ink pl-4">
-            {COLLECTION.map((l, i) => {
-              const active = isActive(pathname, l.href);
-              return (
-                <li key={l.href} className="border-b border-rule last:border-b-0">
-                  <Link href={l.href} aria-current={active ? "page" : undefined} className="flex items-baseline gap-3 py-2.5">
-                    <span className="label-mono w-5 text-faint">{String(i + 1).padStart(2, "0")}</span>
-                    <span aria-hidden="true" className="h-2 w-2 shrink-0 self-center" style={{ background: l.tone }} />
-                    <span className={`font-serif text-[1.5rem] leading-none ${active ? "text-red" : ""}`}>{l.label}</span>
-                  </Link>
-                </li>
-              );
-            })}
-          </ol>
-          <ul className="mt-5 flex flex-wrap gap-x-5 gap-y-2 border-t border-rule pt-4">
+          <div className="mt-1 grid gap-x-8 sm:grid-cols-2">
+            {EXPLORE_GROUPS.map((g) => (
+              <section key={g.key} aria-labelledby={`dock-${g.key}`} className="pt-3">
+                <h2 id={`dock-${g.key}`} className="label pb-1 text-faint">
+                  {g.label}
+                </h2>
+                <ul>
+                  {g.items.map((l) => {
+                    const active = isActive(pathname, l.href);
+                    return (
+                      <li key={l.href} className="border-b border-rule-soft last:border-b-0">
+                        <Link href={l.href} aria-current={active ? "page" : undefined} className="flex items-center gap-3 py-2">
+                          <span aria-hidden="true" className="h-2 w-2 shrink-0" style={{ background: l.tone }} />
+                          <span className={`font-serif text-[1.25rem] leading-tight ${active ? "text-red underline decoration-red decoration-2 underline-offset-[5px]" : ""}`}>{l.label}</span>
+                        </Link>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </section>
+            ))}
+          </div>
+          <ul className="mt-4 flex flex-wrap gap-x-5 gap-y-2 border-t border-rule pt-3">
             {MORE.map((l) => (
               <li key={l.href}>
-                <Link href={l.href} className="label text-muted hover:text-red">
+                <Link href={l.href} aria-current={isActive(pathname, l.href) ? "page" : undefined} className={`label hover:text-red ${isActive(pathname, l.href) ? "text-red" : "text-muted"}`}>
                   {l.label}
                 </Link>
               </li>

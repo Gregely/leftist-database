@@ -20,8 +20,19 @@ test("the dock keeps Guided apart and opens Explore with the collection beneath 
   await expect(nav).toBeVisible();
   await expect(nav.getByRole("link", { name: "Explore" })).toHaveAttribute("href", "/explore");
   await expect(nav.getByRole("link", { name: "Guided" })).toHaveCount(0);
+  // The same groups as the masthead's menu.
+  expect(await nav.getByRole("region", { name: "Library" }).getByRole("link").allInnerTexts()).toEqual(["Thinkers", "Concepts", "Texts", "Debates", "Tendencies"]);
+  expect(await nav.getByRole("region", { name: "Maps & time" }).getByRole("link").allInnerTexts()).toEqual(["Timeline", "Theory Map", "Geography"]);
   await nav.getByRole("link", { name: "Debates" }).click();
   await expect(page).toHaveURL(/\/debates$/);
+  // Navigating closes the sheet; reopened, it marks the current page.
+  await expect(nav).toBeHidden();
+  await page.getByRole("button", { name: "Explore" }).click();
+  await expect(nav.getByRole("link", { name: "Debates" })).toHaveAttribute("aria-current", "page");
+  await page.getByRole("button", { name: "Close" }).click();
+  await expect(nav).toBeHidden();
+  await page.getByRole("link", { name: "Guided" }).last().click();
+  await expect(page).toHaveURL(/\/guided$/);
 });
 
 test("the Theory Map works on a phone", async ({ page }) => {

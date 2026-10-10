@@ -166,12 +166,16 @@ test("editors build a Guided journey from existing entries, and readers only see
   await expect(reader.locator(`[data-guided-card="${slug}"]`)).toHaveCount(0);
 });
 
-test("Guided is in the main navigation alongside the existing sections", async ({ page }) => {
+test("Guided is in the main navigation beside Explore, which holds the sections", async ({ page }) => {
   await page.goto("/");
-  const nav = page.getByRole("navigation").first();
-  await expect(nav.getByRole("link", { name: "Guided" })).toBeVisible();
+  await page.waitForLoadState("networkidle");
+  const nav = page.getByRole("navigation", { name: "Primary" });
+  await expect(nav.getByRole("link", { name: /^Guided/ })).toBeVisible();
+  await expect(nav.getByRole("link", { name: "Explore", exact: true })).toBeVisible();
+  await nav.getByRole("button", { name: "The collection's sections" }).click();
   for (const label of ["Thinkers", "Concepts"]) await expect(nav.getByRole("link", { name: label })).toBeVisible();
-  await nav.getByRole("link", { name: "Guided" }).click();
+  await page.keyboard.press("Escape");
+  await nav.getByRole("link", { name: /^Guided/ }).click();
   await expect(page).toHaveURL(/\/guided$/);
   await expect(page.getByRole("heading", { level: 1 })).toContainText("Guided");
 });

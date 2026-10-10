@@ -53,6 +53,25 @@ export const COLLECTION = SECTIONS.filter((s) => s.key !== "explore");
 /** Primary navigation: Guided on its own; then Explore, followed by its contents. */
 export const NAV = [{ label: "Guided", href: "/guided" }, { label: EXPLORE.label, href: EXPLORE.href }, ...COLLECTION.map((s) => ({ label: s.label, href: s.href }))] as const;
 
+type SectionKey = (typeof SECTIONS)[number]["key"];
+const section = (key: SectionKey) => SECTIONS.find((s) => s.key === key)!;
+
+/**
+ * Explore's menu: the collection in two groups, then two reference pages.
+ * The masthead's dropdown and the phone sheet both read this; a new section
+ * joins a group here.
+ */
+export const EXPLORE_GROUPS = [
+  { key: "library", label: "Library", items: (["thinkers", "concepts", "texts", "debates", "tendencies"] as const).map(section) },
+  { key: "maps", label: "Maps & time", items: (["timeline", "map", "geography"] as const).map(section) },
+] as const;
+
+/** Reference pages that belong to the collection, listed quietly under Explore's groups. */
+export const EXPLORE_MORE = [
+  { label: "Learning paths", href: "/paths" },
+  { label: "Sources", href: "/sources" },
+] as const;
+
 /** Further pages listed in the index sheet and the footer. */
 export const MORE = [
   { label: "Learning paths", href: "/paths" },

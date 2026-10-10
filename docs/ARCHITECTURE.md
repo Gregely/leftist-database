@@ -122,9 +122,13 @@ capitals (`.label`, `.kicker`) for the index voice — section names, navigation
 figures (`.label-mono`) for years and counts. Relationships read as italic phrases (`.rel`: *drew on*, *critiqued*).
 Book and text titles are italic; debate titles end in a red question mark (`Question`).
 
-**Navigation.** Desktop: a masthead with Guided set apart, the collection in reading order (`SECTIONS`) and a search
-field (`/` or ⌘K from anywhere). Phones and tablets: a running head naming the section, and a dock at the foot of the
-screen (Index · Guided · Search · Saved); Index opens the whole collection as a sheet. Entry pages carry a sticky
+**Navigation.** Desktop: the wordmark, then Guided and Explore, and on the right a search field (`/` or ⌘K from
+anywhere) and Saved. Explore links to its own page; its chevron (or hovering with a mouse, or ArrowDown) opens a
+compact menu of the collection in two groups, Library (thinkers, concepts, texts, debates, tendencies) and Maps &
+time (timeline, Theory Map, Geography), with learning paths and sources beneath. The groups live in `EXPLORE_GROUPS`
+(`lib/site.ts`); a new section joins one there. The page's place in the collection is named beside Explore, and the
+current page is marked in the menu. Phones and tablets: a running head naming the section, and a dock at the foot of
+the screen (Guided · Explore · Search · Saved); Explore opens the same groups as a sheet. Entry pages carry a sticky
 running head (`SectionNav`) with the entry title, its sections and a reading-progress hairline. While a reader follows
 a Guided journey, `RouteRibbon` shows the way back under the masthead (`lib/client/route.ts`, browser only).
 
