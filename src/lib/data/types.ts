@@ -114,6 +114,10 @@ export interface GraphNode {
   color: string | null;
   group: string | null;
   degree: number;
+  /** URL slug (unique within the kind). */
+  slug?: string;
+  /** Marked as a featured entry by the editors. */
+  featured?: boolean;
 }
 
 export interface GraphEdge {

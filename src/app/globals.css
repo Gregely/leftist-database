@@ -503,6 +503,47 @@
   .wdth-normal { font-variation-settings: "wdth" 100; }
 }
 
+/* Theory Map: the two handles of the period range share one track. */
+.period-thumb {
+  pointer-events: none;
+}
+.period-thumb::-webkit-slider-runnable-track {
+  background: transparent;
+}
+.period-thumb::-webkit-slider-thumb {
+  pointer-events: auto;
+  appearance: none;
+  width: 12px;
+  height: 20px;
+  margin-top: 0;
+  background: var(--color-paper-warm);
+  border: 1.5px solid var(--color-ink);
+  cursor: ew-resize;
+}
+.period-thumb::-moz-range-track {
+  background: transparent;
+}
+.period-thumb::-moz-range-thumb {
+  pointer-events: auto;
+  width: 10px;
+  height: 18px;
+  border-radius: 0;
+  background: var(--color-paper-warm);
+  border: 1.5px solid var(--color-ink);
+  cursor: ew-resize;
+}
+.period-thumb:focus-visible {
+  outline: none;
+}
+.period-thumb:focus-visible::-webkit-slider-thumb {
+  outline: 2px solid var(--color-red);
+  outline-offset: 1px;
+}
+.period-thumb:focus-visible::-moz-range-thumb {
+  outline: 2px solid var(--color-red);
+  outline-offset: 1px;
+}
+
 /* Respect reduced motion everywhere. */
 @media (prefers-reduced-motion: reduce) {
   *,

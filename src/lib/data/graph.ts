@@ -80,6 +80,8 @@ async function buildGraph(nodeIds: string[], families: RelationshipFamily[], inc
     color: tendencies.get(r.id)?.color ?? null,
     group: tendencies.get(r.id)?.group ?? null,
     degree: degree.get(r.id) ?? 0,
+    slug: r.slug,
+    featured: r.featured,
   }));
   return { nodes, edges };
 }
@@ -103,6 +105,27 @@ export async function getGraph(opts: {
   return buildGraph(
     rows.map((r) => r.id),
     opts.families ?? DEFAULT_FAMILIES,
+  );
+}
+
+/** Every kind of entry the Theory Map can show. */
+export const ATLAS_KINDS: EntityKind[] = ["thinker", "concept", "text", "tendency", "event", "debate"];
+
+/**
+ * The whole public graph for the Theory Map: every entry of the mapped kinds
+ * and every relationship among them, of every family. What is shown, and
+ * when, is decided by the map, not by leaving records out.
+ */
+export async function getAtlasGraph(): Promise<Graph> {
+  const db = await ready();
+  const rows = await db
+    .select({ id: entities.id })
+    .from(entities)
+    .where(and(inArray(entities.kind, ATLAS_KINDS), isPublic()))
+    .orderBy(entities.sortOrder);
+  return buildGraph(
+    rows.map((r) => r.id),
+    ["influence", "critique", "response", "affinity", "structure"],
   );
 }
 

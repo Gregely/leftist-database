@@ -46,18 +46,12 @@ test.describe("home & theory map", () => {
     await expect(links.nth(1)).not.toHaveAttribute("aria-current", "page");
   });
 
-  test("the Theory Map has its own page, with two layouts and a choice of what to include", async ({ page }) => {
+  test("the Theory Map has its own page", async ({ page }) => {
     await page.goto("/");
     await page.getByRole("navigation", { name: "Primary" }).getByRole("link", { name: "Map" }).click();
     await expect(page).toHaveURL(/\/map$/);
     await expect(page.getByRole("heading", { level: 1 })).toContainText("The Theory Map");
-    const map = page.locator("section[aria-labelledby=map-heading]");
-    await expect(map.locator('svg:visible g[role=button][aria-label^="Karl Marx"]')).toBeVisible();
-    await page.getByRole("group", { name: "Layout" }).getByRole("link", { name: "By affinity" }).click();
-    await expect(page).toHaveURL(/view=affinity/);
-    await page.getByRole("group", { name: "Include" }).getByRole("link", { name: "Thinkers & concepts" }).click();
-    await expect(page).toHaveURL(/scope=ideas/);
-    await expect(map.locator('svg:visible g[role=button][aria-label^="Alienation"]')).toBeVisible();
+    await expect(page.locator('section[aria-labelledby=map-heading] g[role=button][aria-label^="Karl Marx"]')).toBeVisible();
     await expect(page.getByRole("complementary").filter({ hasText: "Most connected" })).toContainText("Karl Marx");
   });
 

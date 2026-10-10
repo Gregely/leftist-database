@@ -51,7 +51,19 @@ tests/e2e/                Playwright
   revalidated by `revalidatePath("/", "layout")` after every editorial write.
 - **Graphs:** `MapFigure` (server) computes two layouts with d3-force — landscape for desktop/tablet and portrait for
   phones — and passes coordinates to `TheoryMap` (client), which only handles hover, selection, keyboard and the preview
-  panel. The home map is *chronological*: time is a fixed axis (birth year), relations position the cross-axis.
+  panel. The home map is *chronological*: time is a fixed axis (birth year), relations position the cross-axis. Entry
+  pages, the homepage and the desk use it for small neighbourhood and featured maps.
+- **The Theory Map (`/map`)** is a separate tool for the whole collection. `getAtlasGraph()` returns every public entry
+  of the mapped kinds and every relationship among them; `lib/graph/atlas.ts` places them once, on the server, in two
+  stable arrangements (by time, in bands by kind on a density-stretched axis; by connection), derives a date for
+  undated concepts and debates from their neighbours, ranks entries by weighted connections, and resolves the curated
+  starting points from real entries (a view whose anchor is not public is dropped). The layout is cached until the
+  graph changes. `components/map/AtlasMap` does the rest on the client: pan and zoom (`useViewport`, which writes the
+  transform to the DOM during a gesture and lets React follow), semantic zoom (how many names and which relations are
+  drawn depends on the zoom relative to the overview), collision-free label placement in screen space
+  (`labels.ts`), selection with its connections, filters by kind, relation family and period, search, isolate/expand,
+  and map state in the URL (`kinds`, `from`, `to`, `arrange`, `focus`, `view`, `isolate`). Nothing is removed from
+  the data to make the map lighter: what is drawn, and when, is decided at render time.
 - **Timeline** data is a single query over `entities.year_start` joined to detail tables (`getTimeline({from, to, lanes})`),
   so the same API can later serve windowed ranges; context for a selected item loads on demand from `/api/preview/[id]`.
 - **Search:** FTS5 with Porter stemming and diacritic folding, weighted bm25 (title > aliases > body), prefix matching on
@@ -64,7 +76,7 @@ tests/e2e/                Playwright
 
 - All list APIs take `limit`/`offset` (and filters); index pages paginate (`Pager`) and A–Z/tendency/form filters are
   query-driven.
-- Graph queries are scoped: `getGraph({kinds, featuredOnly, limit})` for overview maps, `getNeighborhood(id, {depth,
+- Graph queries are scoped: `getAtlasGraph()` for the Theory Map, `getGraph({kinds, featuredOnly, limit})` for overview maps, `getNeighborhood(id, {depth,
   kinds, limit})` for entry pages. Large overview maps should filter (by tendency, period) rather than draw everything.
 - Relationship lookups are indexed on both endpoints; the unique index `(from_id, type, to_id)` prevents duplicates.
 - Entry-page aggregates issue a bounded number of queries independent of database size.
@@ -119,7 +131,8 @@ The working name lives only in `src/lib/site.ts` (`SITE.name`), which drives the
 ## Accessibility
 
 Semantic landmarks and headings; skip link; visible red focus rings; all map nodes and timeline items are focusable
-buttons with descriptive labels; the map has a "read as a list" alternative; the search overlay is a modal dialog with a
+buttons with descriptive labels (on the Theory Map, the named ones are in the tab order; the rest are reached by
+search, and the plate takes +, −, 0, arrow keys and Escape); the map has a "read as a list" alternative; the search overlay is a modal dialog with a
 combobox/listbox pattern and focus trapping; comparison data is a real `<table>`; animation is limited to state changes (depth levels, panels, hover traces) and is disabled under
 `prefers-reduced-motion`; colour is never the only carrier of meaning (stances have glyphs and labels).
 

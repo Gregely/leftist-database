@@ -1,101 +1,77 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { IndexHeader } from "@/components/editorial/IndexHeader";
 import { Container, lifespan } from "@/components/editorial/primitives";
-import { MapFigure } from "@/components/graph/MapFigure";
-import { getGraph } from "@/lib/data";
+import { AtlasMap, type AtlasMapState } from "@/components/map/AtlasMap";
+import { KindSwatch, MAP_KINDS } from "@/components/map/style";
 import { KINDS, type EntityKind } from "@/lib/content/model";
+import { getAtlasGraph } from "@/lib/data";
+import { buildAtlas } from "@/lib/graph/atlas";
 
 export const metadata: Metadata = {
   title: "The Theory Map",
-  description: "Thinkers and ideas connected by influence, critique, response and affinity.",
+  description: "Thinkers, ideas, texts, tendencies and events, connected by influence, critique, response and affinity, across time.",
 };
 
-const VIEWS = {
-  time: { label: "By time" },
-  affinity: { label: "By affinity" },
-} as const;
-const SCOPES = {
-  thinkers: { label: "Thinkers", kinds: ["thinker"] as EntityKind[] },
-  ideas: { label: "Thinkers & concepts", kinds: ["thinker", "concept"] as EntityKind[] },
-  traditions: { label: "Thinkers & tendencies", kinds: ["thinker", "tendency"] as EntityKind[] },
-} as const;
+type Props = { searchParams: Promise<Record<string, string | undefined>> };
 
-type Props = { searchParams: Promise<{ view?: string; scope?: string }> };
+/** Map state from the address, so a view can be shared or bookmarked. */
+function parseState(sp: Record<string, string | undefined>): AtlasMapState {
+  const kinds = sp.kinds
+    ?.split(",")
+    .filter((k): k is EntityKind => (MAP_KINDS as string[]).includes(k));
+  const from = Number(sp.from);
+  const to = Number(sp.to);
+  return {
+    kinds: kinds?.length ? kinds : undefined,
+    period: Number.isFinite(from) && Number.isFinite(to) && from < to ? [from, to] : null,
+    arrange: sp.arrange === "links" ? "links" : "time",
+    focus: sp.focus ?? null,
+    view: sp.view ?? null,
+    isolate: sp.isolate ? Math.min(2, Math.max(0, Number(sp.isolate) || 0)) : 0,
+  };
+}
 
 /**
- * The Theory Map as a feature in its own right: a large plate, two ways of
- * laying it out, a choice of what to include, and a key to reading it.
- * The same interactive map appears, smaller, on the homepage and entries.
+ * The Theory Map: the whole collection as an explorable plate. It opens on a
+ * sparse overview (the most connected names, the strongest lines) and adds
+ * detail as the reader zooms, hovers and selects.
  */
 export default async function MapPage({ searchParams }: Props) {
-  const sp = await searchParams;
-  const view = sp.view === "affinity" ? "affinity" : "time";
-  const scope = sp.scope === "ideas" || sp.scope === "traditions" ? sp.scope : "thinkers";
-  const graph = await getGraph({ kinds: SCOPES[scope].kinds });
-  const mode = view === "time" ? "chronological" : "radial";
-  const hubs = [...graph.nodes].sort((a, b) => b.degree - a.degree).slice(0, 10);
-  const href = (o: { view?: string; scope?: string }) => {
-    const q = new URLSearchParams(Object.entries({ view, scope, ...o }).filter(([k, v]) => v && !(k === "view" && v === "time") && !(k === "scope" && v === "thinkers")) as [string, string][]);
-    return q.toString() ? `/map?${q}` : "/map";
-  };
+  const initial = parseState(await searchParams);
+  const data = buildAtlas(await getAtlasGraph());
+  const hubs = [...data.nodes].sort((a, b) => b.importance - a.importance).slice(0, 10);
+  const counts = MAP_KINDS.map((k) => [k, data.nodes.filter((n) => n.kind === k).length] as const).filter(([, n]) => n);
 
   return (
     <>
-      <IndexHeader
-        crumb="Theory Map"
-        tone="var(--color-ink)"
-        title={
-          <>
-            The Theory Map<span className="text-red">.</span>
-          </>
-        }
-        tally={`${graph.nodes.length} entries · ${graph.edges.length} relations`}
-      />
-      <Container>
-        <div className="flex flex-wrap items-center gap-x-8 gap-y-3 border-y border-ink py-3">
-          <div role="group" aria-label="Layout" className="flex items-center gap-1">
-            <span className="label mr-2 text-faint">Layout</span>
-            {(Object.keys(VIEWS) as (keyof typeof VIEWS)[]).map((v) => (
-              <Link
-                key={v}
-                href={href({ view: v })}
-                scroll={false}
-                aria-current={view === v ? "true" : undefined}
-                className={`label border px-2.5 py-1 transition-colors ${view === v ? "border-ink bg-ink text-paper" : "border-rule hover:border-ink"}`}
-              >
-                {VIEWS[v].label}
-              </Link>
-            ))}
-          </div>
-          <div role="group" aria-label="Include" className="flex flex-wrap items-center gap-1">
-            <span className="label mr-2 text-faint">Include</span>
-            {(Object.keys(SCOPES) as (keyof typeof SCOPES)[]).map((s) => (
-              <Link
-                key={s}
-                href={href({ scope: s })}
-                scroll={false}
-                aria-current={scope === s ? "true" : undefined}
-                className={`label border px-2.5 py-1 transition-colors ${scope === s ? "border-red text-red" : "border-rule text-muted hover:border-ink"}`}
-              >
-                {SCOPES[s].label}
-              </Link>
-            ))}
-          </div>
+      <Container className="pt-5 sm:pt-6">
+        <div className="flex flex-wrap items-baseline justify-between gap-2 border-b border-ink pb-2">
+          <p className="label flex items-center gap-2 text-muted">
+            <Link href="/explore" className="hover:text-red">
+              Atlas
+            </Link>
+            <span aria-hidden="true" className="text-rule">
+              /
+            </span>
+            <span aria-hidden="true" className="inline-block h-2 w-2 bg-ink" />
+            <span className="text-ink">Theory Map</span>
+          </p>
+          <p className="label-mono text-faint">
+            {data.nodes.length} entries · {data.edges.length} relations
+          </p>
         </div>
+        <div className="flex flex-wrap items-end justify-between gap-x-10 gap-y-2 pb-4 pt-4 sm:pb-5 sm:pt-8">
+          <h1 className="display text-[2.8rem] sm:text-[3.8rem]">
+            The Theory Map<span className="text-red">.</span>
+          </h1>
+          <p className="hidden max-w-[30rem] pb-2 font-serif sm:block text-[1.05rem] italic leading-snug text-muted">
+            The collection as one plate. Zoom in for more names; select an entry to follow its connections.
+          </p>
+        </div>
+      </Container>
 
-        <section aria-labelledby="map-heading" className="pt-8">
-          <h2 id="map-heading" className="sr-only">
-            The map
-          </h2>
-          <MapFigure
-            graph={graph}
-            mode={mode}
-            plate="Plate II"
-            heading={`${SCOPES[scope].label}, ${VIEWS[view].label.toLowerCase()}`}
-            title={`The Theory Map: ${SCOPES[scope].label.toLowerCase()}, ${VIEWS[view].label.toLowerCase()}`}
-          />
-        </section>
+      <Container>
+        <AtlasMap data={data} initial={initial} />
 
         <div className="mt-14 grid gap-12 lg:grid-cols-12">
           <section aria-labelledby="reading-h" className="lg:col-span-7">
@@ -104,15 +80,26 @@ export default async function MapPage({ searchParams }: Props) {
             </h2>
             <div className="prose-atlas mt-5 max-w-[40rem] !text-[1.08rem]">
               <p>
-                By time, the horizontal axis is year of birth (vertical on a phone) and only the other axis is free, so
-                names drift towards those they are connected to. By affinity, there is no axis. Arrowheads run from the one
-                who acted to the one acted on; heavier lines carry more editorial weight.
+                By time, entries run left to right: thinkers at the height of their working lives (about thirty-five), texts
+                and events at their date, tendencies where they emerged. Ideas and debates without a date sit at the
+                median date of the entries they connect to. The axis is stretched where the collection is dense, so the
+                decades that hold most entries get most of the room; the years marked on it are exact. Events run along
+                the top, then tendencies, thinkers, texts, and ideas at the foot.
               </p>
               <p>
-                Each line is an editorial reading of the record, open to question. The note and source behind it are on
-                the entries it joins.
+                By connection, there is no axis: entries settle near those they are related to. In both, the larger and
+                darker a mark, the more connected the entry. Each line is an editorial reading of the record, open to
+                question; the note and source behind it are on the entries it joins.
               </p>
             </div>
+            <ul className="mt-6 flex flex-wrap gap-x-5 gap-y-2" aria-label="Entries on the map">
+              {counts.map(([k, n]) => (
+                <li key={k} className="label inline-flex items-center gap-2 text-muted">
+                  <KindSwatch kind={k} size={11} />
+                  {n} {n === 1 ? KINDS[k].label.toLowerCase() : KINDS[k].plural.toLowerCase()}
+                </li>
+              ))}
+            </ul>
           </section>
           <aside aria-labelledby="hubs-h" className="lg:col-span-4 lg:col-start-9">
             <h2 id="hubs-h" className="label border-t-[3px] border-ink pt-3 font-sans">

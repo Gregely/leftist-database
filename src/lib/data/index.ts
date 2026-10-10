@@ -25,7 +25,7 @@ export { getPath, getStepDetours, listPaths } from "./paths";
 export { getGuidedJourney, getGuidedStepContent, isGuidedPath, listGuidedJourneys } from "./guided";
 export { search, lookupEntities } from "./search";
 export { listSources, getSource } from "./sources";
-export { getGraph, getNeighborhood } from "./graph";
+export { ATLAS_KINDS, getAtlasGraph, getGraph, getNeighborhood } from "./graph";
 export { getHomeData } from "./home";
 export type * from "./types";
 export type { TimelineItem, TimelineLane, Preview } from "./events";
