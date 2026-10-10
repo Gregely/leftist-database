@@ -95,14 +95,15 @@ export async function deleteSource(actor: Actor, id: string) {
 
 export async function sourceUsage(id: string) {
   const db = await ready();
-  const [c, x, r, m] = await Promise.all([
+  const [c, x, r, m, p] = await Promise.all([
     db.select({ n: sql<number>`count(*)` }).from(s.citations).where(eq(s.citations.sourceId, id)).get(),
     db.select({ n: sql<number>`count(*)` }).from(s.excerpts).where(eq(s.excerpts.sourceId, id)).get(),
     db.select({ n: sql<number>`count(*)` }).from(s.relationships).where(eq(s.relationships.sourceId, id)).get(),
     db.select({ n: sql<number>`count(*)` }).from(s.media).where(eq(s.media.sourceId, id)).get(),
+    db.select({ n: sql<number>`count(*)` }).from(s.entityPlaces).where(eq(s.entityPlaces.sourceId, id)).get(),
   ]);
-  const counts = { citations: Number(c?.n ?? 0), excerpts: Number(x?.n ?? 0), relationships: Number(r?.n ?? 0), media: Number(m?.n ?? 0) };
-  return { ...counts, total: counts.citations + counts.excerpts + counts.relationships + counts.media };
+  const counts = { citations: Number(c?.n ?? 0), excerpts: Number(x?.n ?? 0), relationships: Number(r?.n ?? 0), media: Number(m?.n ?? 0), places: Number(p?.n ?? 0) };
+  return { ...counts, total: counts.citations + counts.excerpts + counts.relationships + counts.media + counts.places };
 }
 
 export async function searchSources(q: string, limit = 20) {
@@ -153,7 +154,7 @@ export function sourceGaps(src: Pick<s.SourceRow, "author" | "publicationDate" |
 /** Entries that cite or quote a source (every status). */
 export async function sourceCitedBy(id: string) {
   const db = await ready();
-  const [c, x] = await Promise.all([
+  const [c, x, p] = await Promise.all([
     db
       .select({ id: s.entities.id, title: s.entities.title, kind: s.entities.kind, locator: s.citations.locator })
       .from(s.citations)
@@ -164,6 +165,11 @@ export async function sourceCitedBy(id: string) {
       .from(s.excerpts)
       .innerJoin(s.entities, eq(s.entities.id, s.excerpts.entityId))
       .where(eq(s.excerpts.sourceId, id)),
+    db
+      .select({ id: s.entities.id, title: s.entities.title, kind: s.entities.kind, locator: s.entityPlaces.locator })
+      .from(s.entityPlaces)
+      .innerJoin(s.entities, eq(s.entities.id, s.entityPlaces.entityId))
+      .where(eq(s.entityPlaces.sourceId, id)),
   ]);
-  return [...c.map((r) => ({ ...r, how: "cited" })), ...x.map((r) => ({ ...r, how: "quoted" }))];
+  return [...c.map((r) => ({ ...r, how: "cited" })), ...x.map((r) => ({ ...r, how: "quoted" })), ...p.map((r) => ({ ...r, how: "places" }))];
 }

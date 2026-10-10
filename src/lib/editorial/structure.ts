@@ -19,6 +19,7 @@ import {
   EXCERPT_VERIFICATION,
   MEDIA_ROLES,
   normaliseRelationship,
+  RECORDED_PLACE_ROLES,
   STANCES,
   type AnyRelationshipType,
   type ExcerptVerification,
@@ -217,6 +218,84 @@ export async function citationsFor(entityId: string) {
     .innerJoin(s.sources, eq(s.sources.id, s.citations.sourceId))
     .where(eq(s.citations.entityId, entityId))
     .orderBy(asc(s.citations.position));
+}
+
+/* -------------------------------------------------------------------------- */
+/* Places                                                                      */
+/* -------------------------------------------------------------------------- */
+
+export interface PlaceLinkInput {
+  placeId: string;
+  role: string;
+  yearStart?: number | string | null;
+  yearEnd?: number | string | null;
+  note?: string;
+  sourceId?: string | null;
+  locator?: string;
+}
+
+/**
+ * Associate an entry with a place in a particular capacity (lived there, in
+ * exile there, organised there, wrote or published there, influential in a
+ * region), with dates and, ideally, a source. Birthplaces, places of death
+ * and event locations are fields of the entry itself, not associations.
+ */
+export async function addPlaceLink(actor: Actor, entityId: string, input: PlaceLinkInput) {
+  const row = await structureGate(actor, entityId);
+  const db = await ready();
+  const errors: Record<string, string> = {};
+  const place = input.placeId ? await db.select().from(s.places).where(eq(s.places.id, input.placeId)).get() : null;
+  if (!place) errors.place = "Choose a place from the gazetteer.";
+  if (!(RECORDED_PLACE_ROLES as readonly string[]).includes(input.role)) errors.role = "Choose how the entry is connected to the place.";
+  const yearStart = int(input.yearStart);
+  const yearEnd = int(input.yearEnd);
+  if (Number.isNaN(yearStart)) errors.yearStart = "A year, e.g. 1849.";
+  if (Number.isNaN(yearEnd)) errors.yearEnd = "A year, e.g. 1883.";
+  if (yearStart != null && yearEnd != null && !Number.isNaN(yearStart) && !Number.isNaN(yearEnd) && yearEnd < yearStart) errors.yearEnd = "Ends before it starts.";
+  if (input.sourceId && !(await db.select({ id: s.sources.id }).from(s.sources).where(eq(s.sources.id, input.sourceId)).get())) errors.source = "That source does not exist.";
+  if (Object.keys(errors).length) throw new ValidationError(errors);
+  const max = await db.select({ n: sql<number>`coalesce(max(position), -1)` }).from(s.entityPlaces).where(eq(s.entityPlaces.entityId, entityId)).get();
+  const stagedFor = stageFor(row);
+  const id = newId("ep");
+  await db.insert(s.entityPlaces).values({
+    id,
+    entityId,
+    placeId: place!.id,
+    role: input.role,
+    yearStart,
+    yearEnd,
+    note: input.note?.trim() ?? "",
+    sourceId: input.sourceId || null,
+    locator: input.locator?.trim() || null,
+    position: Number(max?.n ?? -1) + 1,
+    stagedFor,
+    createdBy: actor.id,
+  });
+  await audit(actor.id, "place_attach", { type: "entity", id: entityId, label: row.title }, { placeId: place!.id, place: place!.name, role: input.role, yearStart, yearEnd, staged: !!stagedFor });
+  await touch(entityId, actor, !!stagedFor);
+  return id;
+}
+
+export async function removePlaceLink(actor: Actor, linkId: string) {
+  const db = await ready();
+  const l = await db.select().from(s.entityPlaces).where(eq(s.entityPlaces.id, linkId)).get();
+  if (!l) return;
+  const row = await structureGate(actor, l.entityId);
+  assertMayRemove(actor, row, l.stagedFor);
+  await db.delete(s.entityPlaces).where(eq(s.entityPlaces.id, linkId));
+  await audit(actor.id, "place_detach", { type: "entity", id: l.entityId, label: row.title }, { placeId: l.placeId, role: l.role });
+  await touch(l.entityId, actor);
+}
+
+export async function placeLinksFor(entityId: string) {
+  const db = await ready();
+  return db
+    .select({ l: s.entityPlaces, place: s.places, src: { id: s.sources.id, title: s.sources.title } })
+    .from(s.entityPlaces)
+    .innerJoin(s.places, eq(s.places.id, s.entityPlaces.placeId))
+    .leftJoin(s.sources, eq(s.sources.id, s.entityPlaces.sourceId))
+    .where(eq(s.entityPlaces.entityId, entityId))
+    .orderBy(asc(s.entityPlaces.yearStart), asc(s.entityPlaces.position));
 }
 
 /* -------------------------------------------------------------------------- */

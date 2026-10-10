@@ -20,6 +20,7 @@ src/
                           structure (relationships, citations, excerpts, media, debates, paths), sources, media,
                           notes, audit, validation/completeness/dependencies (insight), desk queries
     graph/                Server-side d3-force layout
+    geo/                  Place-wording resolver (shared) and the server-drawn base map for Geography
     seed/                 Sample records and the seeder
 drizzle/                  SQL migrations (generated + the hand-written FTS5 migration)
 scripts/db.ts             migrate / seed / reset / ensure / reindex
@@ -64,6 +65,17 @@ tests/e2e/                Playwright
   (`labels.ts`), selection with its connections, filters by kind, relation family and period, search, isolate/expand,
   and map state in the URL (`kinds`, `from`, `to`, `arrange`, `focus`, `view`, `isolate`). Nothing is removed from
   the data to make the map lighter: what is drawn, and when, is decided at render time.
+- **Geography (`/geography`)** is a separate destination with its own page, controls and URL state (`kinds`, `roles`,
+  `from`, `to`, `place`, `trace`); it shares only the pan/zoom hook, label placement and the period slider with the
+  Theory Map. `getGeography()` (`lib/data/geography.ts`) returns the gazetteer places that public entries are tied to,
+  and every association: birthplaces, places of death and event locations read from the entries' own fields and
+  matched to places by exact wording (`lib/geo/resolve.ts`), plus released `entity_places` rows. The base map
+  (`lib/geo/basemap.ts`) is drawn once on the server as SVG paths in a fixed Equal Earth world space: land only, from
+  Natural Earth via `world-atlas` (1:110m for the world, 1:50m inside a Europe box), with a graticule and no modern
+  borders. Places are projected on the server too, so the browser loads no map library. `components/geo/GeoMap`
+  clusters places in screen space at the current zoom, places labels with `labels.ts`, draws regions as names rather
+  than points, filters by kind of entry, kind of association and period, and traces one entry's places in date
+  order.
 - **Timeline** data is a single query over `entities.year_start` joined to detail tables (`getTimeline({from, to, lanes})`),
   so the same API can later serve windowed ranges; context for a selected item loads on demand from `/api/preview/[id]`.
 - **Search:** FTS5 with Porter stemming and diacritic folding, weighted bm25 (title > aliases > body), prefix matching on

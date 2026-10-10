@@ -10,6 +10,7 @@ import { rebuildSearchIndex } from "@/lib/db/search-index";
 import { concepts } from "./concepts";
 import { debates } from "./debates";
 import { paths } from "./paths";
+import { seedPlaces } from "./places";
 import { excerpts, relationships } from "./relationships";
 import { sources } from "./sources";
 import { events, tendencies } from "./tendencies-events";
@@ -251,11 +252,12 @@ export async function seedDatabase(db: Db, log: (m: string) => void = console.lo
     });
   }
 
+  const placeCount = await seedPlaces(db);
   const indexed = await rebuildSearchIndex(db);
   await db.run(sql`PRAGMA optimize`);
   log(
     `Seeded ${Object.entries(counts)
       .map(([k, v]) => `${v} ${k}`)
-      .join(", ")}, ${sources.length} sources, ${relCount} relationships, ${excerpts.length} excerpts; indexed ${indexed}.`,
+      .join(", ")}, ${sources.length} sources, ${relCount} relationships, ${excerpts.length} excerpts, ${placeCount} places; indexed ${indexed}.`,
   );
 }

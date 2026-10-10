@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 import { login } from "./helpers";
 
-const PAGES = ["/", "/explore", "/thinkers", "/thinkers/marx", "/concepts/alienation", "/debates/what-is-the-state", "/timeline", "/texts", "/paths/foundations?step=3", "/guided", "/search?q=state"];
+const PAGES = ["/", "/explore", "/thinkers", "/thinkers/marx", "/concepts/alienation", "/debates/what-is-the-state", "/timeline", "/texts", "/paths/foundations?step=3", "/guided", "/search?q=state", "/geography", "/geography?trace=thinker:lenin"];
 
 for (const path of PAGES) {
   test(`no horizontal overflow: ${path}`, async ({ page }) => {
@@ -40,6 +40,24 @@ test("the Theory Map works on a phone", async ({ page }) => {
   await expect(plate.locator('g[role=button][aria-label*=", text"]').first()).toBeAttached();
 });
 
+test("Geography works on a phone, apart from the Theory Map", async ({ page }) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: "Explore" }).click();
+  const nav = page.getByRole("navigation", { name: "Explore" });
+  await expect(nav.getByRole("link", { name: "Theory Map" })).toHaveAttribute("href", "/map");
+  await nav.getByRole("link", { name: "Geography" }).click();
+  await expect(page).toHaveURL(/\/geography$/);
+  const region = page.getByRole("region", { name: /^Geography map/ });
+  await expect(region.locator("svg g[role=button]").first()).toBeVisible();
+  // The filters stay on one line each and scroll sideways; the page itself does not.
+  expect(await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth)).toBeLessThanOrEqual(1);
+  const panel = page.getByRole("complementary", { name: "Places and entries" });
+  await panel.getByRole("button", { name: /^1 / }).tap();
+  await expect(panel.getByRole("heading", { level: 2 })).toBeVisible();
+  await page.getByRole("group", { name: "Kinds of entry" }).getByRole("button", { name: /^Thinkers/ }).tap();
+  await expect(page).toHaveURL(/kinds=/);
+});
+
 test("portrait map and timeline list are used on phones", async ({ page }) => {
   await page.goto("/");
   await expect(page.locator("section[aria-labelledby=map-heading] svg:visible g[role=button]").first()).toBeVisible();
@@ -50,7 +68,7 @@ test("portrait map and timeline list are used on phones", async ({ page }) => {
 
 test("the editorial desk fits a phone, with an Editor / Preview switch", async ({ page }) => {
   await login(page, "editor");
-  const pages = ["/admin", "/admin/content", "/admin/review", "/admin/new", "/admin/sources", "/admin/media", "/admin/relationships", "/admin/entries/th_marx", "/admin/entries/th_marx?tab=connections", "/admin/entries/th_marx?tab=sources", "/admin/entries/th_marx?tab=history", "/admin/entries/db_class-consciousness?tab=structure", "/preview/th_marx"];
+  const pages = ["/admin", "/admin/places", "/admin/places/pl_berlin", "/admin/entries/th_marx?tab=places", "/admin/content", "/admin/review", "/admin/new", "/admin/sources", "/admin/media", "/admin/relationships", "/admin/entries/th_marx", "/admin/entries/th_marx?tab=connections", "/admin/entries/th_marx?tab=sources", "/admin/entries/th_marx?tab=history", "/admin/entries/db_class-consciousness?tab=structure", "/preview/th_marx"];
   for (const path of pages) {
     await page.goto(path);
     const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);

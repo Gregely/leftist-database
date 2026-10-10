@@ -71,6 +71,7 @@ export function AtlasMap({ data, initial }: { data: AtlasData; initial: AtlasMap
     return m;
   }, [data.edges]);
   const viewById = useMemo(() => new Map(data.views.map((v) => [v.id, v])), [data.views]);
+  const datedYears = useMemo(() => data.nodes.filter((n) => n.dated).map((n) => n.year), [data.nodes]);
 
   /* ——— State ——— */
   const initView = initial.view ? viewById.get(initial.view) : undefined;
@@ -1005,7 +1006,7 @@ export function AtlasMap({ data, initial }: { data: AtlasData; initial: AtlasMap
         </div>
       </section>
 
-      <PeriodControl years={data.years} nodes={data.nodes} period={period} onChange={(p) => {
+      <PeriodControl years={data.years} dates={datedYears} period={period} onChange={(p) => {
         if (scope?.source === "view") setScope((s) => (s ? { ...s, viewId: undefined, source: "isolate" as const } : s));
         setPeriod(p);
       }} />

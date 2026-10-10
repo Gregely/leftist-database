@@ -5,8 +5,8 @@ import "server-only";
  * Text edits to a live entry already wait in revisions until publication.
  * This module gives its *structure* the same guarantee:
  *
- *  - Additive records — relationships, citations, excerpts and media
- *    attachments — made in the context of a live entry are written with
+ *  - Additive records — relationships, citations, excerpts, media
+ *    attachments and place associations — made in the context of a live entry are written with
  *    `staged_for = <entry id>`. Public queries ignore them; the entry's
  *    preview shows them; publishing the entry releases them. A staged
  *    relationship replaces a released one with the same (from, type, to).
@@ -148,6 +148,7 @@ export async function releaseStaged(db: Db, row: Row) {
   await db.update(s.relationships).set({ stagedFor: null }).where(eq(s.relationships.stagedFor, row.id));
   await db.update(s.citations).set({ stagedFor: null }).where(eq(s.citations.stagedFor, row.id));
   await db.update(s.excerpts).set({ stagedFor: null }).where(eq(s.excerpts.stagedFor, row.id));
+  await db.update(s.entityPlaces).set({ stagedFor: null }).where(eq(s.entityPlaces.stagedFor, row.id));
   // A staged attachment of an image already attached in the same role only updates its caption.
   const media = await db.select().from(s.entityMedia).where(eq(s.entityMedia.stagedFor, row.id));
   for (const m of media) {
@@ -178,9 +179,9 @@ export async function releaseStaged(db: Db, row: Row) {
 
 /** How much is waiting for an entry's publication (for the desk). */
 export async function stagedSummary(db: Db, entityId: string) {
-  const count = async (t: typeof s.relationships | typeof s.citations | typeof s.excerpts | typeof s.entityMedia) =>
+  const count = async (t: typeof s.relationships | typeof s.citations | typeof s.excerpts | typeof s.entityMedia | typeof s.entityPlaces) =>
     Number((await db.select({ n: sql<number>`count(*)` }).from(t).where(eq(t.stagedFor, entityId)).get())?.n ?? 0);
-  const [relationships, citations, excerpts, media] = await Promise.all([count(s.relationships), count(s.citations), count(s.excerpts), count(s.entityMedia)]);
-  return { relationships, citations, excerpts, media };
+  const [relationships, citations, excerpts, media, places] = await Promise.all([count(s.relationships), count(s.citations), count(s.excerpts), count(s.entityMedia), count(s.entityPlaces)]);
+  return { relationships, citations, excerpts, media, places };
 }
 

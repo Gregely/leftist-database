@@ -1,4 +1,5 @@
 import type { Corpus } from "../src/lib/corpus/types";
+import { geography } from "./geography";
 import { guidedMarxToLenin } from "./guided-marx-to-lenin";
 import { guidedUnderstandingMarx } from "./guided-understanding-marx";
 import { initialMarx } from "./initial-marx";
@@ -10,4 +11,5 @@ export const CORPORA: Record<string, Corpus> = {
   "guided-understanding-marx": guidedUnderstandingMarx,
   "marx-to-lenin": marxToLenin,
   "guided-marx-to-lenin": guidedMarxToLenin,
+  geography,
 };

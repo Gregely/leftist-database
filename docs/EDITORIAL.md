@@ -127,6 +127,26 @@ Content is stored as Atlas markup (`src/lib/content/markup.ts`), a small superse
   rights notes, year and tags. Uploads are checked by content (JPEG, PNG, WebP, GIF; no SVG; 12 MB max) and identical
   files are stored once. An image is publicly served only while attached to a live entry. Files live in `MEDIA_DIR`.
 
+## Places
+
+The **Geography** section draws on two kinds of place data, kept apart because they mean different things.
+
+- **Place fields** already on entries: a thinker's birthplace and place of death, an event's location. Write them
+  as the sources do, with the name of the period ("Trier, Prussia", "Petrograd"). The map locates a wording only
+  when a place in the gazetteer lists it exactly; the entry's **Places** tab shows which wordings are located, and
+  links an unlocated one to *add place*.
+- **Recorded associations**, added on the **Places** tab: residence, exile, political activity, where a text was
+  written or first published, and a movement's regional influence. Each takes a place, years, a short note and a
+  source with a locator. On a live entry they wait for its next publication, like relationships.
+
+The **gazetteer** (`/admin/places`) lists every place, how often it is used, and the wordings on entries that match
+none. A place needs a name (the name of the period, with other names and their dates under *Other names*), a kind,
+coordinates and where the coordinates come from: a Wikidata item, or another named gazetteer. Never estimate
+coordinates. Use *Historical context* for the states and provinces a place belonged to and when that changed; the
+public map draws no borders and relies on these notes. Regions and countries are shown as names or listed, never
+as points. Any desk user can add a place; editors (or the place's creator) can change it; a place in use cannot be
+deleted.
+
 ## Collections
 
 An entry can carry editorial **collection** tags (`entities.editorial_tags`), for example the *Initial Marx Corpus*.

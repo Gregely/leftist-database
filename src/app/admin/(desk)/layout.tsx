@@ -24,6 +24,7 @@ export default async function DeskLayout({ children }: { children: React.ReactNo
       : []),
     { href: "/admin/relationships", label: "Relationships" },
     { href: "/admin/sources", label: "Sources" },
+    { href: "/admin/places", label: "Places" },
     { href: "/admin/media", label: "Media" },
     ...(can(user, "users.manage") ? [{ href: "/admin/users", label: "People" }] : []),
     ...(can(user, "audit.view") ? [{ href: "/admin/audit", label: "Audit log" }] : []),

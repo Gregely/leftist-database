@@ -53,6 +53,7 @@ Copy `.env.example` to `.env.local` to configure the database URL and the media 
 | Home | `/` | What the site is, a prominent search, Guided beside it with other ways in; the collection as a table of contents (every section at equal weight); concepts at three depths; open debates; texts and lives; Guided journeys and learning paths; the Theory Map as a plate; historical moments; method |
 | Library | `/explore` | Thinkers, concepts, tendencies, debates, texts and periods, each with its own visual treatment |
 | Theory Map | `/map` | The relationship map as an atlas plate: by time or by affinity, thinkers alone or with concepts or tendencies; a key and the most-connected entries |
+| Geography | `/geography` | A world map of where the tradition lived and worked: birthplaces, residence, exile, political activity, where texts were written and published, events and regional influence; filters by kind of entry, kind of association and period; select a place, or trace an entry's places in order |
 | Thinkers | `/thinkers`, `/thinkers/[slug]` | Lifespan index with tendency filters; entry with ideas, network graph, works, influences, disagreements, legacy, timeline |
 | Concepts | `/concepts`, `/concepts/[slug]` | A–Z glossary; entry with a **descending depth reader** (30 seconds → 5 minutes → deep dive), primary texts, debates, related-concept constellation |
 | Debates | `/debates`, `/debates/[slug]` | Positions side by side; **compare** two or more to see shared and divergent stances; arguments and counterarguments |

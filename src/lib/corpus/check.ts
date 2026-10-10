@@ -18,12 +18,13 @@ import path from "node:path";
 import { eq, inArray, sql } from "drizzle-orm";
 import { ready } from "@/lib/db/client";
 import * as s from "@/lib/db/schema";
-import { ALL_RELATIONSHIP_TYPES, entityHref, normaliseRelationship, RELATIONSHIP_TYPES, type EntityKind, type RelationshipType } from "@/lib/content/model";
+import { ALL_RELATIONSHIP_TYPES, entityHref, normaliseRelationship, PLACE_KINDS, RECORDED_PLACE_ROLES, RELATIONSHIP_TYPES, type EntityKind, type RelationshipType } from "@/lib/content/model";
 import { extractCites, extractRefs } from "@/lib/content/markup";
 import { fieldsFor } from "@/lib/editorial/fields";
 import { validateEntity } from "@/lib/editorial/insight";
 import { readWorkingFields } from "@/lib/editorial/content";
 import { deskNeighborhood } from "@/lib/editorial/queries";
+import { getPlace } from "@/lib/editorial/places";
 import { getEntityRow } from "@/lib/data/core";
 import { search } from "@/lib/data/search";
 import { corpusRows, parseKey, resolveKey } from "./ingest";
@@ -222,6 +223,33 @@ export async function checkData(corpus: Corpus, upTo?: string): Promise<CheckIss
         const problem = await unknownAt(k, bi);
         if (problem) issues.push({ level: "error", area: "path", key: p.path, message: `Step: ${problem}.` });
       }
+  }
+
+  // Places: gazetteer records and the associations that use them.
+  const places = new Set<string>();
+  for (const b of batches) for (const pl of b.places ?? []) {
+    if (places.has(pl.id)) issues.push({ level: "error", area: "data", key: pl.id, message: "Place defined twice." });
+    places.add(pl.id);
+    if (!/^pl_[a-z0-9_]+$/.test(pl.id)) issues.push({ level: "error", area: "data", key: pl.id, message: "Place ids are pl_ followed by lowercase letters, digits and underscores." });
+    if (!PLACE_KINDS.includes(pl.kind)) issues.push({ level: "error", area: "data", key: pl.id, message: `Unknown place kind ${pl.kind}.` });
+    if (!/^Q\d+$/.test(pl.wikidata)) issues.push({ level: "error", area: "data", key: pl.id, message: "Wikidata id must look like Q123." });
+    if (!pl.wikipedia.trim()) issues.push({ level: "error", area: "data", key: pl.id, message: "No Wikipedia article to locate the place by." });
+  }
+  const placeKnown = async (id: string) => places.has(id) || !!(await getPlace(id));
+  const linkSeen = new Set<string>();
+  for (const [bi, b] of batches.entries()) for (const l of b.placeLinks ?? []) {
+    const label = `${l.entity} ${l.role} ${l.place}`;
+    const problem = await unknownAt(l.entity, bi);
+    if (problem) issues.push({ level: "error", area: "data", key: label, message: `${problem}.` });
+    if (!(await placeKnown(l.place))) issues.push({ level: "error", area: "data", key: label, message: `Unknown place ${l.place}.` });
+    if (!(RECORDED_PLACE_ROLES as readonly string[]).includes(l.role)) issues.push({ level: "error", area: "data", key: label, message: `Unknown association ${l.role}; birth, death and event places come from entry fields.` });
+    if (l.yearStart != null && l.yearEnd != null && l.yearEnd < l.yearStart) issues.push({ level: "error", area: "dates", key: label, message: `Ends (${l.yearEnd}) before it starts (${l.yearStart}).` });
+    if (!l.note.trim()) issues.push({ level: "error", area: "data", key: label, message: "Association has no explanation." });
+    if (!l.source) issues.push({ level: "warning", area: "sources", key: label, message: "Association has no source." });
+    useSource(l.source, label);
+    const id = `${l.entity}|${l.place}|${l.role}|${l.yearStart ?? ""}`;
+    if (linkSeen.has(id)) issues.push({ level: "error", area: "data", key: label, message: "Association recorded twice." });
+    linkSeen.add(id);
   }
 
   for (const [id, v] of sources) if (!v.used) issues.push({ level: "info", area: "sources", key: id, message: "Source is not cited anywhere yet." });

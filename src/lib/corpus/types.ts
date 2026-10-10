@@ -6,7 +6,7 @@
  * A corpus never publishes anything. Every entry it touches ends the import
  * awaiting human review.
  */
-import type { AnyRelationshipType, EntityKind, ExcerptVerification, MediaRole, SourceType, Stance } from "@/lib/content/model";
+import type { AnyRelationshipType, EntityKind, ExcerptVerification, MediaRole, PlaceKind, RecordedPlaceRole, SourceType, Stance } from "@/lib/content/model";
 
 /** `kind:slug`, e.g. "thinker:marx". Slugs are matched against existing entries (and their old slugs). */
 export type EntityKey = `${EntityKind}:${string}`;
@@ -157,6 +157,42 @@ export interface CorpusMedia {
   flag?: Flag;
 }
 
+/**
+ * A gazetteer record. Coordinates are never written in the corpus: `verify`
+ * reads them from the Wikidata item (found through the Wikipedia article) and
+ * records them in verification.json, and the import takes them from there.
+ */
+export interface CorpusPlace {
+  /** Stable id (`pl_…`). */
+  id: string;
+  name: string;
+  kind: PlaceKind;
+  /** English Wikipedia article title, used to find the Wikidata item and its coordinates. */
+  wikipedia: string;
+  /** The Wikidata item the coordinates must come from; `verify` checks the article points to it. */
+  wikidata: string;
+  modernName?: string;
+  country?: string;
+  historicalNote?: string;
+  aliases?: string[];
+  /** Exact wordings in entry fields that mean this place. */
+  matches?: string[];
+}
+
+/** A recorded association between an entry and a place. */
+export interface CorpusPlaceLink {
+  entity: EntityKey;
+  /** A place id from this corpus or the database. */
+  place: string;
+  role: RecordedPlaceRole;
+  yearStart?: number;
+  yearEnd?: number;
+  note: string;
+  source?: string;
+  locator?: string;
+  flag?: Flag;
+}
+
 export interface CorpusBatch {
   id: string;
   title: string;
@@ -167,6 +203,8 @@ export interface CorpusBatch {
   debates?: CorpusDebate[];
   paths?: CorpusPath[];
   media?: CorpusMedia[];
+  places?: CorpusPlace[];
+  placeLinks?: CorpusPlaceLink[];
 }
 
 export interface Corpus {
@@ -186,6 +224,8 @@ export interface VerificationRecord {
   checkedAt: string;
   quotes: Record<string, { url: string; status: number; matched: boolean; provenance?: string; detail?: string }>;
   sources: Record<string, { status: number | null; ok: boolean; detail: string }>;
+  /** Coordinates read from Wikidata for each place, with what was checked. */
+  places?: Record<string, { ok: boolean; lat?: number; lon?: number; wikidata?: string; detail: string }>;
 }
 
 export type { ExcerptVerification };

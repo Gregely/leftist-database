@@ -6,7 +6,7 @@ import { GuidedEntry } from "@/components/home/GuidedEntry";
 import { RoutesSection } from "@/components/home/RoutesSection";
 import { HomeSearch } from "@/components/search/HomeSearch";
 import { MiniTimeline } from "@/components/timeline/MiniTimeline";
-import { getHomeData } from "@/lib/data";
+import { getGeography, getHomeData } from "@/lib/data";
 import { PERIODS, SECTIONS, SITE } from "@/lib/site";
 
 const AXIS_FROM = 1760;
@@ -14,7 +14,8 @@ const AXIS_TO = 2030;
 const pct = (y: number) => ((y - AXIS_FROM) / (AXIS_TO - AXIS_FROM)) * 100;
 
 export default async function HomePage() {
-  const d = await getHomeData();
+  const [d, geo] = await Promise.all([getHomeData(), getGeography()]);
+  const placeWeight = (id: string) => new Set(geo.links.filter((l) => l.place === id).map((l) => l.entry)).size;
   const [lead, ...concepts] = d.concepts;
 
   const titles = (items: { title: string }[], n = 4) => items.slice(0, n).map((t) => t.title).join(" · ");
@@ -28,6 +29,7 @@ export default async function HomePage() {
     { ...section("tendencies"), count: d.counts.tendency, examples: titles(d.tendencies, 3) },
     { ...section("timeline"), count: d.counts.event, examples: PERIODS.map((p) => p.label).join(" · ") },
     { ...section("map"), count: d.stats.relationships, unit: "links", examples: [...d.graph.nodes].sort((a, b) => b.degree - a.degree).slice(0, 4).map((n) => n.title.split(" ").pop()).join(" · ") },
+    { ...section("geography"), count: geo.places.length, unit: "places", examples: [...geo.places].sort((a, b) => placeWeight(b.id) - placeWeight(a.id)).slice(0, 4).map((p) => p.name).join(" · ") },
     { ...section("explore"), count: d.stats.entities, unit: "entries", examples: `${d.stats.sources} sources in the bibliography` },
   ];
   // Beside Guided: other places to begin, each a real destination.

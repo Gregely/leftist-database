@@ -5,6 +5,7 @@ import { MapFigure } from "@/components/graph/MapFigure";
 import { EntryEditor } from "@/components/desk/EntryEditor";
 import { CompareView, RevisionList } from "@/components/desk/History";
 import { MediaPanel } from "@/components/desk/MediaPanel";
+import { PlacesPanel } from "@/components/desk/PlacesPanel";
 import { NotesPanel } from "@/components/desk/NotesPanel";
 import { PreviewPane } from "@/components/desk/PreviewPane";
 import { RelationshipBuilder } from "@/components/desk/RelationshipBuilder";
@@ -15,7 +16,7 @@ import { WorkflowBar } from "@/components/desk/WorkflowBar";
 import { getTimeline } from "@/lib/data";
 import { requireUser } from "@/lib/auth/session";
 import { userNames } from "@/lib/auth/users";
-import { entityHref, KINDS, type EntityKind, type MediaRole, type WorkflowStatus } from "@/lib/content/model";
+import { entityHref, KINDS, type EntityKind, type MediaRole, type PlaceKind, type RecordedPlaceRole, type WorkflowStatus } from "@/lib/content/model";
 import { gateOf, getRevision, hasPendingChanges, listRevisions, loadEntity, readWorkingFields, snapshotFields } from "@/lib/editorial/content";
 import { fieldLabel, fieldSections, fieldsFor } from "@/lib/editorial/fields";
 import { completeness, dependencies, validateEntity } from "@/lib/editorial/insight";
@@ -25,7 +26,8 @@ import { atLeast, availableActions, can } from "@/lib/editorial/permissions";
 import { parseTags } from "@/lib/editorial/collections";
 import { deskNeighborhood } from "@/lib/editorial/queries";
 import { sourceGaps } from "@/lib/editorial/sources";
-import { citationsFor, debateStructure, excerptOptions as stepExcerptOptions, excerptsFor, mediaFor, pathSteps, relationshipsFor } from "@/lib/editorial/structure";
+import { placeResolver } from "@/lib/editorial/places";
+import { citationsFor, placeLinksFor, debateStructure, excerptOptions as stepExcerptOptions, excerptsFor, mediaFor, pathSteps, relationshipsFor } from "@/lib/editorial/structure";
 import { TRANSITION_PERMISSION, type Transition } from "@/lib/editorial/workflow";
 
 type Props = {
@@ -43,6 +45,7 @@ const TABS = [
   { id: "connections", label: "Connections" },
   { id: "sources", label: "Sources & excerpts" },
   { id: "media", label: "Media" },
+  { id: "places", label: "Places" },
   { id: "structure", label: "Structure" },
   { id: "review", label: "Review" },
   { id: "history", label: "History" },
@@ -255,6 +258,45 @@ export default async function EntryPage({ params, searchParams }: Props) {
           }))}
         />
       </Panel>
+    );
+  } else if (tab === "places") {
+    const [links, { rows: gazetteer, resolver }] = await Promise.all([placeLinksFor(id), placeResolver()]);
+    const byPlace = new Map(gazetteer.map((p) => [p.id, p]));
+    const wordings: { role: "birth" | "death" | "event"; text: string }[] =
+      kind === "thinker"
+        ? [
+            { role: "birth" as const, text: String(fields.birthPlace ?? "") },
+            { role: "death" as const, text: String(fields.deathPlace ?? "") },
+          ]
+        : kind === "event"
+          ? [{ role: "event" as const, text: String(fields.place ?? "") }]
+          : [];
+    body = (
+      <div className="space-y-8">
+        {canStructure && stagedNotice}
+        <Panel title="Places">
+          <PlacesPanel
+            entityId={id}
+            canEdit={canStructure}
+            fieldPlaces={wordings
+              .filter((w) => w.text.trim())
+              .map((w) => ({ ...w, places: resolver.resolve(w.text).map((pid) => ({ id: pid, name: byPlace.get(pid)!.name })) }))}
+            links={links.map(({ l, place, src }) => ({
+              id: l.id,
+              role: l.role as RecordedPlaceRole,
+              place: { id: place.id, name: place.name, kind: place.kind as PlaceKind },
+              yearStart: l.yearStart,
+              yearEnd: l.yearEnd,
+              note: l.note,
+              source: src?.id ? { id: src.id, title: src.title! } : null,
+              locator: l.locator,
+              staged: !!l.stagedFor,
+              canRemove: canRemove(l.stagedFor),
+            }))}
+            options={gazetteer.map((p) => ({ id: p.id, name: p.name, kind: p.kind as PlaceKind, modern: p.modernName }))}
+          />
+        </Panel>
+      </div>
     );
   } else if (tab === "structure" && kind === "debate") {
     const d = await debateStructure(id);

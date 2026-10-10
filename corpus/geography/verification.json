@@ -1,0 +1,609 @@
+{
+  "checkedAt": "2026-10-10T15:01:11.499Z",
+  "quotes": {},
+  "sources": {},
+  "places": {
+    "pl_ales": {
+      "ok": true,
+      "lat": 39.76667,
+      "lon": 8.81667,
+      "wikidata": "Q382548",
+      "detail": "Wikidata Q382548 (“Ales, Sardinia”): 39.76667, 8.81667"
+    },
+    "pl_amiens": {
+      "ok": true,
+      "lat": 49.89194,
+      "lon": 2.29778,
+      "wikidata": "Q41604",
+      "detail": "Wikidata Q41604 (“Amiens”): 49.89194, 2.29778"
+    },
+    "pl_amsterdam": {
+      "ok": true,
+      "lat": 52.36667,
+      "lon": 4.88333,
+      "wikidata": "Q727",
+      "detail": "Wikidata Q727 (“Amsterdam”): 52.36667, 4.88333"
+    },
+    "pl_bamberg": {
+      "ok": true,
+      "lat": 49.89167,
+      "lon": 10.89167,
+      "wikidata": "Q3936",
+      "detail": "Wikidata Q3936 (“Bamberg”): 49.89167, 10.89167"
+    },
+    "pl_barmen": {
+      "ok": true,
+      "lat": 51.26667,
+      "lon": 7.2,
+      "wikidata": "Q153974",
+      "detail": "Wikidata Q153974 (“Barmen”): 51.26667, 7.2"
+    },
+    "pl_basel": {
+      "ok": true,
+      "lat": 47.56056,
+      "lon": 7.59056,
+      "wikidata": "Q78",
+      "detail": "Wikidata Q78 (“Basel”): 47.56056, 7.59056"
+    },
+    "pl_berlin": {
+      "ok": true,
+      "lat": 52.51667,
+      "lon": 13.38333,
+      "wikidata": "Q64",
+      "detail": "Wikidata Q64 (“Berlin”): 52.51667, 13.38333"
+    },
+    "pl_bern": {
+      "ok": true,
+      "lat": 46.94798,
+      "lon": 7.44743,
+      "wikidata": "Q70",
+      "detail": "Wikidata Q70 (“Bern”): 46.94798, 7.44743"
+    },
+    "pl_besancon": {
+      "ok": true,
+      "lat": 47.24222,
+      "lon": 6.02139,
+      "wikidata": "Q37776",
+      "detail": "Wikidata Q37776 (“Besançon”): 47.24222, 6.02139"
+    },
+    "pl_bethesda": {
+      "ok": true,
+      "lat": 38.98483,
+      "lon": -77.09465,
+      "wikidata": "Q584451",
+      "detail": "Wikidata Q584451 (“Bethesda, Maryland”): 38.98483, -77.09465"
+    },
+    "pl_birmandreis": {
+      "ok": true,
+      "lat": 36.73944,
+      "lon": 3.05,
+      "wikidata": "Q2534015",
+      "detail": "Wikidata Q2534015 (“Bir Mourad Raïs”): 36.73944, 3.05"
+    },
+    "pl_boulogne_sur_seine": {
+      "ok": true,
+      "lat": 48.83528,
+      "lon": 2.24139,
+      "wikidata": "Q172455",
+      "detail": "Wikidata Q172455 (“Boulogne-Billancourt”): 48.83528, 2.24139"
+    },
+    "pl_breslau": {
+      "ok": true,
+      "lat": 51.11,
+      "lon": 17.0325,
+      "wikidata": "Q1799",
+      "detail": "Wikidata Q1799 (“Wrocław”): 51.11, 17.0325"
+    },
+    "pl_brussels": {
+      "ok": true,
+      "lat": 50.84667,
+      "lon": 4.35167,
+      "wikidata": "Q239",
+      "detail": "Wikidata Q239 (“City of Brussels”): 50.84667, 4.35167"
+    },
+    "pl_budapest": {
+      "ok": true,
+      "lat": 47.49833,
+      "lon": 19.04083,
+      "wikidata": "Q1781",
+      "detail": "Wikidata Q1781 (“Budapest”): 47.49833, 19.04083"
+    },
+    "pl_burlington": {
+      "ok": true,
+      "lat": 44.47611,
+      "lon": -73.21306,
+      "wikidata": "Q31058",
+      "detail": "Wikidata Q31058 (“Burlington, Vermont”): 44.47611, -73.21306"
+    },
+    "pl_cassino": {
+      "ok": true,
+      "lat": 41.49167,
+      "lon": 13.83333,
+      "wikidata": "Q116592",
+      "detail": "Wikidata Q116592 (“Cassino”): 41.49167, 13.83333"
+    },
+    "pl_castres": {
+      "ok": true,
+      "lat": 43.60583,
+      "lon": 2.24,
+      "wikidata": "Q188776",
+      "detail": "Wikidata Q188776 (“Castres”): 43.60583, 2.24"
+    },
+    "pl_cherbourg": {
+      "ok": true,
+      "lat": 49.63333,
+      "lon": -1.6,
+      "wikidata": "Q3667188",
+      "detail": "Wikidata Q3667188 (“Cherbourg”): 49.63333, -1.6"
+    },
+    "pl_chicago": {
+      "ok": true,
+      "lat": 41.88194,
+      "lon": -87.62778,
+      "wikidata": "Q1297",
+      "detail": "Wikidata Q1297 (“Chicago”): 41.88194, -87.62778"
+    },
+    "pl_cologne": {
+      "ok": true,
+      "lat": 50.94222,
+      "lon": 6.95778,
+      "wikidata": "Q365",
+      "detail": "Wikidata Q365 (“Cologne”): 50.94222, 6.95778"
+    },
+    "pl_constantinople": {
+      "ok": true,
+      "lat": 41.01,
+      "lon": 28.96028,
+      "wikidata": "Q406",
+      "detail": "Wikidata Q406 (“Istanbul”): 41.01, 28.96028"
+    },
+    "pl_copenhagen": {
+      "ok": true,
+      "lat": 55.67611,
+      "lon": 12.56889,
+      "wikidata": "Q1748",
+      "detail": "Wikidata Q1748 (“Copenhagen”): 55.67611, 12.56889"
+    },
+    "pl_coyoacan": {
+      "ok": true,
+      "lat": 19.35,
+      "lon": -99.16222,
+      "wikidata": "Q661315",
+      "detail": "Wikidata Q661315 (“Coyoacán”): 19.35, -99.16222"
+    },
+    "pl_derby": {
+      "ok": true,
+      "lat": 52.92167,
+      "lon": -1.47667,
+      "wikidata": "Q43475",
+      "detail": "Wikidata Q43475 (“Derby”): 52.92167, -1.47667"
+    },
+    "pl_deutz": {
+      "ok": true,
+      "lat": 50.9347,
+      "lon": 6.9878,
+      "wikidata": "Q3621",
+      "detail": "Wikidata Q3621 (“Deutz, Cologne”): 50.9347, 6.9878"
+    },
+    "pl_dmitrov": {
+      "ok": true,
+      "lat": 56.35,
+      "lon": 37.53333,
+      "wikidata": "Q102334",
+      "detail": "Wikidata Q102334 (“Dmitrov”): 56.35, 37.53333"
+    },
+    "pl_dublin": {
+      "ok": true,
+      "lat": 53.34972,
+      "lon": -6.26028,
+      "wikidata": "Q1761",
+      "detail": "Wikidata Q1761 (“Dublin”): 53.34972, -6.26028"
+    },
+    "pl_edinburgh": {
+      "ok": true,
+      "lat": 55.95333,
+      "lon": -3.18917,
+      "wikidata": "Q23436",
+      "detail": "Wikidata Q23436 (“Edinburgh”): 55.95333, -3.18917"
+    },
+    "pl_erfurt": {
+      "ok": true,
+      "lat": 50.97806,
+      "lon": 11.02889,
+      "wikidata": "Q1729",
+      "detail": "Wikidata Q1729 (“Erfurt”): 50.97806, 11.02889"
+    },
+    "pl_fort_de_france": {
+      "ok": true,
+      "lat": 14.6,
+      "lon": -61.06667,
+      "wikidata": "Q81621",
+      "detail": "Wikidata Q81621 (“Fort-de-France”): 14.6, -61.06667"
+    },
+    "pl_geneva": {
+      "ok": true,
+      "lat": 46.2,
+      "lon": 6.15,
+      "wikidata": "Q71",
+      "detail": "Wikidata Q71 (“Geneva”): 46.2, 6.15"
+    },
+    "pl_gorki": {
+      "ok": true,
+      "lat": 55.50336,
+      "lon": 37.77494,
+      "wikidata": "Q841555",
+      "detail": "Wikidata Q841555 (“Gorki Leninskiye”): 55.50336, 37.77494"
+    },
+    "pl_gotha": {
+      "ok": true,
+      "lat": 50.94889,
+      "lon": 10.71833,
+      "wikidata": "Q6986",
+      "detail": "Wikidata Q6986 (“Gotha”): 50.94889, 10.71833"
+    },
+    "pl_hamburg": {
+      "ok": true,
+      "lat": 53.55,
+      "lon": 10,
+      "wikidata": "Q1055",
+      "detail": "Wikidata Q1055 (“Hamburg”): 53.55, 10"
+    },
+    "pl_hammersmith": {
+      "ok": true,
+      "lat": 51.4928,
+      "lon": -0.2229,
+      "wikidata": "Q277162",
+      "detail": "Wikidata Q277162 (“Hammersmith”): 51.4928, -0.2229"
+    },
+    "pl_jena": {
+      "ok": true,
+      "lat": 50.92722,
+      "lon": 11.58639,
+      "wikidata": "Q3150",
+      "detail": "Wikidata Q3150 (“Jena”): 50.92722, 11.58639"
+    },
+    "pl_kirkcaldy": {
+      "ok": true,
+      "lat": 56.11073,
+      "lon": -3.16737,
+      "wikidata": "Q691685",
+      "detail": "Wikidata Q691685 (“Kirkcaldy”): 56.11073, -3.16737"
+    },
+    "pl_krakow": {
+      "ok": true,
+      "lat": 50.06139,
+      "lon": 19.93722,
+      "wikidata": "Q31487",
+      "detail": "Wikidata Q31487 (“Kraków”): 50.06139, 19.93722"
+    },
+    "pl_la_verriere": {
+      "ok": true,
+      "lat": 48.75861,
+      "lon": 1.96222,
+      "wikidata": "Q83574",
+      "detail": "Wikidata Q83574 (“La Verrière”): 48.75861, 1.96222"
+    },
+    "pl_landshut": {
+      "ok": true,
+      "lat": 48.53972,
+      "lon": 12.15083,
+      "wikidata": "Q3974",
+      "detail": "Wikidata Q3974 (“Landshut”): 48.53972, 12.15083"
+    },
+    "pl_leipzig": {
+      "ok": true,
+      "lat": 51.34063,
+      "lon": 12.37473,
+      "wikidata": "Q2079",
+      "detail": "Wikidata Q2079 (“Leipzig”): 51.34063, 12.37473"
+    },
+    "pl_london": {
+      "ok": true,
+      "lat": 51.50722,
+      "lon": -0.1275,
+      "wikidata": "Q84",
+      "detail": "Wikidata Q84 (“London”): 51.50722, -0.1275"
+    },
+    "pl_manchester": {
+      "ok": true,
+      "lat": 53.47944,
+      "lon": -2.24528,
+      "wikidata": "Q18125",
+      "detail": "Wikidata Q18125 (“Manchester”): 53.47944, -2.24528"
+    },
+    "pl_milan": {
+      "ok": true,
+      "lat": 45.46694,
+      "lon": 9.19,
+      "wikidata": "Q490",
+      "detail": "Wikidata Q490 (“Milan”): 45.46694, 9.19"
+    },
+    "pl_moscow": {
+      "ok": true,
+      "lat": 55.75056,
+      "lon": 37.6175,
+      "wikidata": "Q649",
+      "detail": "Wikidata Q649 (“Moscow”): 55.75056, 37.6175"
+    },
+    "pl_munich": {
+      "ok": true,
+      "lat": 48.1375,
+      "lon": 11.575,
+      "wikidata": "Q1726",
+      "detail": "Wikidata Q1726 (“Munich”): 48.1375, 11.575"
+    },
+    "pl_new_harmony": {
+      "ok": true,
+      "lat": 38.1286,
+      "lon": -87.9342,
+      "wikidata": "Q1002432",
+      "detail": "Wikidata Q1002432 (“New Harmony, Indiana”): 38.1286, -87.9342"
+    },
+    "pl_new_lanark": {
+      "ok": true,
+      "lat": 55.66361,
+      "lon": -3.78139,
+      "wikidata": "Q743108",
+      "detail": "Wikidata Q743108 (“New Lanark”): 55.66361, -3.78139"
+    },
+    "pl_new_york": {
+      "ok": true,
+      "lat": 40.71278,
+      "lon": -74.00611,
+      "wikidata": "Q60",
+      "detail": "Wikidata Q60 (“New York City”): 40.71278, -74.00611"
+    },
+    "pl_newtown": {
+      "ok": true,
+      "lat": 52.5132,
+      "lon": -3.3141,
+      "wikidata": "Q669171",
+      "detail": "Wikidata Q669171 (“Newtown, Powys”): 52.5132, -3.3141"
+    },
+    "pl_padua": {
+      "ok": true,
+      "lat": 45.40778,
+      "lon": 11.87333,
+      "wikidata": "Q617",
+      "detail": "Wikidata Q617 (“Padua”): 45.40778, 11.87333"
+    },
+    "pl_paris": {
+      "ok": true,
+      "lat": 48.85667,
+      "lon": 2.35222,
+      "wikidata": "Q90",
+      "detail": "Wikidata Q90 (“Paris”): 48.85667, 2.35222"
+    },
+    "pl_parma": {
+      "ok": true,
+      "lat": 44.80147,
+      "lon": 10.328,
+      "wikidata": "Q2683",
+      "detail": "Wikidata Q2683 (“Parma”): 44.80147, 10.328"
+    },
+    "pl_passy": {
+      "ok": true,
+      "lat": 48.85711,
+      "lon": 2.28414,
+      "wikidata": "Q1241308",
+      "detail": "Wikidata Q1241308 (“Passy”): 48.85711, 2.28414"
+    },
+    "pl_prague": {
+      "ok": true,
+      "lat": 50.0875,
+      "lon": 14.42139,
+      "wikidata": "Q1085",
+      "detail": "Wikidata Q1085 (“Prague”): 50.0875, 14.42139"
+    },
+    "pl_pryamukhino": {
+      "ok": true,
+      "lat": 56.93778,
+      "lon": 34.45278,
+      "wikidata": "Q2111332",
+      "detail": "Wikidata Q2111332 (“Pryamukhino”): 56.93778, 34.45278"
+    },
+    "pl_rome": {
+      "ok": true,
+      "lat": 41.89306,
+      "lon": 12.48278,
+      "wikidata": "Q220",
+      "detail": "Wikidata Q220 (“Rome”): 41.89306, 12.48278"
+    },
+    "pl_saint_mande": {
+      "ok": true,
+      "lat": 48.84139,
+      "lon": 2.41778,
+      "wikidata": "Q18102",
+      "detail": "Wikidata Q18102 (“Saint-Mandé”): 48.84139, 2.41778"
+    },
+    "pl_schomberg": {
+      "ok": true,
+      "lat": 48.78667,
+      "lon": 8.64417,
+      "wikidata": "Q625651",
+      "detail": "Wikidata Q625651 (“Schömberg, Calw”): 48.78667, 8.64417"
+    },
+    "pl_shushenskoye": {
+      "ok": true,
+      "lat": 53.32583,
+      "lon": 91.93944,
+      "wikidata": "Q2143176",
+      "detail": "Wikidata Q2143176 (“Shushenskoye”): 53.32583, 91.93944"
+    },
+    "pl_simbirsk": {
+      "ok": true,
+      "lat": 54.31667,
+      "lon": 48.36667,
+      "wikidata": "Q5627",
+      "detail": "Wikidata Q5627 (“Ulyanovsk”): 54.31667, 48.36667"
+    },
+    "pl_st_petersburg": {
+      "ok": true,
+      "lat": 59.95,
+      "lon": 30.31667,
+      "wikidata": "Q656",
+      "detail": "Wikidata Q656 (“Saint Petersburg”): 59.95, 30.31667"
+    },
+    "pl_stuttgart": {
+      "ok": true,
+      "lat": 48.7775,
+      "lon": 9.18,
+      "wikidata": "Q1022",
+      "detail": "Wikidata Q1022 (“Stuttgart”): 48.7775, 9.18"
+    },
+    "pl_terijoki": {
+      "ok": true,
+      "lat": 60.2,
+      "lon": 29.7,
+      "wikidata": "Q46850",
+      "detail": "Wikidata Q46850 (“Zelenogorsk, Saint Petersburg”): 60.2, 29.7"
+    },
+    "pl_the_hague": {
+      "ok": true,
+      "lat": 52.08,
+      "lon": 4.31,
+      "wikidata": "Q36600",
+      "detail": "Wikidata Q36600 (“The Hague”): 52.08, 4.31"
+    },
+    "pl_trier": {
+      "ok": true,
+      "lat": 49.75565,
+      "lon": 6.63935,
+      "wikidata": "Q3138",
+      "detail": "Wikidata Q3138 (“Trier”): 49.75565, 6.63935"
+    },
+    "pl_turin": {
+      "ok": true,
+      "lat": 45.07917,
+      "lon": 7.67611,
+      "wikidata": "Q495",
+      "detail": "Wikidata Q495 (“Turin”): 45.07917, 7.67611"
+    },
+    "pl_vienna": {
+      "ok": true,
+      "lat": 48.20833,
+      "lon": 16.3725,
+      "wikidata": "Q1741",
+      "detail": "Wikidata Q1741 (“Vienna”): 48.20833, 16.3725"
+    },
+    "pl_vilna": {
+      "ok": true,
+      "lat": 54.68722,
+      "lon": 25.28,
+      "wikidata": "Q216",
+      "detail": "Wikidata Q216 (“Vilnius”): 54.68722, 25.28"
+    },
+    "pl_walthamstow": {
+      "ok": true,
+      "lat": 51.584,
+      "lon": -0.0211,
+      "wikidata": "Q2321784",
+      "detail": "Wikidata Q2321784 (“Walthamstow”): 51.584, -0.0211"
+    },
+    "pl_wiederau": {
+      "ok": true,
+      "lat": 50.97083,
+      "lon": 12.8625,
+      "wikidata": "Q70981",
+      "detail": "Wikidata Q70981 (“Königshain-Wiederau”): 50.97083, 12.8625"
+    },
+    "pl_yanovka": {
+      "ok": true,
+      "lat": 47.89278,
+      "lon": 32.29028,
+      "wikidata": "Q753652",
+      "detail": "Wikidata Q753652 (“Bereslavka, Ukraine”): 47.89278, 32.29028"
+    },
+    "pl_zamosc": {
+      "ok": true,
+      "lat": 50.72056,
+      "lon": 23.25861,
+      "wikidata": "Q145972",
+      "detail": "Wikidata Q145972 (“Zamość”): 50.72056, 23.25861"
+    },
+    "pl_zimmerwald": {
+      "ok": true,
+      "lat": 46.88333,
+      "lon": 7.46667,
+      "wikidata": "Q203877",
+      "detail": "Wikidata Q203877 (“Zimmerwald”): 46.88333, 7.46667"
+    },
+    "pl_zurich": {
+      "ok": true,
+      "lat": 47.37444,
+      "lon": 8.54111,
+      "wikidata": "Q72",
+      "detail": "Wikidata Q72 (“Zurich”): 47.37444, 8.54111"
+    },
+    "pl_arkhangelskoye": {
+      "ok": true,
+      "lat": 55.78528,
+      "lon": 37.28417,
+      "wikidata": "Q2861586",
+      "detail": "Wikidata Q2861586 (“Arkhangelskoye Palace”): 55.78528, 37.28417"
+    },
+    "pl_cafe_du_croissant": {
+      "ok": true,
+      "lat": 48.8692,
+      "lon": 2.34328,
+      "wikidata": "Q2932997",
+      "detail": "Wikidata Q2932997 (“Café du Croissant”): 48.8692, 2.34328"
+    },
+    "pl_gatcombe_park": {
+      "ok": true,
+      "lat": 51.6933,
+      "lon": -2.17361,
+      "wikidata": "Q1405039",
+      "detail": "Wikidata Q1405039 (“Gatcombe Park”): 51.6933, -2.17361"
+    },
+    "pl_reichstag": {
+      "ok": true,
+      "lat": 52.51861,
+      "lon": 13.37611,
+      "wikidata": "Q151897",
+      "detail": "Wikidata Q151897 (“Reichstag building”): 52.51861, 13.37611"
+    },
+    "pl_st_martins_hall": {
+      "ok": true,
+      "lat": 51.513,
+      "lon": -0.12425,
+      "wikidata": "Q6469929",
+      "detail": "Wikidata Q6469929 (“Queen's Theatre, Long Acre”): 51.513, -0.12425"
+    },
+    "pl_algeria": {
+      "ok": true,
+      "lat": 28,
+      "lon": 1,
+      "wikidata": "Q262",
+      "detail": "Wikidata Q262 (“Algeria”): 28, 1"
+    },
+    "pl_catalonia": {
+      "ok": true,
+      "lat": 41.85,
+      "lon": 1.56667,
+      "wikidata": "Q5705",
+      "detail": "Wikidata Q5705 (“Catalonia”): 41.85, 1.56667"
+    },
+    "pl_chiapas": {
+      "ok": true,
+      "lat": 16.53,
+      "lon": -92.45,
+      "wikidata": "Q60123",
+      "detail": "Wikidata Q60123 (“Chiapas”): 16.53, -92.45"
+    },
+    "pl_france": {
+      "ok": true,
+      "lat": 47,
+      "lon": 2,
+      "wikidata": "Q142",
+      "detail": "Wikidata Q142 (“France”): 47, 2"
+    },
+    "pl_german_empire": {
+      "ok": true,
+      "lat": 52.51861,
+      "lon": 13.37611,
+      "wikidata": "Q43287",
+      "detail": "Wikidata Q43287 (“German Empire”): 52.51861, 13.37611"
+    }
+  }
+}

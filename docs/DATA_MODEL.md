@@ -127,6 +127,23 @@ structure and released when the journey is published. Reading progress is kept i
 - `entity_media(entity_id, media_id, role, caption, position)` — attachments, with `role` one of `portrait`,
   `photograph`, `cover`, `scan`, `diagram`, `figure`. Figures placed in prose are attached automatically.
 
+## Places
+
+- `places(id, slug, name, kind, lat, lon, modern_name, country, historical_note, aliases, matches, wikidata_id,
+  coord_source, created_by)` — the gazetteer. `kind` is `settlement`, `site`, `region` or `country`; regions are
+  drawn as names across their area and states are listed, never drawn as points. `name` is the name of the period
+  ("Petrograd" is an alias of St Petersburg, with its dates); `historical_note` says which state or province the
+  place lay in and when that changed. Coordinates must come from a named record (`wikidata_id` or
+  `coord_source`). `matches` lists the exact wordings in entry fields that mean the place.
+- `entity_places(id, entity_id, place_id, role, year_start, year_end, note, source_id, locator, position,
+  staged_for)` — recorded associations: `residence`, `exile`, `activity` (political activity), `writing`,
+  `publication`, `influence` (regional influence). Like relationships, rows added to a live entry are staged until
+  it is published again.
+- Birthplaces, places of death and event locations are **not** stored here: they stay in `thinker_details` and
+  `event_details` as written, and are matched to `places` at read time. A wording that names several places
+  ("Brussels and London", "London; Brussels; Paris; Cologne", or a list of three or more towns) resolves to each; one
+  that matches nothing ("Global") is left off the map and listed in the desk.
+
 ## Editorial tables
 
 | Table | Purpose |

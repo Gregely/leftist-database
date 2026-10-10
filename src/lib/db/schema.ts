@@ -34,6 +34,7 @@ import {
   type AnySQLiteColumn,
   integer,
   primaryKey,
+  real,
   sqliteTable,
   text,
   uniqueIndex,
@@ -509,6 +510,69 @@ export const entityMedia = sqliteTable(
 );
 
 /* -------------------------------------------------------------------------- */
+/* Geography                                                                   */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * The gazetteer: places the Atlas can locate. Reference records (like
+ * sources), not entries: they appear on the public site only through
+ * public entries associated with them.
+ */
+export const places = sqliteTable(
+  "places",
+  {
+    id: text("id").primaryKey(),
+    slug: text("slug").notNull(),
+    /** The name used in the collection, usually the name of the period. */
+    name: text("name").notNull(),
+    kind: text("kind").notNull().default("settlement"), // PlaceKind
+    lat: real("lat").notNull(),
+    lon: real("lon").notNull(),
+    /** Present-day name and country, for orientation. */
+    modernName: text("modern_name").notNull().default(""),
+    country: text("country").notNull().default(""),
+    /** How the place stood in the period: states, provinces, renamings. */
+    historicalNote: text("historical_note").notNull().default(""),
+    /** Other names, including historical ones (JSON array of strings, e.g. "Petrograd (1914–24)"). */
+    aliases: text("aliases").notNull().default("[]"),
+    /** Wordings in entry fields that refer to this place, exactly as written (JSON array). */
+    matches: text("matches").notNull().default("[]"),
+    /** Where the coordinates come from, e.g. a Wikidata item. */
+    wikidataId: text("wikidata_id"),
+    coordSource: text("coord_source").notNull().default(""),
+    createdBy: text("created_by"),
+    ...timestamps,
+  },
+  (t) => [uniqueIndex("places_slug").on(t.slug)],
+);
+
+/** An entry's recorded association with a place (residence, exile, activity, writing, publication, influence). */
+export const entityPlaces = sqliteTable(
+  "entity_places",
+  {
+    id: text("id").primaryKey(),
+    entityId: text("entity_id")
+      .notNull()
+      .references(() => entities.id, { onDelete: "cascade" }),
+    placeId: text("place_id")
+      .notNull()
+      .references(() => places.id, { onDelete: "restrict" }),
+    role: text("role").notNull(), // RecordedPlaceRole
+    yearStart: integer("year_start"),
+    yearEnd: integer("year_end"),
+    note: text("note").notNull().default(""),
+    sourceId: text("source_id").references(() => sources.id, { onDelete: "set null" }),
+    locator: text("locator"),
+    position: integer("position").notNull().default(0),
+    /** Set while this row waits for the publication of the named (live) entry; null when public-eligible. */
+    stagedFor: text("staged_for"),
+    createdBy: text("created_by"),
+    ...timestamps,
+  },
+  (t) => [index("entity_places_entity").on(t.entityId), index("entity_places_place").on(t.placeId)],
+);
+
+/* -------------------------------------------------------------------------- */
 /* Editorial layer                                                             */
 /* -------------------------------------------------------------------------- */
 
@@ -625,5 +689,7 @@ export type SourceRow = typeof sources.$inferSelect;
 export type CitationRow = typeof citations.$inferSelect;
 export type ExcerptRow = typeof excerpts.$inferSelect;
 export type MediaRow = typeof media.$inferSelect;
+export type PlaceRow = typeof places.$inferSelect;
+export type EntityPlaceRow = typeof entityPlaces.$inferSelect;
 export type UserRow = typeof users.$inferSelect;
 export type RevisionRow = typeof revisions.$inferSelect;

@@ -171,6 +171,46 @@ export const MEDIA_ROLES = ["portrait", "photograph", "cover", "scan", "diagram"
 export type MediaRole = (typeof MEDIA_ROLES)[number];
 
 /* ------------------------------------------------------------------------ */
+/* Geography                                                                 */
+/* ------------------------------------------------------------------------ */
+
+/**
+ * What a place in the gazetteer is: a settlement (a town or city), a site
+ * within one (a building, a street), a region, or a country or state. A
+ * region or country is never drawn as if it were a point.
+ */
+export const PLACE_KINDS = ["settlement", "site", "region", "country"] as const;
+export type PlaceKind = (typeof PLACE_KINDS)[number];
+export const PLACE_KIND_LABELS: Record<PlaceKind, string> = { settlement: "Town or city", site: "Site", region: "Region", country: "Country or state" };
+
+/**
+ * How an entry is associated with a place. These are not interchangeable:
+ * being born somewhere, living there in exile, organising there and
+ * publishing there are different historical facts.
+ *
+ * `birth`, `death` and `event` come from fields already on the entries
+ * (a thinker's birthplace and place of death, an event's location); the
+ * others are recorded as place associations, with dates, a note and a source.
+ */
+export const PLACE_ROLES = ["birth", "death", "event", "residence", "exile", "activity", "writing", "publication", "influence"] as const;
+export type PlaceRole = (typeof PLACE_ROLES)[number];
+/** Roles that are recorded as associations (the rest are read from entry fields). */
+export const RECORDED_PLACE_ROLES = ["residence", "exile", "activity", "writing", "publication", "influence"] as const satisfies readonly PlaceRole[];
+export type RecordedPlaceRole = (typeof RECORDED_PLACE_ROLES)[number];
+
+export const PLACE_ROLE_META: Record<PlaceRole, { label: string; verb: string; plural: string }> = {
+  birth: { label: "Birthplace", verb: "born", plural: "Births" },
+  death: { label: "Place of death", verb: "died", plural: "Deaths" },
+  event: { label: "Event location", verb: "took place", plural: "Events" },
+  residence: { label: "Residence", verb: "lived", plural: "Residence" },
+  exile: { label: "Exile", verb: "in exile", plural: "Exile" },
+  activity: { label: "Political activity", verb: "active", plural: "Political activity" },
+  writing: { label: "Written", verb: "written", plural: "Writing" },
+  publication: { label: "Publication", verb: "published", plural: "Publication" },
+  influence: { label: "Regional influence", verb: "influential", plural: "Regional influence" },
+};
+
+/* ------------------------------------------------------------------------ */
 /* Relationships                                                             */
 /* ------------------------------------------------------------------------ */
 

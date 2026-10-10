@@ -32,17 +32,20 @@ import {
   addCitation,
   addExcerpt,
   addProposition,
+  addPlaceLink,
   addStep,
   attachMedia,
   citationsFor,
   excerptsFor,
   linkPosition,
+  placeLinksFor,
   resetStructure,
   savePosition,
   setStances,
   updateExcerpt,
   upsertRelationship,
 } from "@/lib/editorial/structure";
+import { createPlace, updatePlace } from "@/lib/editorial/places";
 import { newId } from "@/lib/util/id";
 import type { Corpus, CorpusBatch, CorpusEntity, EntityKey, Flag, FlagType, VerificationRecord } from "./types";
 
@@ -144,13 +147,15 @@ export interface ImportSummary {
   mediaMissing: number;
   notes: number;
   submitted: number;
+  places: { created: number; updated: number; unlocated: string[] };
+  placeLinks: number;
 }
 
 export async function importCorpus(corpus: Corpus, opts: ImportOptions = {}): Promise<ImportSummary> {
   const log = opts.log ?? (() => {});
   const actor = await importActor();
   const verification = await loadVerification(corpus);
-  const summary: ImportSummary = { created: [], amended: [], unchanged: [], sources: { created: 0, updated: 0, reused: 0 }, relationships: 0, citations: 0, excerpts: 0, media: 0, mediaMissing: 0, notes: 0, submitted: 0 };
+  const summary: ImportSummary = { created: [], amended: [], unchanged: [], sources: { created: 0, updated: 0, reused: 0 }, relationships: 0, citations: 0, excerpts: 0, media: 0, mediaMissing: 0, notes: 0, submitted: 0, places: { created: 0, updated: 0, unlocated: [] }, placeLinks: 0 };
   const touched = new Set<string>();
   const batches = opts.batches?.length ? corpus.batches.filter((b) => opts.batches!.includes(b.id)) : corpus.batches;
   for (const batch of batches) {
@@ -207,6 +212,50 @@ async function importBatch(
     }
   }
 
+  /* Places (the gazetteer) ------------------------------------------------ */
+  for (const pl of batch.places ?? []) {
+    const located = verification?.places?.[pl.id];
+    if (!located?.ok || located.lat == null || located.lon == null) {
+      // No verified coordinates, no place: nothing is ever estimated.
+      summary.places.unlocated.push(pl.id);
+      log(`  ! place ${pl.id} has no verified coordinates (run verify) — skipped`);
+      continue;
+    }
+    const input = {
+      name: pl.name,
+      kind: pl.kind,
+      lat: located.lat,
+      lon: located.lon,
+      modernName: pl.modernName ?? "",
+      country: pl.country ?? "",
+      historicalNote: pl.historicalNote ?? "",
+      aliases: pl.aliases ?? [],
+      matches: pl.matches ?? [],
+      wikidataId: pl.wikidata,
+      coordSource: `Wikidata ${pl.wikidata} (coordinate location), via the English Wikipedia article “${pl.wikipedia}”`,
+    };
+    const existing = await db.select().from(s.places).where(eq(s.places.id, pl.id)).get();
+    if (!existing) {
+      await createPlace(actor, input, { id: pl.id, slug: pl.id.replace(/^pl_/, "").replace(/_/g, "-") });
+      summary.places.created++;
+    } else if (existing.createdBy === actor.id) {
+      const same =
+        existing.name === input.name &&
+        existing.kind === input.kind &&
+        existing.lat === input.lat &&
+        existing.lon === input.lon &&
+        existing.modernName === input.modernName &&
+        existing.country === input.country &&
+        existing.historicalNote === input.historicalNote &&
+        existing.aliases === JSON.stringify(input.aliases) &&
+        existing.matches === JSON.stringify(input.matches);
+      if (!same) {
+        await updatePlace(actor, pl.id, input);
+        summary.places.updated++;
+      }
+    } else log(`  ! place ${pl.id} exists and was not created by this import — left unchanged`);
+  }
+
   /* Entities ------------------------------------------------------------ */
   for (const e of batch.entities ?? []) {
     const row = await importEntity(corpus, e, actor, summary, log);
@@ -233,6 +282,25 @@ async function importBatch(
     summary.relationships++;
     touched.add(contextId);
     if (r.flag) summary.notes += await flagNote(actor, contextId, { ...r.flag, note: `${from.title} — ${r.type} — ${to.title}: ${r.flag.note}` });
+  }
+
+  /* Place associations ----------------------------------------------------- */
+  for (const pl of batch.placeLinks ?? []) {
+    const row = await requireKey(pl.entity);
+    const place = await db.select({ id: s.places.id, name: s.places.name }).from(s.places).where(eq(s.places.id, pl.place)).get();
+    if (!place) {
+      log(`  ! ${pl.entity} — place ${pl.place} is not in the gazetteer (not located?) — association skipped`);
+      continue;
+    }
+    const existing = (await placeLinksFor(row.id)).find(
+      (x) => x.l.placeId === pl.place && x.l.role === pl.role && (x.l.yearStart ?? null) === (pl.yearStart ?? null) && x.l.createdBy === actor.id,
+    );
+    if (!existing) {
+      await addPlaceLink(actor, row.id, { placeId: pl.place, role: pl.role, yearStart: pl.yearStart ?? null, yearEnd: pl.yearEnd ?? null, note: pl.note, sourceId: pl.source ?? null, locator: pl.locator });
+      summary.placeLinks++;
+    }
+    touched.add(row.id);
+    if (pl.flag) summary.notes += await flagNote(actor, row.id, { ...pl.flag, note: `${place.name} (${pl.role}): ${pl.flag.note}` });
   }
 
   /* Excerpts --------------------------------------------------------------- */
@@ -478,12 +546,20 @@ async function loadVerification(corpus: Corpus): Promise<VerificationRecord | nu
  */
 export async function importState(corpus: Corpus) {
   const keys = [...new Set(corpus.batches.flatMap((b) => (b.entities ?? []).map((e) => e.key)))];
-  const present: EntityKey[] = [];
+  const present: string[] = [];
   for (const key of keys) {
     const row = await resolveKey(key);
     if (row && parseTags(row.editorialTags).includes(corpus.collection)) present.push(key);
   }
-  return { defined: keys.length, present, missing: keys.filter((k) => !present.includes(k)) };
+  // A gazetteer corpus is present when its places are.
+  const placeIds = [...new Set(corpus.batches.flatMap((b) => (b.places ?? []).map((p) => p.id)))];
+  if (placeIds.length) {
+    const db = await ready();
+    const have = new Set((await db.select({ id: s.places.id }).from(s.places)).map((r) => r.id));
+    for (const id of placeIds) if (have.has(id)) present.push(id);
+  }
+  const defined = [...keys, ...placeIds];
+  return { defined: defined.length, present, missing: defined.filter((k) => !present.includes(k)) };
 }
 
 /** All entries carrying the corpus collection label. */

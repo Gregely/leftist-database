@@ -19,7 +19,7 @@ export function SiteHeader() {
       >
         Skip to content
       </a>
-      <div className="mx-auto flex h-14 max-w-[1440px] items-stretch justify-between gap-5 px-4 sm:px-8 lg:h-[60px] lg:px-10">
+      <div className="mx-auto flex h-14 max-w-[1440px] items-stretch justify-between gap-5 px-4 sm:px-8 lg:h-[60px] lg:gap-3 lg:px-6 xl:gap-5 xl:px-10">
         <div className="flex min-w-0 items-center gap-3">
           <Wordmark className="text-[1.15rem] lg:text-[1.3rem]" />
           <RunningHead />
@@ -27,7 +27,7 @@ export function SiteHeader() {
         <nav aria-label="Primary" className="hidden lg:flex lg:items-stretch">
           <NavLinks />
         </nav>
-        <div className="hidden items-center gap-5 lg:flex">
+        <div className="hidden items-center gap-3 lg:flex xl:gap-5">
           <SearchTrigger className="group flex w-[3rem] items-center justify-between gap-3 border-b border-ink pb-1 text-left transition-colors hover:border-red min-[1440px]:w-[12.5rem]">
             <span className="flex items-center gap-2">
               <SearchGlyph />

@@ -54,7 +54,7 @@ export function NavLinks() {
   const inCollection = explore || COLLECTION.some((s) => isActive(pathname, s.href));
   return (
     <ul className="flex h-full items-stretch">
-      <li className="flex items-stretch border-r border-ink/70 pr-4 xl:pr-7">
+      <li className="flex items-stretch border-r border-ink/70 pr-3 xl:pr-7">
         <Link href="/guided" aria-current={guided ? "page" : undefined} className={`${linkCls(guided)} gap-2`}>
           <RouteGlyph className="text-red" />
           Guided
@@ -65,7 +65,7 @@ export function NavLinks() {
           )}
         </Link>
       </li>
-      <li className="flex items-stretch pl-4 xl:pl-7">
+      <li className="flex items-stretch pl-3 xl:pl-7">
         <Link
           href={EXPLORE.href}
           aria-current={explore ? "page" : undefined}
@@ -73,21 +73,21 @@ export function NavLinks() {
         >
           {EXPLORE.label}
         </Link>
-        <span aria-hidden="true" className="mx-2.5 h-px w-3 self-center bg-ink xl:mx-4 xl:w-6" />
+        <span aria-hidden="true" className="mx-2 h-px w-3 self-center bg-ink xl:mx-4 xl:w-6" />
         <ul aria-label="The collection" className="flex items-stretch">
           {COLLECTION.map((item, i) => {
             const active = isActive(pathname, item.href);
             return (
               <li key={item.href} className="flex items-stretch">
                 {i > 0 && (
-                  <span aria-hidden="true" className="self-center px-1 text-faint xl:px-2">
+                  <span aria-hidden="true" className="self-center px-[3px] text-faint xl:px-2">
                     ·
                   </span>
                 )}
                 <Link
                   href={item.href}
                   aria-current={active ? "page" : undefined}
-                  className={`relative flex h-full items-center whitespace-nowrap font-serif text-[0.9rem] transition-colors hover:text-red xl:text-[1.02rem] ${active ? "text-red" : "text-ink-warm"} ${bar(active ? "page" : null)}`}
+                  className={`relative flex h-full items-center whitespace-nowrap font-serif text-[0.86rem] transition-colors hover:text-red xl:text-[1.02rem] ${active ? "text-red" : "text-ink-warm"} ${bar(active ? "page" : null)}`}
                 >
                   {item.short === item.label ? (
                     item.label

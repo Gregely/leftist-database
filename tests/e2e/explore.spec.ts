@@ -19,6 +19,7 @@ test.describe("home & theory map", () => {
       ["Tendencies", "/tendencies"],
       ["Timeline", "/timeline"],
       ["Theory Map", "/map"],
+      ["Geography", "/geography"],
       ["Explore", "/explore"],
     ];
     for (const [name, href] of sections) await expect(collection.getByRole("link", { name: new RegExp(`^\\d+ ${name}`) })).toHaveAttribute("href", href);
@@ -40,7 +41,7 @@ test.describe("home & theory map", () => {
     await expect(links.nth(0)).toHaveAccessibleName("Guided");
     await expect(links.nth(1)).toHaveAccessibleName("Explore");
     const contents = primary.getByRole("list", { name: "The collection" });
-    expect(await contents.getByRole("link").allInnerTexts()).toEqual(["Thinkers", "Concepts", "Texts", "Debates", "Tendencies", "Timeline", "Theory Map"]);
+    expect(await contents.getByRole("link").allInnerTexts()).toEqual(["Thinkers", "Concepts", "Texts", "Debates", "Tendencies", "Timeline", "Theory Map", "Geography"]);
     await expect(contents.getByRole("link", { name: "Guided" })).toHaveCount(0);
     await expect(contents.getByRole("link", { name: "Thinkers" })).toHaveAttribute("aria-current", "page");
     await expect(links.nth(1)).not.toHaveAttribute("aria-current", "page");

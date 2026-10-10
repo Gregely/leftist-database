@@ -4,7 +4,7 @@ import { ready } from "@/lib/db/client";
 import { auditLog, users } from "@/lib/db/schema";
 import { newId } from "@/lib/util/id";
 
-export type AuditTarget = "entity" | "relationship" | "source" | "media" | "user" | "session";
+export type AuditTarget = "entity" | "relationship" | "source" | "media" | "place" | "user" | "session";
 
 const SENSITIVE = /pass(word)?|token|secret|hash|cookie|session/i;
 
@@ -108,6 +108,11 @@ export const AUDIT_ACTIONS = [
   "media_edit",
   "media_attach",
   "media_detach",
+  "place_create",
+  "place_update",
+  "place_delete",
+  "place_attach",
+  "place_detach",
   "note_add",
   "note_resolve",
   "structure_edit",

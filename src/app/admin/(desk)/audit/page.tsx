@@ -57,7 +57,7 @@ export default async function AuditPage({ searchParams }: Props) {
           <span className="label mb-1 block text-faint">Target</span>
           <select name="type" defaultValue={sp.type ?? ""} className="field w-40 py-1.5">
             <option value="">Any</option>
-            {["entity", "relationship", "source", "media", "user", "session"].map((t) => (
+            {["entity", "relationship", "source", "media", "place", "user", "session"].map((t) => (
               <option key={t} value={t}>
                 {t}
               </option>

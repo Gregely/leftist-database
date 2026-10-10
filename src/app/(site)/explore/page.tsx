@@ -85,6 +85,10 @@ export default async function ExplorePage() {
               title="Every thinker in the Atlas, by year of birth"
             />
           </div>
+          <p className="mt-5 flex flex-wrap items-baseline gap-x-3 border-t border-rule pt-3">
+            <span className="font-serif italic text-muted">Where it happened, rather than how ideas connect:</span>
+            <ArrowLink href="/geography">Open Geography</ArrowLink>
+          </p>
         </Container>
       </section>
 

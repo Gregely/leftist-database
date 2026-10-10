@@ -40,6 +40,7 @@ export const SECTIONS = [
   { key: "tendencies", label: "Tendencies", short: "Tendencies", href: "/tendencies", tone: KIND_TONE.tendency },
   { key: "timeline", label: "Timeline", short: "Timeline", href: "/timeline", tone: KIND_TONE.event },
   { key: "map", label: "Theory Map", short: "Map", href: "/map", tone: "var(--color-ink)" },
+  { key: "geography", label: "Geography", short: "Geography", href: "/geography", tone: "var(--color-blue)" },
   { key: "explore", label: "Explore", short: "Explore", href: "/explore", tone: "var(--color-faint)" },
 ] as const;
 

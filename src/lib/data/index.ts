@@ -27,6 +27,7 @@ export { search, lookupEntities } from "./search";
 export { listSources, getSource } from "./sources";
 export { ATLAS_KINDS, getAtlasGraph, getGraph, getNeighborhood } from "./graph";
 export { getHomeData } from "./home";
+export { getGeography, type Geography, type GeoPlace, type GeoEntry, type GeoLink } from "./geography";
 export type * from "./types";
 export type { TimelineItem, TimelineLane, Preview } from "./events";
 export type { DebatePosition, DebateArgument, DebateAggregate } from "./debates";

@@ -53,6 +53,8 @@ export type Permission =
   | "entity.bulkReview"
   | "source.create"
   | "source.edit"
+  | "place.create"
+  | "place.edit"
   | "media.upload"
   | "media.edit"
   | "relationship.global"
@@ -73,6 +75,7 @@ export function can(actor: Actor | null, permission: Permission, entity?: Entity
     case "entity.create":
     case "entity.view":
     case "source.create":
+    case "place.create":
     case "media.upload":
       return true;
 
@@ -124,6 +127,7 @@ export function can(actor: Actor | null, permission: Permission, entity?: Entity
 
     case "source.edit":
     case "media.edit":
+    case "place.edit":
       return editor || (!!owner && owner === actor.id);
 
     case "relationship.global":

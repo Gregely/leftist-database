@@ -44,7 +44,7 @@ function summarise(s: ImportSummary) {
   console.log(
     `\nCreated ${s.created.length}, amended ${s.amended.length}, unchanged ${s.unchanged.length}; ` +
       `sources +${s.sources.created} ~${s.sources.updated} (reused ${s.sources.reused}); ` +
-      `relationships ${s.relationships}, citations +${s.citations}, excerpts +${s.excerpts}, media ${s.media}${s.mediaMissing ? ` (${s.mediaMissing} not downloaded yet)` : ""}, notes +${s.notes}, submitted ${s.submitted}.`,
+      `relationships ${s.relationships}, citations +${s.citations}, excerpts +${s.excerpts}, media ${s.media}${s.mediaMissing ? ` (${s.mediaMissing} not downloaded yet)` : ""}, notes +${s.notes}, places +${s.places.created} ~${s.places.updated}${s.places.unlocated.length ? ` (not located: ${s.places.unlocated.join(", ")})` : ""}, place associations +${s.placeLinks}, submitted ${s.submitted}.`,
   );
 }
 

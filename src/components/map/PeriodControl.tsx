@@ -1,26 +1,30 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import type { AtlasNode } from "@/lib/graph/atlas";
 import { PERIODS } from "@/lib/site";
 import { C } from "./style";
 
 /**
- * Narrow the map to a period: a two-handled range over the years the
- * collection covers, with the density of dated entries drawn beneath it, and
- * the site's periods as quick choices. The map follows when a handle is let
+ * Narrow a map to a period: a two-handled range over the years the
+ * collection covers, with the density of dated material drawn beneath it, and
+ * the site's periods as quick choices. Shared by the Theory Map and the
+ * Geography section; each keeps its own period. The map follows when a handle is let
  * go, not on every step of a drag.
  */
 export function PeriodControl({
   years,
-  nodes,
+  dates,
   period,
   onChange,
+  scrollPresets = false,
 }: {
   years: [number, number];
-  nodes: AtlasNode[];
+  /** One year per dated item, drawn as density by decade. */
+  dates: number[];
   period: [number, number] | null;
   onChange: (p: [number, number] | null) => void;
+  /** On narrow screens, keep the period choices on one line that scrolls sideways. */
+  scrollPresets?: boolean;
 }) {
   const [y0, y1] = years;
   const [draft, setDraft] = useState<[number, number]>(period ?? years);
@@ -28,10 +32,10 @@ export function PeriodControl({
 
   const bins = useMemo(() => {
     const out = new Array(Math.ceil((y1 - y0) / 10)).fill(0);
-    for (const n of nodes) if (n.dated) out[Math.min(out.length - 1, Math.floor((n.year - y0) / 10))]++;
+    for (const y of dates) if (y >= y0 && y <= y1) out[Math.min(out.length - 1, Math.floor((y - y0) / 10))]++;
     const max = Math.max(1, ...out);
     return out.map((c) => c / max);
-  }, [nodes, y0, y1]);
+  }, [dates, y0, y1]);
 
   const commit = (p: [number, number]) => onChange(p[0] <= y0 && p[1] >= y1 ? null : p);
   const pct = (y: number) => ((y - y0) / (y1 - y0)) * 100;
@@ -74,7 +78,7 @@ export function PeriodControl({
         </div>
         <span className="label-mono w-10 shrink-0 text-ink">{draft[1]}</span>
       </div>
-      <div className="flex flex-wrap items-center gap-x-1 gap-y-1.5 sm:pl-16">
+      <div className={`flex items-center gap-x-1 gap-y-1.5 sm:pl-16 ${scrollPresets ? "-mr-4 overflow-x-auto pr-4 sm:mr-0 sm:flex-wrap sm:overflow-visible sm:pr-0 [&>button]:shrink-0" : "flex-wrap"}`}>
         <button type="button" aria-pressed={!period} onClick={() => onChange(null)} className={`label border px-2 py-1 ${!period ? "border-ink bg-ink text-paper" : "border-rule text-muted hover:border-ink"}`}>
           All
         </button>

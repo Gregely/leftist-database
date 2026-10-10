@@ -16,6 +16,7 @@ import { ConflictError, NotFoundError, ValidationError } from "@/lib/editorial/c
 import { validateEntity } from "@/lib/editorial/insight";
 import * as mediaLib from "@/lib/editorial/media";
 import * as notes from "@/lib/editorial/notes";
+import * as placesLib from "@/lib/editorial/places";
 import { assertCan, ForbiddenError, type Actor } from "@/lib/editorial/permissions";
 import * as sourcesLib from "@/lib/editorial/sources";
 import * as structure from "@/lib/editorial/structure";
@@ -189,6 +190,30 @@ export async function deleteSourceAction(id: string): Promise<ActionResult> {
   const res = await run((a) => sourcesLib.deleteSource(a, id), { publicChange: true });
   if (!res.ok) return res;
   redirect("/admin/sources");
+}
+
+/* — Places ———————————————————————————————————————————————————————————— */
+
+export async function createPlaceAction(input: placesLib.PlaceInput): Promise<ActionResult<string>> {
+  return run((a) => placesLib.createPlace(a, input), { publicChange: true });
+}
+
+export async function updatePlaceAction(id: string, input: placesLib.PlaceInput): Promise<ActionResult> {
+  return run((a) => placesLib.updatePlace(a, id, input), { publicChange: true, message: "Place saved." });
+}
+
+export async function deletePlaceAction(id: string): Promise<ActionResult> {
+  const res = await run((a) => placesLib.deletePlace(a, id), { publicChange: true });
+  if (!res.ok) return res;
+  redirect("/admin/places");
+}
+
+export async function addPlaceLinkAction(entityId: string, input: structure.PlaceLinkInput): Promise<ActionResult<string>> {
+  return run((a) => structure.addPlaceLink(a, entityId, input), { publicChange: true });
+}
+
+export async function removePlaceLinkAction(linkId: string): Promise<ActionResult> {
+  return run((a) => structure.removePlaceLink(a, linkId), { publicChange: true });
 }
 
 /* — Media ————————————————————————————————————————————————————————————— */

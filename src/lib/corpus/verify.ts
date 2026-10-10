@@ -118,17 +118,60 @@ export async function verifyCorpus(corpus: Corpus, log: (l: string) => void = ()
       log(`${record.sources[src.id].ok ? "✓" : "✗"} source ${src.id} — ${record.sources[src.id].detail}`);
     }
   }
+  // Places: the article must point to the named Wikidata item; the coordinates are that item's (P625).
+  const places = corpus.batches.flatMap((b) => b.places ?? []);
+  if (places.length) record.places = {};
+  for (const pl of places) {
+    record.places![pl.id] = await locate(pl.wikipedia, pl.wikidata);
+    const r = record.places![pl.id];
+    log(`${r.ok ? "✓" : "✗"} place ${pl.id} — ${r.detail}`);
+    await sleep(1000);
+  }
   // Keep results for anything not re-checked this time.
   try {
     const prev = JSON.parse(await readFile(file, "utf8")) as VerificationRecord;
     record.quotes = { ...prev.quotes, ...record.quotes };
     record.sources = { ...prev.sources, ...record.sources };
+    if (prev.places || record.places) record.places = { ...prev.places, ...record.places };
   } catch {}
   await writeFile(file, JSON.stringify(record, null, 2) + "\n");
   return record;
 }
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+async function getJson(url: string) {
+  for (let attempt = 0, wait = 4000; attempt < 4; attempt++, wait *= 2) {
+    const res = await fetch(url, { headers: { "user-agent": UA, accept: "application/json" }, signal: AbortSignal.timeout(30_000) }).catch(() => null);
+    if (res?.ok) return res.json();
+    if (res && res.status !== 429 && res.status < 500) throw new Error(`HTTP ${res.status}`);
+    await sleep(wait);
+  }
+  throw new Error("no response (rate-limited or offline)");
+}
+
+/** Coordinates for a place: the Wikidata item behind a Wikipedia article, if it is the expected one, and its P625. */
+async function locate(title: string, qid: string): Promise<{ ok: boolean; lat?: number; lon?: number; wikidata?: string; detail: string }> {
+  try {
+    const page = (await getJson(
+      `https://en.wikipedia.org/w/api.php?action=query&format=json&formatversion=2&redirects=1&prop=pageprops&ppprop=wikibase_item&titles=${encodeURIComponent(title)}`,
+    )) as { query: { pages: { title: string; missing?: boolean; pageprops?: { wikibase_item?: string } }[] } };
+    const article = page.query.pages[0];
+    const item = article?.pageprops?.wikibase_item;
+    if (!article || article.missing || item !== qid) return { ok: false, wikidata: item, detail: `article “${title}” is Wikidata ${item ?? "?"}, not ${qid}` };
+    const data = (await getJson(`https://www.wikidata.org/w/api.php?action=wbgetclaims&format=json&entity=${qid}&property=P625`)) as {
+      claims: { P625?: { rank: string; mainsnak: { datavalue?: { value: { latitude: number; longitude: number } } } }[] };
+    };
+    const claims = (data.claims.P625 ?? []).filter((c) => c.rank !== "deprecated");
+    const claim = (claims.find((c) => c.rank === "preferred") ?? claims[0])?.mainsnak.datavalue?.value;
+    if (!claim) return { ok: false, wikidata: qid, detail: `Wikidata ${qid} has no coordinate location (P625)` };
+    const lat = Math.round(claim.latitude * 1e5) / 1e5;
+    const lon = Math.round(claim.longitude * 1e5) / 1e5;
+    return { ok: true, lat, lon, wikidata: qid, detail: `Wikidata ${qid} (“${article.title}”): ${lat}, ${lon}` };
+  } catch (e) {
+    return { ok: false, wikidata: qid, detail: (e as Error).message };
+  }
+}
 
 /**
  * Download image files that a corpus lists but does not have yet. Requests are

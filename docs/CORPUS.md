@@ -16,6 +16,7 @@ The corpora, in import order (`corpus/index.ts`):
 | `guided-understanding-marx` | Guided journeys | `initial-marx` | — |
 | `marx-to-lenin` | Marx to Lenin Corpus | `initial-marx` | [`marx-to-lenin-review.md`](corpus/marx-to-lenin-review.md); research in [`marx-to-lenin-research.md`](corpus/marx-to-lenin-research.md) |
 | `guided-marx-to-lenin` | Guided journeys | `marx-to-lenin` | — |
+| `geography` | Geography | `initial-marx`, `marx-to-lenin` | — |
 
 ## Commands
 
@@ -36,7 +37,9 @@ npm run corpus -- report initial-marx [--http …]   # writes docs/corpus/initia
   resets or publishes; an empty database needs `npm run db:ensure` (or `npm run dev`) first.
 - **verify** is the only step that needs the network. It checks that each excerpt's wording appears verbatim
   (after normalising quotes, dashes and spacing) on its archive page, that each online source mentions an expected
-  phrase, and that each book can be found in Open Library. Results are committed, so imports are reproducible offline.
+  phrase, and that each book can be found in Open Library. For places, it checks that the English Wikipedia article
+  named belongs to the Wikidata item named, and records that item's coordinate location (P625). Results are
+  committed, so imports are reproducible offline; a place without verified coordinates is not imported.
 - **import** is idempotent: re-running it changes nothing that has not changed in the data. But where an editor has
   changed an imported entry since, re-importing writes the corpus text back as a new working version (history is
   kept), so on a reviewed database prefer `setup`, which skips corpora already present. `import` refuses a corpus
@@ -52,7 +55,7 @@ npm run corpus -- report initial-marx [--http …]   # writes docs/corpus/initia
 
 `src/lib/corpus/types.ts` defines the format. A corpus has a `collection` name, a `planned` list of every entry the
 finished corpus defines (so early batches can link ahead), and ordered **batches**, each with `sources`, `entities`,
-`relationships`, `excerpts`, `debates`, `paths` and `media`.
+`relationships`, `excerpts`, `debates`, `paths`, `media`, `places` and `placeLinks`.
 
 - **Entities** are addressed by `kind:slug`. An existing entry with that slug is *amended* (for a live entry, a new
   working version — the published one is untouched); otherwise one is created. `fields` uses the editor field names
@@ -82,6 +85,20 @@ finished corpus defines (so early batches can link ahead), and ordered **batches
   entries.
 - **Media** files sit in `corpus/<name>/media/` with title, alt text, caption, creator, credit, source and licence.
   Identical files are stored once; the import never rewrites metadata on a library image it did not upload.
+- **Places** are gazetteer records (`id: "pl_…"`, `name`, `kind`, `wikipedia`, `wikidata`, `historicalNote`,
+  `aliases`, `matches`). They never carry coordinates: `verify` reads them from Wikidata, and the import creates the
+  place only if verification succeeded. The import updates a place it created when the data changes, and leaves
+  alone a place an editor created.
+- **Place links** record an association that entry fields cannot express: `entity`, `place`, `role` (`residence`,
+  `exile`, `activity`, `writing`, `publication`, `influence`), years, a `note` and a `source`. Birthplaces, places
+  of death and event locations are not repeated here; they come from the entries. On a live entry a place link is
+  staged and released when the entry is next published.
+
+`corpus/geography` is the example: a gazetteer for every place wording on entries that can be identified (86
+places, all located through Wikidata), and 81 associations, each dated and sourced to a book or edition already in
+the bibliography. Wordings that name no single place ("Global"), places without a reliable record (Gudalovka,
+Passugg, Rechenberg) and areas with no coordinate on Wikidata (the Russian Empire, the English Midlands) are left
+unlocated rather than estimated.
 
 ## Reviewing a corpus
 
