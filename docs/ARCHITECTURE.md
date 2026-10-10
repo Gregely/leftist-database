@@ -70,7 +70,8 @@ tests/e2e/                Playwright
   Theory Map. `getGeography()` (`lib/data/geography.ts`) returns the gazetteer places that public entries are tied to,
   and every association: birthplaces, places of death and event locations read from the entries' own fields and
   matched to places by exact wording (`lib/geo/resolve.ts`), plus released `entity_places` rows. The base map
-  (`lib/geo/basemap.ts`) is drawn once on the server as SVG paths in a fixed Equal Earth world space: land only, from
+  (`lib/geo/basemap.ts`) is drawn once on the server as SVG paths, served by the static route `/geography/land` so
+  the page stays light and browsers cache it, in a fixed Equal Earth world space: land only, from
   Natural Earth via `world-atlas` (1:110m for the world, 1:50m inside a Europe box), with a graticule and no modern
   borders. Places are projected on the server too, so the browser loads no map library. `components/geo/GeoMap`
   clusters places in screen space at the current zoom, places labels with `labels.ts`, draws regions as names rather

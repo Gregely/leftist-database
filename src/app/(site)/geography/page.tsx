@@ -36,7 +36,8 @@ export default async function GeographyPage({ searchParams }: Props) {
   const initial = parseState(await searchParams);
   const geo = await getGeography();
   const data: GeoData = {
-    basemap: basemap(),
+    // The land itself is fetched from /geography/land; the page carries only the frame.
+    basemap: { ...basemap(), land: "", detail: "" },
     places: geo.places.map((p) => ({ ...p, at: project(p.lon, p.lat) })),
     entries: geo.entries,
     links: geo.links,

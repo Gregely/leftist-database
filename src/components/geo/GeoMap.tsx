@@ -67,6 +67,7 @@ export function GeoMap({ data, initial }: { data: GeoData; initial: GeoState }) 
   const [mounted, setMounted] = useState(false);
   const [ready, setReady] = useState(false);
   const [serif, setSerif] = useState("Georgia, serif");
+  const [land, setLand] = useState({ land: data.basemap.land, detail: data.basemap.detail });
 
   const frame = useRef<HTMLDivElement>(null);
   const svg = useRef<SVGSVGElement>(null);
@@ -178,6 +179,19 @@ export function GeoMap({ data, initial }: { data: GeoData; initial: GeoState }) 
   const maxK = home.k * 40;
   const [initialT] = useState(() => home);
   const { view, moving, current, animateTo, zoomBy, panBy, set } = useViewport({ svg, world, axis: noAxis, minK, maxK });
+
+  useEffect(() => {
+    if (land.land) return;
+    let live = true;
+    fetch("/geography/land")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((j: { land: string; detail: string } | null) => live && j && setLand(j))
+      .catch(() => {});
+    return () => {
+      live = false;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     setMounted(true);
@@ -527,8 +541,8 @@ export function GeoMap({ data, initial }: { data: GeoData; initial: GeoState }) 
               <g aria-hidden="true">
                 <path d={data.basemap.sphere} fill={C.sheet} stroke={C.rule} vectorEffect="non-scaling-stroke" />
                 <path d={data.basemap.graticule} fill="none" stroke={C.ruleSoft} strokeWidth={0.8} vectorEffect="non-scaling-stroke" />
-                <path d={data.basemap.land} fill="#E5DED0" clipPath={`url(#${uid}-outside)`} />
-                <path d={data.basemap.detail} fill="#E5DED0" />
+                <path d={land.land} fill="#E5DED0" clipPath={`url(#${uid}-outside)`} />
+                <path d={land.detail} fill="#E5DED0" />
               </g>
 
               {/* Regions: a name across the area, never a point */}
