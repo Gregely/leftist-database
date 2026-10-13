@@ -13,3 +13,7 @@ playwright-report/
 .next-test/
 data/uploads/
 data/test-uploads/
+
+# Impeccable: the engine binary is downloaded on first run; hook settings are per-machine
+.claude/skills/impeccable/scripts/bin/
+.claude/settings.local.json
