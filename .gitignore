@@ -10,7 +10,7 @@ data/*.db-*
 test-results/
 playwright-report/
 .DS_Store
-.next-test/
+.next-*/
 data/uploads/
 data/test-uploads/
 
